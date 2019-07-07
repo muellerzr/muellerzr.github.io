@@ -3,6 +3,7 @@ layout: default
 permalink: /index.html
 ---
 
+
 <div class="posts">
   {% for post in site.posts limit:5 %}
     <article class="post">
