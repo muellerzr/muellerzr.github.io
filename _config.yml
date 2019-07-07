@@ -85,7 +85,7 @@ exclude:
   - README.md
   - CNAME
 
-theme: jekyll-theme-architect
+theme: jekyll-theme-slate
 
 defaults:
   - scope:
