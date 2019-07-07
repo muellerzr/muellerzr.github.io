@@ -1,7 +1,7 @@
 ---
 layout: post
 category: fastai-curr
-title: An Introduction
+title: Summer Smackdown - An Introduction
 ---
 
 Fast.AI offers a number of courses nowadays for anyone to take that are invaluable to Data Science practitioners including: 
