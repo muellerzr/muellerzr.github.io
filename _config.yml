@@ -73,7 +73,7 @@ sass:
   style: :expanded # You might prefer to minify using :compressed
 
 # Use the following plug-ins
-plugins:
+gems:
   - jekyll-sitemap # Create a sitemap using the official Jekyll sitemap gem
   - jekyll-feed # Create an Atom feed using the official Jekyll feed gem
 
@@ -84,12 +84,8 @@ exclude:
   - LICENSE
   - README.md
   - CNAME
-  - node_modules
-  - vendor/bundle/
-  - vendor/cache/
-  - vendor/gems/
-  - vendor/ruby/
 
+theme: jekyll-theme-slate
 
 defaults:
   - scope:
@@ -100,5 +96,3 @@ defaults:
       path: "_posts/projects"
     values:
       type: "projects"
-
-theme: jekyll-theme-dinky
