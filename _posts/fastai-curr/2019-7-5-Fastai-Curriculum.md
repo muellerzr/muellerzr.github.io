@@ -13,7 +13,9 @@ Fast.AI offers a number of courses nowadays for anyone to take that are invaluab
 
 And as my University offers nothing close to that, and after taking the Practical Deep Learning course, I want to do my best to try them all and learn as much as I can. To do this, I have tasked myself with a challenge:
 
-The Fall semester begins in eight weeks. As such, in eight weeks time I want to have completed the Computational Linear Algebra, the Natural Language Processing, and Matrix Calculus for Deep Learning courses, and be well into most of the way through the Deep Learning: From the Foundations course. 
+The Fall semester begins in eight weeks. As such, in eight weeks time I want to have completed the Computational Linear Algebra, the Natural Language Processing, and Matrix Calculus for Deep Learning courses, and be well into most of the way through the Deep Learning: From the Foundations course. I will be calling this the **Summer Smackdown** 
+
+* **Note**: not affiliated with the WWE
 
 To help keep me up to pace with this, I will be writing a series of weekly blogs here describing what I learned that week from each course, how I went and did something with it, and what challenges I may be facing. 
 
