@@ -5,11 +5,11 @@ title: Summer Smackdown - An Introduction
 ---
 
 Fast.AI offers a number of courses nowadays for anyone to take that are invaluable to Data Science practitioners including: 
-* **Practical Deep Learning for Coders**
-* **Deep Learning: From the Foundations**
-* **Computational Linear Algebra**
-* **Matrix Calculus for Deep Learning** *
-* **Natural Language Processing** *
+* [**Practical Deep Learning for Coders**](https://course.fast.ai/#)
+* [**Deep Learning: From the Foundations**](https://course.fast.ai/part2)
+* [**Computational Linear Algebra**](https://github.com/fastai/numerical-linear-algebra)
+* [**Matrix Calculus for Deep Learning**](https://explained.ai/matrix-calculus/index.html) *
+* [**Natural Language Processing**](https://github.com/fastai/course-nlp) *
 
 And as my University offers nothing close to that, and after taking the Practical Deep Learning course, I want to do my best to try them all and learn as much as I can. To do this, I have tasked myself with a challenge:
 
