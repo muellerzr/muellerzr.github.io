@@ -1,0 +1,217 @@
+---
+layout: post
+category: projects
+title: Feature Importance and Gradable Test Sets in Fast.AI
+---
+
+For all of my unversity research thus far, I have been utilizing the tabular library within Fast.AI to apply deep neural networks on tabular data (something not regularly done) with good results. As such, I have done a large amount of outside work and research into common practices with Tabular data. In this article I will be discussing Feature Importance as well as how to grade a test set using the Fast.AI library.
+
+---
+# Feature Importance:
+## What is it and why should it matter?
+
+Feature importance in a very wide-grasp is figuring out what the most important factors in your data are in which the model can then perform the best with. In images, these can be mapped using 'heatmaps', where we have a thermal image of an input and we can see where a particular model wanted to focus on. The Fast.AI library utilizes [Grad-CAM](https://arxiv.org/abs/1610.02391) to do this. Here is an example from the Lesson 6 notebook in the Practical Deep Learning for Coders course:
+
+![](https://i.imgur.com/d6nhN53.png)
+
+In the context of a tabular problem, where we deal with input variables, we can grade the relative importance of each variable we use and can figure out the best choice for our set. The technique this article will be discussing is called **permutation importance**.
+
+## Permutation Importance:
+
+Permutation importance, or Mean Decrease in Accuracy (MDA) is a method of measuring a variables importance in a model by first **fully training** a model with everything available, then taking each variable away one by one and seeing the relative change in accuracy or any **metric**. This should be done on a seperate test set, as it has the least bias for our models.
+
+When we train a neural network in the library, one thing we can *not* do is simply wipe a column out from our inputs and see that change, as our models will always expect all variables to be present. As such there are two options available to us: fully train a new model for every single combination needed (which is extremely costly and time-inducive), or we can **permutate** a column and shuffle all of its values, with the hopes of breaking any link a particular column had to our data. 
+
+## Doing this in Fast.AI:
+
+As I mentioned above, we can permutate a column in Pandas very easily with the `.sample` function. This will randomly sample 'x' number of items from our dataframe. For us, since we want to suffle the entire thing, it would look like this:
+
+{% highlight python3 %}
+{% raw %}
+df[column] = df[column].sample(n=len(df), replace=True).reset_index(drop=True)
+{% endraw %}
+{% endhighlight %}
+Here `df` is our dataframe and `column` is what we want to shuffle. Now that we have this new shuffled column, we can make a new tabular databunch to pass into our model and grab some predictions. 
+
+I'll make a small note of this here, the terminology here will be slightly confusing, this is due to I am grading a 'test' set here. I'll explain why it's this way later.
+
+The start of our feature_importance function now looks something like this:
+
+{% highlight python3 %}
+{% raw %}
+def permutation_imp(learn, cat_vars, cont_vars, dep_var, test):
+  dt = (TabularList.from_df(test, cat_names=cat_vars, cont_names=cont_vars,
+  	    procs=procs)
+       .split_none()
+       .label_from_df(cols=dep_var))
+  dt.valid = dt.train
+  dt = dt.databunch()
+
+  learn.data.valid_dl = dt.valid_dl
+  loss0 = float(learn.validate()[1])
+
+  fi=dict()
+
+  types = [cat_vars, cont_vars]
+  for j, t in enumerat(types):
+    for i, c in enumerate(t):
+      base = test.copy()
+      base[c] = base[c].sample(n=len(base), replace=True).reset_index(drop=True)
+      dt = (TabularList.from_df(test, cat_names=cat_vars, cont_names=cont_vars,
+  	    procs=procs)
+       .split_none()
+       .label_from_df(cols=dep_var))
+  	  dt.valid = dt.train
+  	  dt = dt.databunch()
+
+  	  learn.data.valid_dl = dt.valid.dl
+  	  fi[c] = float(learn.validate()[1])
+{% endraw %}
+{% endhighlight %}
+
+* A few more notes on the above code, we are saving all of our new accuracies into a dictionary for us go through later, and the `enumerate()` loops allow us to go through and use every value in our `types` array of arrays. 
+
+---
+
+Great, so now we can get our relative accuracies for shuffling a column right? We're almost done right? Wrong. The above code actually will not quite work. The reason why is when we generate our databunch, our original cat_vars and cont_vars arrays will be overriden if there are any missing values in our dataset. So now we will have the possibility of `_na` variables, which we don't want to shuffle as those are binary data representing if a value is missing. 
+
+How do we fix this? We can utilize Python's `copy` library and the `deepcopy` function to make a new copy of our list that we can modify safely. Ontop of this, we need access to our data's procs, so lets make a line to grab that from the training dataset before we make every TabularList:
+
+{% highlight python3 %}
+{% raw %}
+def permutation_imp(learn, cat_vars, cont_vars, dep_var, test):
+  data = learn.data.train_ds.x
+  procs = data.procs
+  cat, cont = copy.deepcopy(cats), copy.deepcopy(conts)
+  dt = (TabularList.from_df(test, path='', cat_names=cat, cont_names=cont, procs=procs)
+  ...
+  ...
+  ...
+  fi = dict()
+  cat, cont = copy.deepcopy(cats, conts)
+  ...
+  ...
+  ...
+  for j, t in enumerate(types):
+    for i, c in enumerate(t):
+      base = test.copy()
+      base[c] = base[c].sample(n=len(base), replace=True).reset_index(drop=True)
+      cat, cont = copy.deepcopy(cats), copy.deepcopy(conts)
+      dt = (TabularList.from_df(test, path='', cat_names=cat, cont_names=cont, procs=procs)
+      ...
+      ...
+{% endraw %}
+{% endhighlight %}
+
+---
+
+Great! We're almost there. All that's left is giving us a pretty table that shows our changes in accuracy along with the variables name! We'll use a Pandas dataframe to show it, and we can look at the dataframe to see what variable's results we are using:
+
+{% highlight python3 %}
+{% raw %}
+d = sorted(fi.items(), key = lambda kv: kv[1], reverse=False)
+df = pd.DataFrame({'Variable': [l for l, v in d], 'Accuracy': [v for l, v in d]})
+df['Type'] = ''
+for x in range(len(df)):
+  if df['Variable'].iloc[x] in cats:
+    df['Type'].iloc[x] = 'categorical'
+  else:
+    df['Type'].iloc[x] = 'continuous'
+
+return df
+{% endraw %}
+{% endhighlight %}
+
+Now this will return a dataframe with our variable's name, how much the accuracy was either lost or gained by shuffling it, and the type of variable it was. Here's our new 'permutation_importance' function in full:
+
+{% highlight python3 %}
+{% raw %}
+import copy
+
+def feature_importance(learn:Learner, cats:list, conts:list, dep_var:str, test:DataFrame):
+  data = learn.data.train_ds.x
+  procs = data.procs
+  cat, cont = copy.deepcopy(cats), copy.deepcopy(conts)
+  dt = (TabularList.from_df(test, path='', cat_names=cat, cont_names=cont, 
+                            procs=procs)
+                           .split_none()
+                           .label_from_df(cols=dep_var))
+  dt.valid = dt.train
+  dt = dt.databunch()
+    
+  learn.data.valid_dl = dt.valid_dl
+  loss0 = float(learn.validate()[1])
+  
+  fi=dict()
+  cat, cont = copy.deepcopy(cats), copy.deepcopy(conts)
+  types = [cat, cont]
+  for j, t in enumerate(types):
+    for i, c in enumerate(t):
+      print(c)
+      base = test.copy()
+      base[c] = base[c].sample(n=len(base), replace=True).reset_index(drop=True)
+      cat, cont = copy.deepcopy(cats), copy.deepcopy(conts)
+      dt = (TabularList.from_df(base, path='', cat_names=cat, cont_names=cont, 
+                            procs=procs)
+                           .split_none()
+                           .label_from_df(cols=dep_var))
+      dt.valid = dt.train
+      dt = dt.databunch()
+      
+      learn.data.valid_dl = dt.valid_dl
+      fi[c] = float(learn.validate()[1]) - loss0
+      
+  d = sorted(fi.items(), key =lambda kv: kv[1], reverse=True)
+  df = pd.DataFrame({'Variable': [l for l, v in d], 'Accuracy': [v for l, v in d]})
+  df['Type'] = ''
+  for x in range(len(df)):
+    if df['Variable'].iloc[x] in cats:
+      df['Type'].iloc[x] = 'categorical'
+    if df['Variable'].iloc[x] in conts:
+      df['Type'].iloc[x] = 'continuous'
+  return df 
+{% endraw %}
+{% endhighlight %}
+
+---
+
+Why is this important?
+* First, we can understand how to get the best results from our models by dropping any values that were greater than zero, as we saw a positive impact by shuffling. 
+* Second, now we can easily explain what our model is doing, and why we chose the features we did!
+
+---
+
+# Gradable Test Sets:
+
+This next part will discuss grade-able test sets in the Fast.AI library. Why did I feel this was needed? In the current Fast.AI library, we can pass a `.add_test()` to any databunch we create, and we will always create an unlabled dataset in which to predict on. This is wondeful if we are trying to quickly generate test results for Kaggle competition or similar when we do *not* have the ground truth, but what if we *do* have labels from our own dataset in our research or projects and we want to evaluate our models performance?
+
+---
+
+To do this, we will create a *new* databunch object that will be using only our test dataframe (or dataset). We can't quite just the standard way of generating our databunch, as with Fast.AI, any training dataset loaded in will always get shuffled and the last batch will be dropped if it isn't equal to our batch size. How do we fix this? We stop right before the databunch generation and change our validation set. For example, 
+
+{% highlight python3 %}
+{% raw %}
+dt = (TabularList.from_df(test, path='', cat_names=cat_vars, cont_names=cont_vars,
+                          procs=procs)
+                          .split_none()
+                          .label_from_df(cols=dep_var))
+dt.valid = dt.train
+dt = dt.databunch()
+{% endraw %}
+{% endhighlight %}
+Now our validation set in our `dt` databunch is ready to be switched over, and we can make use of the `learn.validate()` function. We could have just put our entire test set through `learn.predict()`'s one by one, but the time to do that is exceptionally long as we don't take advantage of a GPU, and each input is individual. Here, we can get our predictions in seconds by taking advantage of that GPU. To do this swich, we need to swap our dataloader's memory addresses in our Learner:
+
+{% highlight python3 %}
+{% raw %}
+learn.data.valid_dl = dt.valid_dl
+{% endraw %}
+{% endhighlight %}
+Now that we have this, we have a gradable test set. We could run ClassificationInterpretation to analyze the results on this new set, we can run `.validate()` and see what it's accuracy is, and we can extract what ones we got right and wrong and see what those look like. 
+
+---
+
+Lastly, thank you for reading! I'm slowly learning more and more from the library by trying new ideas, and so this 'Projects' blog will sometimes be a moshposh of either big projects or small ones like this. I believe both are invaluable and so they'll both be living in here.
+
+Thanks again!
+
+Zach
