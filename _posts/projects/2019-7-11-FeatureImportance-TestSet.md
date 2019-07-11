@@ -4,13 +4,13 @@ category: projects
 title: Feature Importance and Gradable Test Sets in Fast.AI
 ---
 
-For all of my unversity research thus far, I have been utilizing the tabular library within Fast.AI to apply deep neural networks on tabular data (something not regularly done) with good results. As such, I have done a large amount of outside work and research into common practices with Tabular data. In this article I will be discussing Feature Importance as well as how to grade a test set using the Fast.AI library.
+For all of my university research thus far, I have been utilizing the tabular library within Fast.AI to apply deep neural networks on tabular data (something not regularly done) with good results. As such, I have done a large amount of outside work and research into common practices with Tabular data. In this article I will be discussing Feature Importance as well as how to grade a test set using the Fast.AI library.
 
 ---
 # Feature Importance:
 ## What is it and why should it matter?
 
-Feature importance in a very wide-grasp is figuring out what the most important factors in your data are in which the model can then perform the best with. In images, these can be mapped using 'heatmaps', where we have a thermal image of an input and we can see where a particular model wanted to focus on. The Fast.AI library utilizes [Grad-CAM](https://arxiv.org/abs/1610.02391) to do this. Here is an example from the Lesson 6 notebook in the Practical Deep Learning for Coders course:
+Feature importance in a very wide-grasp is figuring out what the most important factors in your data are in which the model can then perform the best with. In images, these can be visualized using 'heat-maps', where we have a thermal image of an input and we can see where a particular model wanted to focus on. The Fast.AI library utilizes [Grad-CAM](https://arxiv.org/abs/1610.02391) to do this. Here is an example from the Lesson 6 notebook in the Practical Deep Learning for Coders course:
 
 ![](https://i.imgur.com/d6nhN53.png)
 
@@ -18,13 +18,13 @@ In the context of a tabular problem, where we deal with input variables, we can 
 
 ## Permutation Importance:
 
-Permutation importance, or Mean Decrease in Accuracy (MDA) is a method of measuring a variables importance in a model by first **fully training** a model with everything available, then taking each variable away one by one and seeing the relative change in accuracy or any **metric**. This should be done on a seperate test set, as it has the least bias for our models.
+Permutation importance, or Mean Decrease in Accuracy (MDA) is a method of measuring a variables importance in a model by first **fully training** a model with everything available, then taking each variable away one by one and seeing the relative change in accuracy or any **metric**. This should be done on a separate test set, as it has the least bias for our models.
 
-When we train a neural network in the library, one thing we can *not* do is simply wipe a column out from our inputs and see that change, as our models will always expect all variables to be present. As such there are two options available to us: fully train a new model for every single combination needed (which is extremely costly and time-inducive), or we can **permutate** a column and shuffle all of its values, with the hopes of breaking any link a particular column had to our data. 
+When we train a neural network in the library, one thing we can *not* do is simply wipe a column out from our inputs and see that change, as our models will always expect all variables to be present. As such there are two options available to us: fully train a new model for every single combination needed (which is extremely costly and time-intensive), or we can **permutate** a column and shuffle all of its values, with the hopes of breaking any link a particular column had to our data. 
 
 ## Doing this in Fast.AI:
 
-As I mentioned above, we can permutate a column in Pandas very easily with the `.sample` function. This will randomly sample 'x' number of items from our dataframe. For us, since we want to suffle the entire thing, it would look like this:
+As I mentioned above, we can permutate a column in Pandas very easily with the `.sample` function. This will randomly sample 'x' number of items from our dataframe. For us, since we want to shuffle the entire thing, it would look like this:
 
 {% highlight python3 %}
 {% raw %}
@@ -73,9 +73,9 @@ def permutation_imp(learn, cat_vars, cont_vars, dep_var, test):
 
 ---
 
-Great, so now we can get our relative accuracies for shuffling a column right? We're almost done right? Wrong. The above code actually will not quite work. The reason why is when we generate our databunch, our original cat_vars and cont_vars arrays will be overriden if there are any missing values in our dataset. So now we will have the possibility of `_na` variables, which we don't want to shuffle as those are binary data representing if a value is missing. 
+Great, so now we can get our relative accuracies for shuffling a column right? We're almost done right? Wrong. The above code actually will not quite work. The reason why is when we generate our databunch, our original cat_vars and cont_vars arrays will be overridden if there are any missing values in our dataset. So now we will have the possibility of `_na` variables, which we don't want to shuffle as those are binary data representing if a value is missing. 
 
-How do we fix this? We can utilize Python's `copy` library and the `deepcopy` function to make a new copy of our list that we can modify safely. Ontop of this, we need access to our data's procs, so lets make a line to grab that from the training dataset before we make every TabularList:
+How do we fix this? We can utilize Python's `copy` library and the `deepcopy` function to make a new copy of our list that we can modify safely. On top of this, we need access to our data's procs, so lets make a line to grab that from the training dataset before we make every TabularList:
 
 {% highlight python3 %}
 {% raw %}
