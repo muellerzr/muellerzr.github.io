@@ -1,7 +1,7 @@
 ---
 layout: post
 category: projects
-title: Class Confusion, a way to analyze fastai model behaviors
+title: Class Confusion, Analyzing Fastai Model Behaviors
 ---
 
 In my research at the University, I have found that one major weakness of mine is trying to explain how these models are working and their behavior. After enough discussion on the fastai forums, I decided to make a new widget entitled "Class Confusion", which can be used in regular jupyter environments and in Google Colaboratory.
