@@ -17,6 +17,10 @@ The widget works by sending in attributes of your model you want to look at, inc
 * A list of classes to look at or combinations
 * A list of variables to examine
 
+My project managed to work its way into the main fastai library, and lives in widgets:
+
+`from fastai.widgets import ClassConfusion`
+
 ---
 
 ## Images:
