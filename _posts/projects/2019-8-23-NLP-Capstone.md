@@ -151,7 +151,7 @@ accuracy(preds_avg, targs[0])
 ```
 This ensembled accuracy was **94.94%**. Jeremy et al's paper shows they achieved 95% accuracy, so we did not quite achieve what they got but we were close. But let's consider it from a different standpoint. How much improvement was adding the SentencePiece and the forwards and backwards  models together? The table below compares those results:
 
-| Name | Accuracy |
+| **Name** | **Accuracy** |
 |:--------------------------------------------------------:|:--------:|
 | Spacy Forward | 94.49% |
 | **Spacy Forward and Backwards** | **94.77%** |
