@@ -4,8 +4,6 @@ category: projects
 title: Capstone Project - Revisiting IMDB
 ---
 
-# Utilizing State of the Art Practices for Sentiment Analysis - The fastai way
-
 Very recently, Rachel Thomas and Jeremy Howard released a new course focused on Natural Language Processing. I had stated previously in my blogs I wanted to document my progress and come up with a "Capstone" project for the course. I have been quiet these past few weeks due to my busy schedule, and I have not had the time to really focus on these blogs. As such, here is the capstone project, along with where the new NLP course fits in, and what those practices are.
 
 ---
