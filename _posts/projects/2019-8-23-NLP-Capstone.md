@@ -1,7 +1,7 @@
 ---
 layout: post
 category: projects
-title: Capstone Project: Revisiting IMDB
+title: Capstone Project - Revisiting IMDB
 ---
 
 # Utilizing State of the Art Practices for Sentiment Analysis - The fastai way
