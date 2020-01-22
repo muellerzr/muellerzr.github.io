@@ -91,4 +91,8 @@ defaults:
       path: "_posts/projects"
     values:
       type: "projects"
+  - scope:
+      path: "_posts/blogs"
+    values:
+      type: "blogs"
 
