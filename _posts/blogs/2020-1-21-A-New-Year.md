@@ -1,4 +1,8 @@
-# New Year, New Adventures
+---
+layout: post
+category: blogs
+title: New Year, New Adventures
+---
 
 I realize I haven't been updating this as much as I would have liked to, so this year I intend on publishing one new blog a month. These blogs will be on whatever topic I focused on that month (or previous months), along with any major guides or updates I might have had. Let's start with the New Year:
 
