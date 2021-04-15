@@ -96,3 +96,5 @@ defaults:
     values:
       type: "blogs"
 
+
+theme: jekyll-theme-cayman
