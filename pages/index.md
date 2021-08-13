@@ -23,11 +23,11 @@ I have a heavy passion for Deep Learning and Open Source libraries. As a result,
 
 - [PyTorch to fastai, Bridging the Gap (February 2021)](https://muellerzr.github.io/fastblog/2021/02/14/Pytorchtofastai.html)
 
-- [Zero to Hero with `fastai`](https://muellerzr.github.io/fastblog/2020/08/21/beginner.html)
+- [Zero to Hero with `fastai` (August 2020)](https://muellerzr.github.io/fastblog/2020/08/21/beginner.html)
 
-- [Capstone Project - Revisiting IMDB](https://muellerzr.github.io/NLP-Capstone/)
+- [Capstone Project - Revisiting IMDB (August 2019)](https://muellerzr.github.io/NLP-Capstone/)
 
-- [Suspecto - Analyzing News Articles with Natural Language Processing to Score Credibility](https://muellerzr.github.io/Suspecto/)
+- [Suspecto - Analyzing News Articles with Natural Language Processing to Score Credibility (July 2019)](https://muellerzr.github.io/Suspecto/)
 
 ## Courses
 
