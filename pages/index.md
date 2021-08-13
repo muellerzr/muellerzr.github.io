@@ -3,12 +3,6 @@ layout: default
 permalink: /index.html
 ---
 
----
-layout: page
-title: About Me
-permalink: /about/
----
-
 ## About Me
 
 Hi! My name is Zachary Mueller, and I'm a rising senior (2021) at the University of West Florida. I'm majoring in **Software Design and Development** and I have minors in both **Computer Science** and **Environmental Science**. I am also currently a Deep Learning Software Engineer at Novetta (yes, that is indeed school and work at the same time)
