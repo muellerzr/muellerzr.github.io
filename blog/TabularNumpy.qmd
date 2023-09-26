@@ -1,0 +1,483 @@
+---
+title: Speeding up fastai Tabular with NumPy
+date: 2020-04-22
+categories: [fastai]
+aliases:
+    - ../fastblog/2020/04/22/TabularNumpy.html
+---
+
+> Speeding up fastai tabular training by 40%
+
+::: {.callout-note appearance="simple"}
+This blog is also a Jupyter notebook available to run from the top down. There will be code snippets that you can then run in any Jupyter environment. This post was written using:
+
+* `fastai2`: 0.0.16
+* `fastcore`: 0.1.16
+:::
+
+
+# What is this article?
+
+In this article, we're going to dive deep into the `fastai` `DataLoader` and how to integrate it in with NumPy. The end result? Speeding up tabular training by 40% (to where almost half the time per epoch is just the time to train the model itself). 
+
+
+## What is `fastai` Tabular? A TL;DR
+
+When working with tabular data, `fastai` has introduced a powerful tool to help with prerocessing your data: `TabularPandas`. It's super helpful and useful as you can have everything in one place, encode and decode all of your tables at once, and the memory usage on top of your `Pandas` dataframe can be very minimal. Let's look at an example of it. 
+
+First let's import the tabular module:
+
+```python
+from fastai2.tabular.all import *
+```
+
+For our particular tests today, we'll be using the `ADULT_SAMPLE` dataset, where we need to identify if a particular individual makes above or below $50,000. Let's grab the data:
+
+```python
+path = untar_data(URLs.ADULT_SAMPLE)
+```
+
+And now we can open it in `Pandas`:
+
+```python
+df = pd.read_csv(path/'adult.csv')
+```
+
+```python
+df.head()
+```
+
+Now that we have our `DataFrame`, let's fit it into a `TabularPandas` object for preprocessing. To do so, we need to decalre the following:
+
+* `procs` (pre-processing our data, such as normalization and converting categorical values to numbers)
+* `cat_names` (categorical variables)
+* `cont_names` (continuous variables)
+* `y_names` (our y columns)
+
+For our case, these look like so:
+
+```python
+cat_names = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race']
+cont_names = ['age', 'fnlwgt', 'education-num']
+procs = [Categorify, FillMissing, Normalize]
+y_names = 'salary'
+```
+
+We'll also need to tell `TabularPandas` how we want to split our data. We'll use a random 20% subsample:
+
+```python
+splits = RandomSplitter()(range_of(df))
+```
+
+Now let's make a `TabularPandas`!
+
+```python
+to = TabularPandas(df, procs=procs, cat_names=cat_names, cont_names=cont_names,
+                   y_names=y_names, splits=splits)
+```
+
+Now all of our data is pre-processed here and we can grab all of the raw values if we wanted to say use it with `XGBoost` like so:
+
+```python
+to.train.xs.iloc[:3]
+```
+
+Andi it's fully encoded! Now that we're a bit familiar with `TabularPandas`, let's do some speed tests!
+
+## The Baseline
+
+For our tests, we'll run 4 different tests:
+1. One batch of the training data
+2. Iterating over the entire training dataset
+3. Iterating over the entire validation set
+4. Fitting for 10 epochs (GPU only)
+
+And for each of these we will compare the times on the CPU and the GPU. 
+
+### CPU:
+
+First let's grab the first batch. The reason this is important is each time we iterate over the training `DataLoader`, we actually shuffle our data, which can add some time:
+
+```python
+dls = to.dataloaders(bs=128, device='cpu')
+```
+
+To test our times, we'll use `%%timeit`. It measures the execution time of a Python function for a certain amount of loops, and reports back the fastest one. For iterating over the entire `DataLoader` we'll look at the time per batch as well. 
+
+First, a batch from training:
+
+```python
+%%timeit
+_ = next(iter(dls.train))
+```
+
+Now the validation:
+
+```python
+%%timeit
+_ = next(iter(dls.valid))
+```
+
+Alright, so first we can see that our shuffling function is adding almost 15 milliseconds on our time, something we can improve on! Let's then go through the entire `DataLoader`:
+
+```python
+%%timeit
+for _ in dls.train:
+    _
+```
+
+Now let's get an average time per batch:
+
+```python
+print(661/len(dls.train))
+```
+
+About 3.25 milliseconds per batch on the training dataset, let's look at the validation:
+
+```python
+%%timeit
+for _ in dls.valid:
+    _
+```
+
+```python
+print(159/len(dls.valid))
+```
+
+And about 3.11 milliseconds per batch on the validation, so we can see that it's about the same after shuffling. Now let's compare some GPU times:
+
+### GPU
+
+```python
+dls = to.dataloaders(bs=128, device='cuda')
+```
+
+```python
+%%timeit
+_ = next(iter(dls.train))
+```
+
+```python
+%%timeit
+_ = next(iter(dls.valid))
+```
+
+So first, grabbing just one batch we can see it added about a half a millisecond on the training and .2 milliseconds on the validation, so we're not utilizing the GPU for this process much (which makes sense, `TabularPandas` is *CPU* bound). And now let's iterate:
+
+```python
+%%timeit
+for _ in dls.train:
+    _
+```
+
+```python
+print(693/len(dls.train))
+```
+
+```python
+%%timeit
+for _ in dls.valid:
+    _
+```
+
+```python
+print(163/len(dls.valid))
+```
+
+And here we can see a little bit more being added here as well. Now that we have those baselines, let's fit for ten epochs real quick:
+
+```python
+learn = tabular_learner(dls, layers=[200,100], metrics=accuracy)
+```
+
+```python
+%%time
+learn.fit(10, 1e-2)
+```
+
+After fitting, we got about 22.9 seconds in total and ~2.29 seconds per epoch! Now that we have our baselines, let's try to speed that up!
+
+## Bringing in `NumPy`
+
+### The `Dataset`
+
+With speeding everything up, I wanted to keep `TabularPandas` as it is, as it's a great way to pre-process your data! So instead we'll create a new `Dataset` class where we will convert our `TabularPandas` object into a `NumPy` array. Why is that important? `NumPy` is a super-fast library that has been hyper-optimized by using as much C code as it possibly can which is *leagues* faster than Python. Let's build our `Dataset`!
+
+We'll want it to maintain the `cats`, `conts`, and `ys` from our `TabularPandas` object seperate. We can call `to_numpy()` on all of them because they are simply stored as a `DataFrame`! Finally, to deal with categorical versus continuous variables, we'll assign our `cats` as `np.long` and our `conts` as `np.float32` (we also have our `ys` as `np.int8`, but this is because we're doing classification):
+
+```python
+class TabDataset():
+    "A `NumPy` dataset from a `TabularPandas` object"
+    def __init__(self, to):
+        self.cats = to.cats.to_numpy().astype(np.long)
+        self.conts = to.conts.to_numpy().astype(np.float32)
+        self.ys = to.ys.to_numpy()
+```
+
+Great! Now we need a few more bits for everything to work! For our `Dataset` to function, we need to be able to gather the values from it each time we call from it. We use the `__getitem__` function to do so! For our particular problem, we need it to return some `cats`, `conts`, and our `ys`. And to save on more time we'll return a whole *batch* of values:
+
+```python
+class TabDataset():
+    "A `NumPy` dataset from a `TabularPandas` object"
+    def __init__(self, to):
+        self.cats = to.cats.to_numpy().astype(np.long)
+        self.conts = to.conts.to_numpy().astype(np.float32)
+        self.ys = to.ys.to_numpy()
+
+    def __getitem__(self, idx):
+        idx = idx[0]
+        return self.cats[idx:idx+self.bs], self.conts[idx:idx+self.bs], self.ys[idx:idx+self.bs]
+```
+
+You'll notice we don't explicitly pass in a batch size, so where is that coming from? This is added when we build our `DataLoader`, as we'll see later. Let's finish up our `Dataset` class by adding in an option to get the length of the dataset (we'll do the length of our categorical table in this case).
+
+```python
+class TabDataset():
+    "A `NumPy` dataset from a `TabularPandas` object"
+    def __init__(self, to):
+        self.cats = to.cats.to_numpy().astype(np.long)
+        self.conts = to.conts.to_numpy().astype(np.float32)
+        self.ys = to.ys.to_numpy()
+
+    def __getitem__(self, idx):
+        idx = idx[0]
+        return self.cats[idx:idx+self.bs], self.conts[idx:idx+self.bs], self.ys[idx:idx+self.bs]
+
+    def __len__(self): return len(self.cats)
+```
+
+And now we can make some `Datasets`!
+
+```python
+train_ds = TabDataset(to.train)
+valid_ds = TabDataset(to.valid)
+```
+
+We can look at some data real quick if we want to as well! First we need to assign a batch size:
+
+```python
+train_ds.bs = 3
+```
+
+And now let's look at some data:
+
+```python
+train_ds[[3]]
+```
+
+We can see that we output what could be considered a batch of data! The only thing missing is to make it into a tensor! Fantastic! Now let's build the `DataLoader`, as there's some pieces in it that we need, so simply having this `Dataset` won't be enough
+
+### The `DataLoader`
+
+Now to build our `DataLoader`, we're going to want to modify 4 particular functions:
+
+1. `create_item`
+2. `create_batch`
+3. `get_idxs`
+4. `shuffle_ds`
+
+Each of these play a particular role. First let's look at our template:
+
+```python
+class TabDataLoader(DataLoader):
+    def __init__(self, dataset, bs=1, num_workers=0, device='cuda', shuffle=False, **kwargs):
+        "A `DataLoader` based on a `TabDataset`"
+        super().__init__(dataset, bs=bs, num_workers=num_workers, shuffle=shuffle, 
+                         device=device, drop_last=shuffle, **kwargs)
+        self.dataset.bs=bs
+```
+
+As you can see, our `__init__` will build a `DataLoader`, and we keep track of our `Dataset` and set the `Datasets` batch size here as well
+
+```python
+dl = TabDataLoader(train_ds, bs=3)
+```
+
+```python
+dl.dataset.bs
+```
+
+```python
+dl.dataset[[0]]
+```
+
+And we can see that we grab everything as normal in the `Dataset`! Great! Now let's work on `create_item` and `create_batch`. `create_item` is very simple as we already do so when we make our call to the dataset, so we just pass it on. `create_batch` is also very simplistic. We'll take some index's from our `Dataset` and convert them all to `Tensors`!
+
+```python
+class TabDataLoader(DataLoader):
+    def __init__(self, dataset, bs=1, num_workers=0, device='cuda', shuffle=False, **kwargs):
+        "A `DataLoader` based on a `TabDataset`"
+        super().__init__(dataset, bs=bs, num_workers=num_workers, shuffle=shuffle, 
+                         device=device, drop_last=shuffle, **kwargs)
+        self.dataset.bs=bs
+    
+    def create_item(self, s): return s
+
+    def create_batch(self, b):
+        cat, cont, y = self.dataset[b]
+        return tensor(cat).to(self.device), tensor(cont).to(self.device), tensor(y).to(self.device)
+```
+
+Now we're almost done. The last two pieces missing is `get_idxs` and `shuffle_fn`. These are needed as after each epoch we actually shuffle the dataset and we need to get a list of index's for our `DataLoader` to use! To save on time (as we’re using array indexing), we can shuffle the interior dataset instead! A major benefit is slicing (consecutive idxs) instead of indexing (non-consecutive idxs). Let's look at what that looks like:
+
+```python
+class TabDataLoader(DataLoader):
+    def __init__(self, dataset, bs=1, num_workers=0, device='cuda', shuffle=False, **kwargs):
+        "A `DataLoader` based on a `TabDataset`"
+        super().__init__(dataset, bs=bs, num_workers=num_workers, shuffle=shuffle, 
+                         device=device, drop_last=shuffle, **kwargs)
+        self.dataset.bs=bs
+    
+    def create_item(self, s): return s
+
+    def create_batch(self, b):
+        "Create a batch of data"
+        cat, cont, y = self.dataset[b]
+        return tensor(cat).to(self.device), tensor(cont).to(self.device), tensor(y).to(self.device)
+
+    def get_idxs(self):
+        "Get index's to select"
+        idxs = Inf.count if self.indexed else Inf.nones
+        if self.n is not None: idxs = list(range(len(self.dataset)))
+        return idxs
+
+    def shuffle_fn(self):
+        "Shuffle the interior dataset"
+        rng = np.random.permutation(len(self.dataset))
+        self.dataset.cats = self.dataset.cats[rng]
+        self.dataset.conts = self.dataset.conts[rng]
+        self.dataset.ys = self.dataset.ys[rng]
+```
+
+And now we have all the pieces we need to build a `DataLoader` with `NumPy`! We'll examine it's speed now and then we'll build some convience functions later. First let's build the `Datasets`:
+
+```python
+train_ds = TabDataset(to.train)
+valid_ds = TabDataset(to.valid)
+```
+
+And then the `DataLoader`:
+
+```python
+train_dl = TabDataLoader(train_ds, device='cpu', shuffle=True, bs=128)
+valid_dl = TabDataLoader(valid_ds, device='cpu', bs=128)
+```
+
+And now let's grab some CPU timings similar to what we did before:
+
+```python
+%%timeit
+_ = next(iter(train_dl))
+```
+
+```python
+%%timeit
+_ = next(iter(valid_dl))
+```
+
+**Right** away we can see that we are *leagues* faster than the previous version. Shuffling only added ~370 *microseconds*, which means we used 4% of the time! Now let's iterate over the entire `DataLoader`:
+
+```python
+%%timeit
+for _ in train_dl:
+    _
+```
+
+```python
+print(31.8/len(train_dl))
+```
+
+```python
+%%timeit
+for _ in valid_dl:
+    _
+```
+
+```python
+print(8.07/len(valid_dl))
+```
+
+And as we can see, each individual batch of data is about 0.158 milliseconds! Yet again, about 6% of time time, quite a decrease! So we have **sucessfully** decreased the time! Let's look at the GPU now:
+
+```python
+train_dl = TabDataLoader(train_ds, device='cuda', shuffle=True, bs=128)
+valid_dl = TabDataLoader(valid_ds, device='cuda', bs=128)
+```
+
+```python
+%%timeit
+_ = next(iter(train_dl))
+```
+
+```python
+%%timeit
+_ = next(iter(valid_dl))
+```
+
+```python
+%%timeit
+for _ in train_dl:
+    _
+```
+
+```python
+print(51.5/len(train_dl))
+```
+
+```python
+%%timeit
+for _ in valid_dl:
+    _
+```
+
+```python
+print(12.8/len(valid_dl))
+```
+
+Which as we can see, it adds a little bit of time from converting the tensors over to `cuda`. You could save a *little* bit more by converting first, but as this should be seperate from the dataset I decided to just keep it here. Now that we have all the steps, finally we can take a look at training! First let's build a quick helper function to make `DataLoaders` similar to what `fastai`'s `tabular_learner` would be expecting:
+
+```python
+class TabDataLoaders(DataLoaders):
+    def __init__(self, to, bs=64, val_bs=None, shuffle_train=True, device='cpu', **kwargs):
+        train_ds = TabDataset(to.train)
+        valid_ds = TabDataset(to.valid)
+        val_bs = bs if val_bs is None else val_bs
+        train = TabDataLoader(train_ds, bs=bs, shuffle=shuffle_train, device=device, **kwargs)
+        valid = TabDataLoader(valid_ds, bs=val_bs, shuffle=False, device=device, **kwargs)
+        super().__init__(train, valid, device=device, **kwargs)
+```
+
+```python
+dls = TabDataLoaders(to, bs=128, device='cuda')
+```
+
+And now we can build our model and train! We need to build our own `TabularModel` here, so we'll need to grab the size of our embeddings and build a `Learner`. For simplicity we'll still use `TabularPandas` to get those sizes:
+
+```python
+emb_szs = get_emb_sz(to)
+net = TabularModel(emb_szs, n_cont=3, out_sz=2, layers=[200,100]).cuda()
+learn = Learner(dls, net, metrics=accuracy, loss_func=CrossEntropyLossFlat())
+```
+
+And now let's train!
+
+```python
+%%time
+learn.fit(10, 1e-2)
+```
+
+As you can see, we cut the speed down 60%! So we saw a *tremendous* speed up! Let's quickly revisit all of the times and results in a pretty table.
+
+## Results
+
+|  | CPU? | First Batch | Per Batch | Per Epoch | Ten Epochs |
+|:-------:|:----:|:-------------------------------:|:-----------------------------:|-----------|------------|
+| fastai2 | Yes | 18.3ms (train) 3.37ms (valid) | 3.25ms (train) 3.11ms (valid) |  |  |
+|  | No | 18.8ms (train) 3.49ms (valid) | 3.41ms (train) 3.19ms (valid) | 2.29s | 22.9s |
+| NumPy | Yes | 0.669ms (train) 0.3ms (valid | 0.15ms (train) 0.15ms (valid) |  |  |
+|  | No | 0.835ms (train) 0.451ms (valid) | 0.25ms (train) 0.25ms (valid) | 1.38s | 13.8s |
+
+So in summary, we first sped up the time to grab a single batch of data by converting everything from `Pandas` to `NumPy`. Afterwards we made a custom `DataLoader` that could handle these `NumPy` arrays and induce the speedup we saw! I hope this article helps you better understand how the interior `DataLoader` can be integrated in with `NumPy`, and that it helps you speed up your tabular training!
+
+* Small note: `show_batch()` etc will *not* work with this particular code base, this is simply a proof of concept
+

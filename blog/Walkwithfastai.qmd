@@ -1,0 +1,68 @@
+---
+title: 'Announcing Walk with fastai, the missing pieces for success'
+date: 2022-10-22
+category: education
+image: media/blog/Walkwithfastai/01.png
+aliases:
+    - ../fastblog/2022/10/22/Walkwithfastai.html
+---
+
+
+> Details about my newest course, available at https://thezachmueller.gumroad.com/l/walkwithfastai
+
+# Walk with fastai, the missing pieces for success
+
+![](media/blog/Walkwithfastai/01.png)
+
+You heard that right, three years after the hit course [Walk with fastai](https://walkwithfastai.com) I'm coming back with an action-packed round two!
+
+This course has been in the making since the *day* version 1 finished, as I was never truly happy with how that one ended up. It was great, but there was much to be desired. This course is designed to help fill those gaps. Let's dive in!
+
+
+## Why do this? What's different?
+
+First let's talk about what's new. This course will **still** take you from someone who either has completed Jeremy Howards [course](https://course.fast.ai) or who hasn't even **touched** fastai at all and take you to a level above most practitioners. We still start at an understanding of some Python, and maybe some PyTorch and take you further beyond.
+
+However it's been three years since the first came out and much has changed. New techiques have been released, changes to the framework have occured, and in these times concepts like *distributed computing* mean much more! As a result over **50%** of the course material is *completely new*. 
+
+But wait, what about the old material?
+
+The old material is also completely redone and added verbose content thanks to the power of Quarto and nbdev. Just look at the before and after:
+
+### Before: 
+
+![](media/blog/Walkwithfastai/02.png)
+
+### After:
+
+![](media/blog/Walkwithfastai/03.png)
+
+No longer is this course just a passing resource, but instead it could be read entirely on its own without the accompaning lecture content and be infinitely more valuable than its predecessor. 
+
+## What about the original course?
+
+The original course will always be free and a readily-available resource to all, however its content will not be updated for latest iterations of the framework and so forth. The YouTube videos will not be going anywhere, and the code repository wil still be publically available. Always. 
+
+That being said, this new version of the course will go much futher beyond than the original did, and has enough material to have it stand out as its own and not just be a complete repeat of what was presented three years ago.
+
+## Not convinced? Here's what others have to say about the original course:
+
+> Zach Mueller is probably the most active member of the fastai community. He is also very actively involved with fastai development. If there is one person who understands the fastai library through and through (apart from Jeremy Howard and Sylvain Gugger), that is certainly Zach! He went out of his way to create a fabulous learning resource for us, Walk With Fastai. Numerous notebooks explaining how to work with the library to achieve wonderful results. A must read! - Radek Osmulski, Senior Data Scientist at NVIDIA AI
+
+> Walk with Fastai is the best source available for utilizing fastai and goes above and beyond what is available in the documentation. Zach somehow extracted all of the knowledge I wanted to know about fastai and combined it into blog posts, videos, and source code that are easy to follow and build on. If you want to use fastai, this is a great resource to reference. I've had to go back and forth a couple of times between the best source (between it and fastbook) and I think I've gotten more out of Walk with fastai. - Kevin Bird
+
+> I really enjoyed the vision section Zach’s Walk with fastai series. His extension of the fastai keypoint example from a single point to multipoint was really great and importantly included covering the basics of doing ML well such as cleaning the data, ensuring the transforms make sense and so forth before starting any modelling - super critical to teaching deep learning. I loved that he then goes deeper and shows off how to customize a UNET for key point regression (because why not!) and really get the most out of the fastai API. Highly recommended as an accompaniment to the fastai course! - Morgan McGuire, Growth ML Engineer at Weights and Biases
+
+> Your addendum course videos in Walk with fastai is so super useful. I've learnt so much more about using fastai effectively in new problem spaces by combining Jeremy's lessons with your own, and am still learning as I am still progressing through them. - Nissan Dookeran
+
+## How do I sign up?
+
+Preorders are now live, which you can find [here](https://thezachmueller.gumroad.com/l/walkwithfastai). 
+
+I value your trust in me as a teacher and a creator so if you preorder before the course begins you will be able to not only attend the lectures **live** and directly as me questions, but you will also get weekly updates from me detailing progress, teases, and overall how the course is coming along. 
+
+If you do not preorder you will receive access to the material as a lesson finishes, within a day for the unedited lecture and within a week for the edited ones. 
+
+Also starting today preorders are now 50% off, so be sure to get them while they're available!
+
+

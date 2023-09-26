@@ -1,0 +1,120 @@
+---
+title: "How to be happy, or ways to try your best"
+date: "2023-01-02"
+categories: [life]
+---
+
+# How to be happy, or ways to try your best
+
+## Motivation
+
+For a while now I've been going back to two particular studies that stuck with me. They provide guidelines on *scientifically acknowledged* ways to be happy. I've been trying to follow them, and this year I plan to try even more of them.
+
+This article will focus on these two studies, what I believe are valuable from them, and how I plan to implement them into my life.
+
+## TL;DR
+
+Check out [this table](https://www.researchgate.net/publication/339053050/figure/tbl2/AS:866502018342913@1583601588912/Expert-ratings-of-ways-to-greater-happiness-for-a-greater-number-of-citizens-policy.png), and [these](https://www.researchgate.net/publication/339053050_Ways_to_Greater_Happiness_A_Delphi_Study) [papers](https://www.nature.com/articles/s41598-019-44097-3)
+
+## Ways to Greater Happiness: A Delphi Study
+
+Given a pool of 20 or so experts, the study asked them to think of ways to be happier. But even further, they were asked to focus on methods that increased happiness in the context of **life satisfaction**.
+
+::: {.margin}
+Life satisfaction means your overall enjoyment of life as a whole.
+:::
+
+Specifically they were asked two questions:
+
+> What **policies** are most likely to *yield greater happiness* for a greater *number* of **cities** in nations
+
+> What **individual** strategies are most likely to enhance people's happiness **in the long run**
+
+This article will focus solely on the latter portion of the questions.
+
+These results were ranked based on effectiveness, cost-effectiveness, and feasability. 
+
+Now that you have the background, let's go into the results. I've split the ones that I personally have highlighted into different groupings based on their life category.
+
+### Financial
+
+The first on the list in financial was **investing in experiences**. Experiences don't need to be big or fancy,
+like a vacation overseas or a trip to a theme park. I've found that smaller, simpler experiences to invest in are just as good. For example, I had a routine of going to the aquarium, a local bar for dinner, and finally sometimes a concert once a week or so for a few months. Just getting out of the house and being around the aquarium (something I'm very passionate about and love) was phenominal. Mix that in with memories of good food and a great concert, and it's something I cannot wait to do again once concert season hits.
+
+The second is **enrolling in automatic savings**. The paper discusses how monitary items don't really attribute towards overall happiness, with savings being the one exception to the list. Due to the fact that you can safeguard emergencies, future large purchases, and retirement, it makes sense that it would be ranked highly on their list. If you don't do this, the rule of thumb I grew up with is to save at least 10% of your income if you can. I need to do more of this myself.
+
+### Health Self Care
+
+These next options are more feasible than the first for many. They involve taking care of your physical body without a "magic solution."
+
+The first was to **get physical exercise.** Other studies have shown that exercise releases endorphins, which are chemicals that improve your mood and in those with ADHD it reduces symtoms. I can personally attest to that as well. This can come in many different forms, such as the gym or going for a walk. However I will also mention [another study](https://www.nature.com/articles/s41598-019-44097-3) which discussed how relative happiness was seen when compared to the length of time someone spends outside a week. While there was a cliff, it was generally found that going outside around 120 minutes a week was the sweet spot for happiness. This can be done by going for a walk, going to the park, or even just sitting outside. After reading these papers I decided to add a 30 minute walk to my daily routine in a spot completely devoid of urban life and it was an excellent way for me to start my day mentally and I anecdotally felt happier. I also have noticed the lack of it as the colder months have come and I've been less inclined to go outside for a walk and instead head directly to the gym.
+
+The second was to **check your health.** This includes regular visits to the doctor, going to the dentist, and talking to a therapist. Post-pandemic I need to do this much more often myself, and I intend to do so in the 2023 year. Take care of your body and it will return the favor tenfold.
+
+The last one was **regular and ample sleep.** Studies have also shown that aligning your circatium rythum to the sun can have increased benefits as well. To help with this I use the Android "Sleep" app which tracks my sleep and let's me set alarms based on **time fully asleep**. As a result my average sleep over the last few months has been a proper 7-8 hours of sleep, rather than my 5-6 hours I used to get. I haven't tried aligning my circatium rythum to the sun yet, but I plan to do so for three months to see how it compares to my current sleep schedule.
+
+### Home Environment
+
+This category blends in with a few of the previous ones in their recommendations, compounding their importance.
+
+Two of which were *experience nature* and *maximize sunlight*. If you're following these tips, then in my opinion you've already succeeded in these two. If you have a west-facing window it may be good to spend more time there to help with "maximizing sunlight". I personally work out of a cave (den) as my office, so my new apartment I plan on looking for one with more windows to help with it. I also plan on trying bonsai trees and other plants to help more with the "experience nature" aspect.
+
+The last one is to **optimize your bedroom for sleep.** The Sleep Foundation states that the following are some of the best recommendations for a good night's sleep:
+
+- Keep your bedroom at 65 degrees Fahrenheit (18 degrees Celsius) if possible. A healthy adult will have their core temperature drop when they sleep, so lowering the temperature at night helps induce this. A range between 60 and 71 should be suitable for most people.
+- Minimizing the noise in your room is their second recommendation. Strive to keep the bedroom as quiet as possible. 
+- Keep as much natural lighting as possible. Exposure to artificial lighting in the evening can delay circadian rhythms and make it harder to fall asleep. A lux of 10 or higher in the evening leads to a more restless sleep. 
+
+
+### Life Style
+
+The life style category is aimed at helping your *overall lifestyle* be happy and healthy.
+
+The first of which is to be **active physically and mentally**. As before, being active and going for walks every day, working out, or bringing some physical routine into your life is recommended. Having a hobby or job that you can mentally work yourself towards is also recommended. I generally do this with my job, but I also have a few hobbies that let me utilize this as well, mostly centered around coding or creating courses.
+
+The second is to **set goals.** I have mixed feelings about this recommendation, because typical "goals" don't work well for me. What I have found works best is to use goals as milemarkers, not end-all-be-all deadlines. Doing this over the last year I've found I've done **more** of what I've wanted to do without the guilt of not getting something done in time.
+
+The third recommendation is to **enjoy things.** Clear, I know. Generally what this means though is to find something you enjoy, be it a walk in the park, a hobby, or your job. Anything that let's you experience happiness as you do it. 
+
+The final recommendation, and hardest one, is to **finda  way of life that fits you.** This requires a gigantic amount of self-reflection and understanding your own personal values, but is the most worthwhile in the long run. I spent the last year exploring this and to some degree I still am, however actually focusing on just "me" and what *I* want out of my life has helped align my thoughts and goals for work, hobbies, and relationships.
+
+### Meaning
+
+Finding meaning in life is also extremely important. But how can you do this? The paper recommends the following three opportunities:
+
+First, **be generous**. Holding the door open for someone, being kind to everyone you meet, this one is very easy for you to get started today.
+
+The second and third recommnedations I will tie together: **don't seek happiness, seek purpose.** Chasing happiness will (in my opinion) leave you forever dissatisfied because you're running after an *idea* rather than something tangeble. It's the same thought process as a man can own everything in the world but still not be happy, because experiencing life and people for who they truly are is an immaterial thing. Instead, seek purpose. What is your purpose in life? What do you want to do? What do you want to be? What do you want to accomplish? These are all questions that can help you find meaning in your life and align yourself with your values. 
+
+### Mental Development
+
+These are ways to help you develop your mind and improve your mental health. There were not many under this category, considering much of these are already covered in the other categories. However, there were a few that stood out. 
+
+The first was to **keep learning**. Never be satisfied with the knowledge you have, and enter every conversation with the mindset of someone will teach you something new. I've constantly done this with the field of tech for the last few years and it's kept work extremely enjoyable and entertaining.
+
+The second is to **seek challenges**. Constantly push yourself to do more, to learn more, to be more. Try out that new project, see if you can go for that gold Kaggle medal, or just try to add a new habit to your daily routine. Something that forces you to tackle a new hurdle and be adamant about overcoming it. 
+
+
+### Positive Outlook
+
+This next category is all about how you view the world. It's about how you view yourself, how you view others, and how you view the world around you. The main one they recommended implementing, which is also single-handedly the hardest on their list, is to **accept yourself** for who you are. I could tangent on this all day, but the end-all-be-all is to just love yourself. Discover what makes you tick, and acknowledge the strengths and weaknesses you have. Fighting yourself is a tiring battle, and changing yourself dramatically is fighting a flood. Instead, learn about who you are, hone your strengths, and accept your weaknesses.
+
+### Social Bonds
+
+Humans are social beings, and we need to be around others to be happy. The paper recommends the following ways to improve your social bonds:
+
+First, **invest in your friends and family**. Investing doesn't mean to spend lavish gifts on them, but instead to spend time with them. Go out to dinner, go for a walk, or just sit down and talk with them. Your time is the investment and everyone knows that your time is a precious resource.
+
+The second and third recommendations I again pull together: **act nicely and focus on the happiness of others**. Going back to the idea of chasing happiness will never let you get there, focusing on the happiness of others instead of your own will provide you with a much more fulfilling life.
+
+### Work
+
+The last category were items related to work. Overall there weren't many recommendations here that actually were shown to make a difference, but the main one is to limit your work hours if possible. Have the seperation between work and life. 
+
+It's also important to know that **building wealth** was *not* advised as part of living a happier life. This includes both getting a part-time job and working for yourself. This is mostly because they are ineffective and not very feasable for most individuals. This *is* counterintuitive to the building of savings earlier mentioned, but I don't actually believe so since one is aimed at financial security and the other is **adding more work to your life**. 
+
+## Conclusion
+
+Hopefully you found this post interesting and useful. Slowly I have been adding more and more of these practices into my life, and so far I have found they only benefit. I wanted a location to keep track of these, and bookmark these two papers, considering I go back to them *constantly* and thus here we are. 
+
+I wish you luck on your journey to happiness, and hopefully some of these ideas can help you along the way.

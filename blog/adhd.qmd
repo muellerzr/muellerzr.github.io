@@ -1,0 +1,113 @@
+---
+toc: true
+description: My lifetime journey with ADHD
+categories: [markdown]
+title: Neuro-Diversity in Tech, The Slippery Slope to Burnout
+date: 2022-05-06
+---
+# Neuro-Diversity in Tech, The Slippery Slope to Burnout
+
+## Introduction
+
+I've been struggling for a few weeks trying to figure out exactly how I want this post written. Many individuals have either come to me privately or publicly saying I need to write about this, as lack of resources in our field on what ADHD in tech looks like, both the good and bad, is very limited.
+
+Which I don't disagree. When I first was investigating all I found were horror stories from Reddit saying how "ADHD had ruined their life and field in tech."
+
+This is of course terrifying and disheartening to hear. So I'll state this now:
+
+**When you know how to utilize the tools you were given, you will struggle some but you will be able to succeed. And you can survive in tech.**
+
+*However*, if you don't even know you have a tool in the toolbox, how do know to use it?
+
+## The Warning Signs for Me
+
+Take all of this article with a grain of salt, as it is put through my own lens. Every single one of us is different, I am simply putting my story out as a datapoint for others. Your ADHD could show entirely different behaviors than mine, or none of what I say may even apply to you! And that is *ok*. I do not represent the entire community, and I would never say I would.
+
+
+But, there is also value in stating what I went through and how I found and avoided future pitfalls.
+
+Alright, let's discuss warning signs.
+
+For me, this culminated in three different ways:
+
+- Insane hyperfocus
+- Constant burnout
+
+## HyperFocus and Burnout
+
+So. Let's talk about that. (Enter Rhett and Link).
+
+I have "mixed" type ADHD. Which means I have both the energetic tendencies, and also on the other end of the threshold the *hyperfocus* tendencies.
+
+Oh, so I'm just one of those people that plays games for 12+ hours a day right? That doesn't mean anything.
+
+**You are right!** There isn't much of a link to extended video game time and ADHD, because video games are a form of stimulant.
+
+Instead, this culminates to working on one specific thing, without breaks (bar sleep) for a day if not **days** on end. This was fantastic in school, because I would do our programming projects 1-2 days before the due date, and knock out the entire thing in one go.
+
+But, doing so leads to an explosion at the end: ***Burnout***. I cannot *overstate* how easy it was for me to burn out doing things I enjoyed. Because it immediately took all of my focus for the weekend, the week, etc.
+
+But then, if I didn't finish it by the end of my focus session, I'd give up. Either due to fatigue, or (as I found out later) because some ADHD folks have problems successfully finishing long-term projects all the way.
+
+They thrive on short effort (but considerable) and high return/reward.
+
+Let me provide an example to this.
+
+If you're familiar with me, you know that I wrote https://www.walkwithfastai.com. A mini course of Jeremy Howard's wonderful fastai course v3, geared towards fastai version 2 and was the only course in existence covering v2 of fastai until the book and previous iteration of the current course.
+
+I had quite a bit planned for this course. A section on Computer Vision, Tabular, and NLP. I knew the bare basics of NLP, but I knew I had to keep it in there to be "complete."
+
+So I burned and burned and burned through the notebooks. I was smart and got all of the easy ones out of the way within the first month or two (~14-16 notebooks or so). Things were going well. Some bits I was struggling with, but there was only 3 more notebooks to go, the NLP section.
+
+I wrote that first notebook and knew immediately it just wasn't going to happen. I did not know enough about the topic, and that lesson was happening in 2 weeks after I made it to that point. And then, the burnout finally hit as well. **Months-long prolonged burnout**.
+
+So, it didn't. It vanished.
+
+I consider Walk with fastai both one of my greatest achievements but also one of my biggest failures. Because it was a considerable project I **could not see through to the end**.
+
+But Zach! You made all those other wonderful lessons!
+
+Yeah, but my brain has a hard time acknowledging the good there.
+
+Since then, I've gotten much better at understanding what is the tipping point of my burnout, how I can balance it well, and worked with some wonderful folks to help me get onto my feet.
+
+But I would **never** put myself through that again. In that specific way.
+
+I'm not some magical being. I'm human. If I could just hyperfocus all day long, who knows what I'd be able to solve! But I can't, and it has real physical consequences when left unregulated.
+
+So, if you do have this part of ADHD, remind yourself that you need to take breaks. That working for hours on end uninterrupted for too long **can hurt you and will**. Oh and, **take your PTO**. *You need to rest*. **Communicate** with your manager when this happens. They can't "magically know" that you're close or at a tipping point, because (at least for me), you don't show signs until it's *far* too late.
+
+## You know I have ADHD. I glazed through all of that. What does it mean?
+
+Okay, so, that painted a **very** bleak picture. But I wanted to make sure you knew it wasn't all rainbows and unicorns here.
+
+So, what can I do then?
+
+First: be as top as you can about your mental state. You've been living with it for all your life. You know how you work. This is me telling you that if you're constantly burned out, you might be genuinely working too hard. Talk with your manager and see if something can be negotiated.
+
+Second: Work. Out. I mean it. Studies have shown that working out increases the chemical in our brain that people with ADHD lack. Heavy lifting is even better. I work out every single day, and aim to be a power lifter how I can. There is genuine clarity for me for an hour or so after a heavy lift, where I feel "normal". It's a 2:1 benefit, you get to stay healthy and your brain actually works right!
+
+Third: Be educated and go with an assumption of *might*, and treat it (not chemically) as if its truth. The only harm here is you tried something and it just might not work. And that's okay. It's a **step forward not a step backwards**.
+
+The biggest resource for me starting out was [Ologies with Alie Ward](https://www.alieward.com/ologies/adhd). She had two episodes on ADHD, with the first having Dr. Russell Barkley. It opened my world to "hey, you might not be crazy and really actually have this thing!" And on top of that, it was approachable where even if you **don't** have ADHD, but you know someone who does, I'm *begging* you to listen to it. It's a very real world of the potential (on both sides) of how individuals with ADHD function, what the studies have shown, and how to be successful in their situations.
+
+## How to be successful
+
+Alright, now we've finally hit the "how to win" part of this. Which is not a sure-all-fire-way, it's just the way that worked for me. On top of this, I'll also include bits from that podcast that they mentioned as well.
+
+People with ADHD do **exceptionally well** in short time/effort high reward systems. Tech is actually one of those places where this works well, **especially in a healthy startup**. So, work with your manager to give yourself short-term projects (I've found this to be about 2 weeks), that take *chunks* out of a larger project. This helps you stay on track, you're not overworked, and by the end you've finished an amazing goal!
+
+Next, as I said above please make sure to eat well and stay active how you can. It's **okay** to have your food delivered if you need to, because you're afraid you might overwork through lunch and suddenly it's 7pm and you haven't eaten since 6am. (Sounds like I've done this before, doesn't it heh). Meal prep if you can, or find easy ways to just microwave something quickly for you to eat throughout the day.
+
+Third, try to actually get tested if you're not. And if so, try and talk to a doctor. There are horror stories from folks that have done this, and I have my own. It took 3 tries over a 4 month period before I was finally diagnosed and could get tested. For individuals who give up easily, that's not a fun time. But **it is worth it so keep it up**. If you choose to explore medication, genuinely be honest with your doctor while you're at it, as they only serve to help you.
+
+## Conclusion
+
+Well, if you've made it to the end of this thank you. You've somehow survived my rant and I truly hope you got something worthwile out of it. At the bare minimum, seeing how one instance of ADHD in tech looks like.
+
+Below I have some links to folks I follow on twitter who are either ADHD advocates or have ADHD in tech. They've been immensely helpful to have on my day-to-day twitter feed, and have helped me through my journey. Hopefully they can help you through yours as well.
+
+- [Part 1: Attention-Deficit Neuropsychology (ADHD) with Russel Barkley](https://www.alieward.com/ologies/adhd)
+- [@ADHD_Alien](https://twitter.com/ADHD_Alien)
+- [@kefimochi](https://twitter.com/kefimochi)
+- [@AdhdAngsty](https://twitter.com/AdhdAngsty

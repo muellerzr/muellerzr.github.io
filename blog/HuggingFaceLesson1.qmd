@@ -1,0 +1,419 @@
+---
+title: 'HuggingFace Course Notes, Chapter 1 (And Zero), Part 1'
+date: 2021-06-14
+categories: [education]
+image: media/blog/HuggingFaceLesson1/01.png
+aliases:
+    - ../fastblog/huggingface/2021/06/14/HuggingFaceLesson1.html
+---
+
+
+> This notebook covers all of Chapter 0, and Chapter 1 up to "How do Transformers Work?"
+
+## Chapter 0 (Setup):
+
+Since HF in of itself has no dependancy requirements, they recommend us installing `transformers[dev]` so it gets all the dev requirements for "any imaginable use case".
+
+A full list of what it installs is below:
+
+```
+deps = {
+    "Pillow": "Pillow",
+    "black": "black==21.4b0",
+    "cookiecutter": "cookiecutter==1.7.2",
+    "dataclasses": "dataclasses",
+    "datasets": "datasets",
+    "deepspeed": "deepspeed>=0.4.0",
+    "docutils": "docutils==0.16.0",
+    "fairscale": "fairscale>0.3",
+    "faiss-cpu": "faiss-cpu",
+    "fastapi": "fastapi",
+    "filelock": "filelock",
+    "flake8": "flake8>=3.8.3",
+    "flax": "flax>=0.3.4",
+    "fugashi": "fugashi>=1.0",
+    "huggingface-hub": "huggingface-hub==0.0.8",
+    "importlib_metadata": "importlib_metadata",
+    "ipadic": "ipadic>=1.0.0,<2.0",
+    "isort": "isort>=5.5.4",
+    "jax": "jax>=0.2.8",
+    "jaxlib": "jaxlib>=0.1.65",
+    "jieba": "jieba",
+    "keras2onnx": "keras2onnx",
+    "nltk": "nltk",
+    "numpy": "numpy>=1.17",
+    "onnxconverter-common": "onnxconverter-common",
+    "onnxruntime-tools": "onnxruntime-tools>=1.4.2",
+    "onnxruntime": "onnxruntime>=1.4.0",
+    "optuna": "optuna",
+    "packaging": "packaging",
+    "parameterized": "parameterized",
+    "protobuf": "protobuf",
+    "psutil": "psutil",
+    "pydantic": "pydantic",
+    "pytest": "pytest",
+    "pytest-sugar": "pytest-sugar",
+    "pytest-xdist": "pytest-xdist",
+    "python": "python>=3.6.0",
+    "ray": "ray",
+    "recommonmark": "recommonmark",
+    "regex": "regex!=2019.12.17",
+    "requests": "requests",
+    "rouge-score": "rouge-score",
+    "sacrebleu": "sacrebleu>=1.4.12",
+    "sacremoses": "sacremoses",
+    "sagemaker": "sagemaker>=2.31.0",
+    "scikit-learn": "scikit-learn",
+    "sentencepiece": "sentencepiece==0.1.91",
+    "soundfile": "soundfile",
+    "sphinx-copybutton": "sphinx-copybutton",
+    "sphinx-markdown-tables": "sphinx-markdown-tables",
+    "sphinx-rtd-theme": "sphinx-rtd-theme==0.4.3",
+    "sphinx": "sphinx==3.2.1",
+    "sphinxext-opengraph": "sphinxext-opengraph==0.4.1",
+    "starlette": "starlette",
+    "tensorflow-cpu": "tensorflow-cpu>=2.3",
+    "tensorflow": "tensorflow>=2.3",
+    "timeout-decorator": "timeout-decorator",
+    "timm": "timm",
+    "tokenizers": "tokenizers>=0.10.1,<0.11",
+    "torch": "torch>=1.0",
+    "torchaudio": "torchaudio",
+    "tqdm": "tqdm>=4.27",
+    "unidic": "unidic>=1.0.2",
+    "unidic_lite": "unidic_lite>=1.0.7",
+    "uvicorn": "uvicorn",
+}
+```
+
+> Note: after exploring a bit I found their requirements are located [here](https://github.com/huggingface/transformers/blob/master/src/transformers/dependency_versions_table.py)
+
+```python
+!pip install transformers[dev] -U >> /dev/null # Ensure we upgrade and clean the output
+```
+
+This should take a bit to run. I noticed four incompatibility errors in Colab, we'll see if it has any issues.
+
+```python
+!pip show transformers
+```
+
+Alright! We can move onto Chapter 1! 🤗
+
+## Chapter 1
+
+### Introduction
+
+Looks as though it's split into three main chunks:
+
+- Introduction
+- Diving in
+- Advanced
+
+Introduction will show a very surface level with Transformers models and HF Transformers, fine-tuning a basic model, and sharing models and tokenizers.
+
+Diving in will go further into the HF datasets and tokenizers library, basic NLP tasks, and how to ask for help (presumably on the forums or on Twitter?)
+
+Advanced looks to be covering specialized architecture, speeding up training, custom training loops (yay!) and contributing to HF itself.
+
+> Note: This is better taken after an intro course such as Practical Deep Learning for Coders or any course developed by deeplearning.ai.
+
+It also mentions that they don't expect any prior PyTorch or Tensorflow knowledge, but some familiarity will help. (fastai likely helps here too some)
+
+The wonderful authors: 
+
+- Matthew Carrigan - MLE @ HF
+- Lysandre Debut - MLE @ HF, worked with Transformers library from the very beginning
+- Sylvain Gugger - Research Engineer @ HF, core maintainer of Transformers. And one of our favorite former fastai folk
+
+**What we will learn**:
+
+- The `pipeline` function
+- The Transformer architecture
+- Encoder, decoder, and encoder/decoder architectures and when to use each
+
+### Natural Language Processing
+
+- What is it?
+
+Classifying whole sentences or each word in a sentence, generating text content, question answering, and generating a new sentence from an input text
+
+- Why is it challenging?
+
+For a human, given "I am hungry" and "I am sad" we can know how similar thye are. That's hard for ML models. 
+
+### Transformers, what can they do?
+
+We get to look at `pipeline` now!
+
+The [Model Hub](https://huggingface.co/models) is a super valuable resource because it contains thousands of pretrained models for you to use, and you can upload your own. *The* language model zoo.
+
+
+### [Working with Pipelines, with Sylvain](https://youtu.be/tiZFewofSLM)
+
+> Offhand note, I like that the videos are broken up into ~4-5 minute chunks
+
+General approach to how I will take these notes:
+
+1. Watch video without notes
+2. Read the website and take notes
+3. Go back to the video and catch anything I missed
+
+The `pipeline` is a very quick and powerful way to grab inference with any HF model.
+
+Let's break down one example below they showed:
+
+```python
+from transformers import pipeline
+
+classifier = pipeline("sentiment-analysis")
+classifier("I've been waiting for a HuggingFace course all my life!")
+```
+
+What did this do here?
+
+1. Downloaded a model (judging by the download bar). Don't know which model yet is the default
+2. I *think* we downloaded a pretrained tokenizer too?
+3. Said model was the default for a `sentiment-analysis` task
+4. We asked it to classify the sentiment in our sentence. Labels are positive and negative, and it gave us back an array of dictionaries with those values
+
+We can also pass in multiple inputs/texts:
+
+```python
+classifier([
+    "I've been waiting for a HuggingFace course my whole life.", 
+    "I hate this so much!"
+])
+```
+
+The default model for this task is a pretrained model fine-uned for sentient analysis in english. Let's see if I can't find it
+
+```python
+dir(classifier)
+```
+
+```python
+classifier.framework
+```
+
+```python
+type(classifier.model)
+```
+
+So it's a `DistilBertForSequenceClassification`, likely using the default which would be `en-sentiment`
+
+Current available pipeline classes:
+* `feature-extraction` (vector representation of a text)
+* `fill-mask`
+* `ner` (Named-Entity-Recognition)
+* `question-answering`
+* `sentiment-analysis`
+* `text-generation`
+* `translation`
+* `zero-shot-classification`
+
+### Zero-Shot Classification
+
+- Classifying unlabelled tasks. 
+
+`zero-shot-classification` pipeline let's us specify which labels to use for classification, even if they may differ from the pretrained models.
+
+> Side Note: I'm going to write a quick namespace class via `mk_class` in fastcore to hold all of these tasks, so I can get tab-completion
+
+```python
+pip install fastcore >> /dev/null
+```
+
+```python
+from fastcore.basics import mk_class
+```
+
+```python
+cls_dict = {'FeatureExtraction':'feature-extraction',
+ 'FillMask':'fill-mask',
+ 'NER':'ner',
+ 'QuestionAnswering':'question-answering',
+ 'SentimentAnalysis':'sentiment-analysis',
+ 'Summarization':'summarization',
+ 'TextGeneration':'text-generation',
+ 'Translation':'translation',
+ 'ZeroShotClassification':'zero-shot-classification'
+ }
+
+mk_class('Task', **cls_dict)
+```
+
+```python
+Task.FeatureExtraction
+```
+
+As you can see all I've done is load a fancy namespace-like object from `fastcore` that holds my dictionary values as attributes instead.
+
+Back to the HF stuff. Let's load in a pipeline:
+
+```python
+classifier = pipeline(Task.ZeroShotClassification)
+```
+
+Seems this model took quite a bit longer to download, but our `Task` object is working great!
+
+```python
+classifier(
+    "This is a course about the Transformers library",
+    candidate_labels=['education','politics','business']
+)
+```
+
+Very interesting, so we can see right away it could tell this was educational! (Or fit the closest to that label.) I wonder how it works under the hood, something I may peruse later. 
+
+### Text Generation
+
+Generate some fancy text given a prompt.
+
+Similar to predictive text feature on my iPhone.
+
+Has some randomness, so we won't 100% get the smae thing each time
+
+```python
+generator = pipeline(Task.TextGeneration)
+```
+
+```python
+generator("In this course we will teach you how to")
+```
+
+Theres a few args we can control and pass to it, such as `num_return_sequences` and `max_length`.
+
+The homework is to try and generate two sentences of 15 words each. Let's try that:
+
+```python
+generator(
+    "In Marine Biology,",
+    num_return_sequences=2,
+    max_length=15
+)
+```
+
+Cool! Easy to use
+
+A headache I ran into is it's `num_return_sequences`, **not** `num_returned_sequences`.
+
+### Use any model from the Hub in a pipeline
+
+I **love** the HuggingFace hub, so very happy to see this in here
+
+Models can be found on the [ModelHub](https://huggingface.co/models). In this example we use distilgpt2
+
+```python
+generator = pipeline(Task.TextGeneration, model='distilgpt2')
+
+generator(
+    "In this course, we will teach you how to",
+    max_length=30,
+    num_return_sequences=2
+)
+```
+
+### Mask Filling
+
+Fill in the blanks of a given text
+
+```python
+unmasker = pipeline(Task.FillMask)
+```
+
+```python
+unmasker('This course will teach you all about <mask> models.', top_k=2)
+```
+
+So here it thought the best word to fill that with was mathematical, followed by computational (and showed the filled in sentence)
+
+`top_k` is how many possibilities are displayed
+
+> Note: Model fills `<mask>`, and different models will have different things it will try and fill that with. One way to check this is by looking at the mask word used in the widget (on HF ModelHub)
+
+### Named Entity Recognition (NER)
+
+Find parts of an input text that correspond to entities such as persons, locations, or organizations.
+
+```python
+ner = pipeline(Task.NER, grouped_entities=True)
+```
+
+```python
+ner("My name is Zach Mueller and I go to school in Pensacola")
+```
+
+What does having it not grouped do?
+
+```python
+ner = pipeline(Task.NER, grouped_entities=False)
+ner("My name is Zach Mueller and I go to school in Pensacola")
+```
+
+So we can see that the first grouped "Zach" and "Mueller" together as a single item, and Pen, Sa, Cola together too (likely split with the subword tokenizer). Having `grouped=True` sounds like a good default in this case
+
+Most models that you want to have aligned with this task have some form of `POS` abbriviation in the name or tag
+
+### Question Answering (QA)
+
+This is very straightforward, query a question and then receive an answer given some context.
+
+```python
+qa = pipeline(Task.QuestionAnswering)
+qa(
+    question="Where do I work?",
+    context="My name is Zach Mueller and I go to school in Pensacola"
+)
+```
+
+> Note: this is an **extraction** method, *not* text generation. So it just _extracted_ Pensacola from the question.
+
+### Summarization
+
+Reduce a text to a shorter one, while keeping most of the important aspects referenced in the text
+
+```python
+summarizer = pipeline(Task.Summarization)
+```
+
+```python
+summarizer("""
+    America has changed dramatically during recent years. Not only has the number of 
+    graduates in traditional engineering disciplines such as mechanical, civil, 
+    electrical, chemical, and aeronautical engineering declined, but in most of 
+    the premier American universities engineering curricula now concentrate on 
+    and encourage largely the study of engineering science. As a result, there 
+    are declining offerings in engineering subjects dealing with infrastructure, 
+    the environment, and related issues, and greater concentration on high 
+    technology subjects, largely supporting increasingly complex scientific 
+    developments. While the latter is important, it should not be at the expense 
+    of more traditional engineering.
+
+    Rapidly developing economies such as China and India, as well as other 
+    industrial countries in Europe and Asia, continue to encourage and advance 
+    the teaching of engineering. Both China and India, respectively, graduate 
+    six and eight times as many traditional engineers as does the United States. 
+    Other industrial countries at minimum maintain their output, while America 
+    suffers an increasingly serious decline in the number of engineering graduates 
+    and a lack of well-educated engineers.
+""")
+```
+
+### Translation
+
+The last task in the tutorial/lesson is machine translation. Usually the model name will have some `lang1_to_lang2` naming convention in the title. The easiest way to pick one is to search on the model hub. In this example we'll translate French to english (let's see how much I remember from my French classes in high school!)
+
+```python
+translator = pipeline(Task.Translation, model='Helsinki-NLP/opus-mt-fr-en')
+```
+
+```python
+translator("Je m'apelle Zach, comment-vous est appelez-vous?")
+```
+
+We can also specify a `max_lenght` or `min_length` for the generated result
+
+In the next chapter, we'll learn what is inside a pipeline and customizing its behavior
+
+

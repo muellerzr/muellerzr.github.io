@@ -1,0 +1,264 @@
+---
+title: "Suspecto - Analyzing News Articles with Natural Language Processing to Score Credibility"
+toc: true
+category: projects
+date: 2019-07-07
+image: media/blog/Suspecto/01.png
+aliases:
+    - ../Suspecto.html
+---
+
+<img align="left" src="media/blog/Suspecto/01.png" height="170" style="padding-right: 20px; float; left;">
+Annually, the University of West Florida runs an event called “CodeFest”<sub>[1]</sub>. The idea behind the
+event is teams of 5 to 6 individuals generate an end user experience on a topic and idea of your
+choosing related to the theme of the year. This year, the theme was “smart” within a context of:
+helping people to make smarter decisions, smart cities, or forming smart habits. The goal is to
+develop this implementation within a 48-hour period.
+
+<h2>The Project:</h2>
+Develop an interface where a user may enter a selection of text and is served a score of how
+“credible” that text may be.
+
+<h2>The Team:</h2>
+* Myself
+* Carson Wilber, dual major in Cybersecurity and Computer Science with a minor in
+Mathematics
+* Christian Um Kaman, major in Computer Science and has a B.S. in Psychology
+* Sarah Pham, major in Computer Science specializing in Software Engineering
+* Basil Kuloba, major in Computer Science.
+
+<br>
+
+<h2> The Data: </h2>
+> The Fake News Corpus[6] is “an open source dataset composed of millions of news articles mostly
+scraped from a curated list of 1001 domains from http://www.opensources.co/. Because the list does not
+contain many reliable websites, additionally NYTimes and WebHose English News Articles articles has
+been included to better balance the classes.” 
+
+In order to download the data to your local machine, run the following in your Jupyter notebook:
+
+`wget https://storage.googleapis.com/researchably-fake-news-recognition/news_cleaned_2018_02_13.csv.zip`
+
+The CSV document downloaded is approximately 30 GB in size and includes 8.5 million articles.
+For the sake of the competition and time available, the language model only used the first
+120,000 articles.
+The metric we wanted to produce measures the credibility of an input text based on its
+similarity to this dataset. We call it the Eddy Score, named after Dr. Brian Eddy, one of our dear
+mentors and the creator of CodeFest.
+
+<h2>ULMFiT</h2>
+ULMFiT <sub>[2][3]</sub> , or Universal Language Model Fine-Tuning, is used for text classification. It
+originates by building a language model that is trained on the English language, or what corpus
+of language your model will be using. Then, the model is refined using a corpus of text from the
+specific domain; in our case, it was approximately 30 GB of sample news articles. Finally, the
+data includes the specific domain labels, which are used to train the final classifier built on top
+of the language model.
+ULMFiT essentially operates by inputting an article and taking the first word from the article,
+and using the model from the second stage, attempts to guess what the next word will be in
+that sentence. This allows it to perform a semantic comparison with the classes previously used by the model based upon predicted content versus real content, producing a logit similarity of
+each class. At the end of the article, we have an overall percentage of how well the writing style
+fit into the categories.
+
+The categories in which the data are labeled are as follows:
+
+|        <b>Type</b>       | <b>Description</b>                                                                                                                                                                                                                                                                                                                                         |
+|:-----------------:|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Fake News         | Sources that entirely fabricate information, disseminate deceptive content, or grossly distort actual news reports.                                                                                                                                                                                                                                 |
+| Satire            | Sources that use humor, irony, exaggeration, ridicule, and false information to comment on current events                                                                                                                                                                                                                                           |
+| Extreme Bias      | Sources that come from a particular point of view and may rely on propaganda, decontextualized information, and opinions distorted as facts.                                                                                                                                                                                                        |
+| Conspiracy Theory | Sources that are well-known promoters of  kooky conspiracy theories.                                                                                                                                                                                                                                                                                |
+| State News        | Sources in repressive states operating under government sanction.                                                                                                                                                                                                                                                                                   |
+| Junk Science      | Sources that promote pseudoscience, metaphysics, naturalistic fallacies, and other scientifically dubious claims.                                                                                                                                                                                                                                   |
+| Hate News         | Sources that actively promote racism, misogyny, homophobia, and other forms of discrimination.                                                                                                                                                                                                                                                      |
+| Click-Bait        | Sources that provide generally credible content, but use exaggerated, misleading, or questionable headlines, social media descriptions, and/or  images.                                                                                                                                                                                             |
+| Unreliable        | Sources that may be reliable but whose contents require further verification.                                                                                                                                                                                                                                                                       |
+| Political         | Sources that provide generally verifiable information in support of certain points of  view or political orientations.                                                                                                                                                                                                                              |
+| Credible/Reliable | Sources that circulate news and information in a manner consistent with traditional and ethical practices in journalism (Remember: even credible sources sometimes rely on clickbait-style headlines or occasionally make mistakes. No news organization is perfect, which is why a healthy news diet consists of multiple sources of information.) |
+
+
+When we reach the end of an article or series of text, a culmination of these percentages has
+been done, and standardly it would output the highest percentage found. For our case though,
+this is where the Eddy Score comes in and why it is important. Our credibility score, which is a
+percentage, takes initially into account the credibility rating the model found, then we subtract a
+variety of criteria listed below. The reasoning is this is not simply black and white. While the
+political category in itself may not be bias and verifiable, if it is political and has extreme bias, we
+need to factor that in. The Eddy Score is calculated as such:
+
+<div style="text-align:center">
+	<img src="media/blogs/Suspecto/06.png" />
+</div>
+
+The result is a score from 0-100 denoting the relative credibility of a sentence or series of sentences.
+
+Before continuing, it is important to make a note on the ethical implications of this model: <b>this
+application alone is not sufficiently thorough enough to take for granted.</b> It provides a
+baseline for further work, but presently does <b>not</b> analyze any claims or facts stated for
+authenticity. As a result, regardless of the Eddy Score of a selection of text, always be skeptical.
+
+Now for the application's build process. I utilized the Fast.AI libraries below:
+<p style="text-align:left">
+	<code class="python3">
+		from fastai import * <br>
+		from fastai.text import *
+	</code>
+	
+</p>
+
+When importing the dataset, a small subset was used for memory and time constraints (another
+indicator of further work to be done). As mentioned before, training was performed using
+120,000 of the 8.5 million samples of the Fake News Corpus. The data was read into pandas,
+split and labeled into ‘Training’ and ‘Validation’ sets, recombined, and then packaged into a
+TextDataBunch.
+
+<p style="text-align:left">
+	<code class="python3">
+		dfTrain = pd.read_csv(‘news_cleaned_2018_02_13.csv’, nrows=100000) <br>
+		dfValid = pd.read_csv(‘news_cleaned_2018_02_13.csv’, 
+		names=[‘type’,’content’], skiprows=10000,
+nrows=20000) <br><br>
+		dfDatasetTrain = pd.DataFrame()<br>
+		dfDatasetTrain['type'] = dfTrain['type']<br>
+		dfDatasetTrain['content'] = dfTrain['content']<br>
+		dfDatasetTrain['is_valid'] = 'True'<br><br>
+		dfDatasetValid = pd.DataFrame()<br>
+		dfDatasetValid['type'] = dfTrain['type']<br>
+		dfDatasetValid['content'] = dfTrain['content']<br>
+		dfDatasetValid['is_valid'] = 'True'<br>
+		<br>
+		dfAll = pd.concat([dfDatasetTrain, dfDatasetValid])<br>
+		dfAll.to_csv('good_small_dataset.csv')<br><br>
+		data_lm= TextDataBunch.from_csv('', 'good_small_dataset.csv')
+	</code>
+</p>
+
+Now that we have a databunch, we can create a `language_model_learner` using a long short-term memory (LSTM) architecture, known as AWD_LSTM. This will allow us to have that initial model that understands the corpus of what we are planning to be looking at. Afterwards, we can find the proper learning rate, and train the first section of layers within our model.
+
+<p style="text-align:left">
+	<code class="python3">
+		learn = language_model_learner(data_lm, AWD_LSTM, drop_mult=0.5)<br>
+		learn.lr_find()<br>
+		learn.recorder.plot()<br>
+	</code>
+</p>
+
+Here is an output of what our model's summary looks like, as well as the learning rate plot:
+
+The model:
+
+<img src="https://i.imgur.com/p7iY4PK.png" />
+
+The LR plot:
+
+<img src="https://i.imgur.com/KhilwNi.png" />
+
+
+With this, we can now pick a learning rate of roughly 1e-2 and train for one epoch at our current layer-levels. We are doing what is called "gradually unfreezing" of our model. This is often done with transfer-learning so we can re-use related weights, and start from a pretty close baseline to what we want to get to. Most people should be familiar with the image-version of this, when we use the ImageNet weights!
+
+<p style="text-align:left">
+	<code class="python3">
+	  learn.fit_one_cycle(1, 1e-2)
+  	</code>
+</p>
+
+![](media/blog/Suspecto/02.png)
+
+* One thing to note here, I was using Google Colab at the time and this was before Jeremy Howard and Sylvain Gugger had managed to bring down that training time.
+
+Now we can unfreeze our weights, do another instance of lr_find() and train for one more epoch.
+
+<p style="text-align:left">
+	<code class="python3">
+	  learn.fit_one_cycle(1, 1e-3)
+  	</code>
+</p>
+
+![](media/blog/Suspecto/03.png)
+
+
+After training, the model understands how to construct primitive sentences in the given
+language. The overall accuracy achieved was approximately 40%, which for an overall language model is not bad at all! In
+total, training 2 epochs took 8 hours on a free GPU instance on Google Colaboratory.
+
+Now that we have this done, why not have some fun and make sure we are doing okay, text-generatio wise? Fast.AI comes with a wonderful `learn.predict()` function, which in this case can allow us to pass any string of text, and we can query the model for the next few words. Let's try the following sentence, along with the next six words:
+"Kim Kardashian released a new photo depicting her doing"
+
+`learn.predict("Kim Kardashian released a new photo depicting her doing", n_words=5)`
+
+"Kim Kardashian released a new photo depicting her doing **humanitarian acts with Korean immigrants**"
+
+Interesting choice of words! This demonstrates that our model has a very basic understand of the fundamental grammer within the corpus language. Now that we have this, we can work on our classification model next.
+
+
+For this, we will need a TextClasDatabunch, with arguments for vocab, which should be equal to the language model's vocabulary.
+
+<p style="text-align:left">
+	<code class="python3">
+	  data_clas = TextClasDataBunch.from_csv(path, 'Dataset_clean.csv', vocab=data_lm.train_ds.vocab, text_cols='content', label_cols='type', bs=16)
+  	</code>
+</p>
+
+Next we can create our new Learner object:
+<p style="text-align:left">
+	<code class="python3">
+	  learn = text_classifier_learner(data_clas, AWD_LSTM, drop_mult=0.5)
+  	</code>
+</p>
+
+This model has an initial encoder of our language model, followed by a classification layer set that will help us determine what class of language words fall into:
+![](media/blog/Suspecto/04.png)
+
+This new model was then trained for another 3 epochs, with the gradual unfreezing being applied. Afterwards, the overall accuracy of the model was approximately 93.3% on the training set, not bad!
+
+![](media/blog/Suspecto/05.png)
+
+
+With the complete model, any application may be built to compute an Eddy Score and provide
+this information to the user. For the purposes of CodeFest, an interface was built using the
+Starlette Python library deployed on the simple web deployment platform Render. During
+competitive demonstration, a more consumer oriented brand was designed and deployed on
+React.js with a link to download an eventual Chrome Extension.
+The implementation in the end was quite simple: ask the user to copy and paste their article,
+pass this selection into the model, and produce an Eddy Score within a few seconds. The score
+and an associated warning or affirmation regarding the content are then displayed to the user.
+
+
+Here is an example of the web-page the team developed for this project:<br>
+
+![](https://i.imgur.com/6djzCpn.png)
+
+
+Now onto some things I learned from this experience and *very* stressful three days:
+
+**First**: Make sure when you make your databunch you built it correctly. I made one mistake in
+the selection process and wound up generating a dictionary of category names... Oops! (Make
+sure you’re using the right index when selecting the data!)
+
+**Second**: While Google Colab is a wonderful free resource, I turned to Paperspace for a Jupyter
+notebook due to the RAM and GPU requirements this model needed. The language model
+needs a lot of memory to run, and building the databunch needs a large amount of RAM. It is
+why my selection of articles was the first 120,000. Anything more and I would run out of
+memory!
+
+**Third**: I learned how to deploy a web-app that was **not** an image classifier! Thankfully, Fast.AI has a very streamlined process, so I could get it running locally within an hour using the [Render](https://course.fast.ai/deployment_render.html) guide as a resource.
+
+**Fourth**: No idea is too complex for you to do. I had never touched a natural language
+processing model before this, and while I was extremely intimidated, I pushed through.
+
+Overall, this was a wonderful experience and I am honored to have built such an application
+with my team.
+
+I hope you all find this helpful, feel free to find me on the Fast.AI forums[5] with any questions,
+my handle is muellerzr.
+
+Thank you for reading!
+
+Zachary Mueller
+
+
+<h2>Resources/Further Reading</h2>
+[1] [CodeFest](https://uwf.edu/hmcse/departments/computer-science/codefest/)<br>
+[2] [ULMFiT Paper](https://arxiv.org/abs/1801.06146)<br>
+[3] [LSTM Language Model Paper](https://arxiv.org/abs/1708.02182)<br>
+[4] [Fast.AI](https://www.fast.ai)<br>
+[5] [Fast.AI Forums](https://forums.fast.ai/)<br>
+[6] [OpenSources](https://github.com/OpenSourcesGroup/opensources)<br>

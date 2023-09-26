@@ -1,0 +1,176 @@
+---
+title: "Capstone Project - Revisiting IMDB"
+toc: true
+category: projects
+date: 2019-08-23
+aliases:
+    - ../NLP-Capstone.html
+---
+
+Very recently, Rachel Thomas and Jeremy Howard released a new course focused on Natural Language Processing. I had stated previously in my blogs I wanted to document my progress and come up with a "Capstone" project for the course. I have been quiet these past few weeks due to my busy schedule, and I have not had the time to really focus on these blogs. As such, here is the capstone project, along with where the new NLP course fits in, and what those practices are.
+
+## Overall How it Works
+For those unfamiliar with the methodology, fastai popularized and engineered the [ULM-FiT]([https://arxiv.org/abs/1801.06146](https://arxiv.org/abs/1801.06146)) model, or Universal Language Model Fine-tuning. In it, we first train a language model that is pre-trained on our initial language. In our case, this looks like the following:    
+ - Take an English model trained on WikiText103
+ - Train this model further on our corpus (our overall language)
+ - Use that model as an embedding for the classification model
+
+This is how our general overview for our training will do, with a few exceptions. We will be training the language model on everything we have available to use. In terms of IMDB, there is a folder with more than twice the amount of data for unsupervised text.
+
+## What's New?
+
+### Backwards
+The first new state-of-the-art practice that was taught in the course is backwards models. Essentially the language model learns from backwards word orders. For example, take the following sentence: "He went to the beach." Our new language model would instead be fed: "beach the to went He" (after tokenization and other data preparation). What Jeremy described we could do from here is something called an ensemble, where we take two different models that were trained for the same task, average their predictions, and we can generally perform *better* than either one individually. 
+
+To utilize this feature, when we create a databunch we include `backwards=True` the following for both our language databunch and the classifier databunch:
+
+```python
+data = (TextList.from_folder(path)
+        .split_by_rand_pct(0.1, seed=42)
+        .label_for_lm()
+		.databunch(bs=128, num_workers=4, backwards=True))
+```
+
+### Tokenization
+Along with a new model to train, Jeremy and the folks at fastai integrated SentencePiece into the library. Before, fastai only supported Spacy tokenization and so this was the benchmark used for the IMDB Movie Review sentiment analysis problem.  To utilize this, we need to first be on the most recent version of the fastai library. 
+
+When we want to declare a tokenizer, we add it to that initial `TextList.from_` call as a processor. For example, here is what Spacy's tokenization looks like (it is used automatically if nothing is passed in): 
+```python
+tokenizer = Tokenizer(SpaceTokenizer, 'en')
+processor = [TokenizeProcessor(tokenizer=tokenizer), 
+             NumericalizeProcessor(max_vocab=30000)]
+```
+This creates a processor that will tokenize our items and then numericalize each of those, or map each token to a number.
+
+To use SentencePiece, it is a quick one-liner, plus OpenFileProcessor (used to read in the text from files):
+```python
+processor = [OpenFileProcessor(), SPProcessor()]
+
+data = (TextList.from_folder(path, processor=processor)
+        .split_by_rand_pct(0.1, seed=42)
+        .label_for_lm()
+		.databunch(bs=128, num_workers=4, backwards=True))
+```
+And now we are using SentencePiece!
+
+
+## The Capstone Project
+The project itself is based on an idea Jeremy discussed in the lectures: what if someone were to try to utilize an ensemble of both a fowards and backwards model, trained twice on both SentencePiece and on Spacy. His theory is that there could be very-close-to-if-not state of the art results. So that is our goal. We will create four models, utilizing both tokenizers and model-functionalities.
+
+### The Language Model
+For the langauge model, here is how the four databunches were generated:
+(for nomenclature sake, each databunch and model will have the following: x_y_z_a where x is either data or learn, y is either lm or cls, z is either spy or spp, and a is either forwards or backwards)
+
+```python
+data_lm_spp_fwd = (TextList.from_folder(path, processor=[OpenFileProcessor(), SPProcessor()])
+                  .split_by_rand_pct(0.1, seed=42)
+                  .label_for_lm()
+                  .databunch(bs=128, num_workers=4, backwards=False))
+                  
+data_lm_spp_bwd = (TextList.from_folder(path, processor=[OpenFileProcessor(), SPProcessor()])
+                  .split_by_rand_pct(0.1, seed=42)
+                  .label_for_lm()
+                  .databunch(bs=128, num_workers=4, backwards=True))
+
+data_lm_spy_fwd = (TextList.from_folder(path)
+                  .split_by_rand_pct(0.1, seed=42)
+                  .label_for_lm()
+                  .databunch(bs=64, num_workers=4, backwards=False))
+
+data_lm_spy_bwd = (TextList.from_folder(path)
+                  .split_by_rand_pct(0.1, seed=42)
+                  .label_for_lm()
+                  .databunch(bs=64, num_workers=4, backwards=True))
+```
+One thing to note here is the batch size difference. When I trained on my 1060, I noticed that I could push double the batches using SentencePiece than with Spacy, leading me to believe it is more efficient GPU wise.
+
+From here, I generated our typical learners while also utilizing Mixed Precision to help get the most out of my CUDA cores. This has been seen to reduce training time astronomically in some cases, especially with language models. We can apply this to our models with `to_fp16()`
+
+```python
+learn_lm_spy_fwd = language_model_learner(data_lm_spy_fwd, AWD_LSTM, drop_mult=1.).to_fp16()
+learn_lm_spy_bwd = language_model_learner(data_lm_spy_bwd, AWD_LSTM, drop_mult=1.).to_fp16()
+learn_lm_spp_fwd = language_model_learner(data_lm_spp_fwd, AWD_LSTM, drop_mult=1.).to_fp16()
+learn_lm_spp_bwd = language_model_learner(data_lm_spp_bwd, AWD_LSTM, drop_mult=1.).to_fp16()
+```
+
+From here, each model was trained in the same fashion using the following function:
+
+```python
+def train_spy(models:list):
+	names = ['fwd', 'bwd']
+    x = 0
+    for model in models:
+        lr = 1e-2
+        lr *= 64/48
+        
+        model.fit_one_cycle(1, lr, moms=(0.8,0.7))
+        model.unfreeze()
+        model.fit_one_cycle(10, lr/10, moms=(0.8,0.7))
+        
+        model.save(f'spp_{names[x]}_fine_tuned_10')
+        model.save_encoder(f'spp_{names[x]}_fine_tuned_enc_10')
+    return models
+```
+Each language model was trained for 11 epochs, with each achieving roughly 33% by the end. Jeremy's rule of thumb for language models is regardless of the original language, if you have 30%, you're good to move on.
+
+One small note, when I tested this initially with IMDB_SAMPLE, I found that I could not get the language model with SentencePiece to fully train for a large number of epochs when compared to Spacy, whereas the full dataset I saw little differentiation. I believe SentencePiece needs more data as a minimum to train on than Spacy.
+
+For every language model, after 11 epochs their accuracy was 33.93%.
+
+The Spacy epochs were each an average of 21:39 minutes, whereas the SentencePiece epochs were an average of 11:04 minutes.
+
+### The Classifier
+Now for the main tasks at hand, building the sentiment analysis classifier. Here I wound up having GPU memory issues, which lead to a much longer training time, and I also could not get `to_fp16()` to work, so I could not take advantage of Mixed Precision. 
+
+Each model had a batch size of 8 and was trained for 5 epochs total, with an initial learning rate of 2e-2, before degrading from there using the following function:
+
+```python
+res = []
+targs = []
+for learn in learns:
+    learn.fit_one_cycle(1, lr, moms=(0.8,0.7))
+    learn.freeze_to(-2)
+    learn.fit_one_cycle(1, slice(lr/(2.6**4), lr), moms=(0.8,0.7))
+    learn.freeze_to(-3)
+    learn.fit_one_cycle(1, slice(lr/2/(2.6**4), lr/2), moms=(0.8,0.7))
+    learn.unfreeze()
+    learn.fit_one_cycle(2, slice(lr/10/(2.6**4), lr/10), moms=(0.8,0.7))
+    
+    preds, targ = learn.get_preds(ordered=True)
+    res.append(preds)
+    targs.append(targ)
+```
+
+
+## Results
+To gather the results of the ensemble, I took the raw predictions and averaged them all:
+```python
+preds_avg = (res[0] + res[1] + res[2] + res[3])/4
+accuracy(preds_avg, targs[0])
+```
+This ensembled accuracy was **94.94%**. Jeremy et al's paper shows they achieved 95% accuracy, so we did not quite achieve what they got but we were close. But let's consider it from a different standpoint. How much improvement was adding the SentencePiece and the forwards and backwards  models together? The table below compares those results:
+
+| **Name** | **Accuracy** |
+|:--------------------------------------------------------:|:--------:|
+| Spacy Forward | 94.49% |
+| **Spacy Forward and Backwards** | **94.77%** |
+| SentencePiece Forward | 94.55% |
+| **SentencePiece Forward and Backwards** | **94.66%** |
+| Spacy and SentencePiece Forward | 94.86% |
+| Spacy and SentencePiece Backwards | 94.79% |
+| Spacy Forward and Backward and SentencePiece Forward | 94.89% |
+| Spacy Forward and Backward and SentencePiece Backwards  | 94.88% |
+| **Spacy and SentencePiece Forward and Backwards**  | **94.94%** |
+
+So now let's compare. We can see that compared to the test of a Spacy Model alone forwards and backwards, a SentencePiece model is pretty close, achieving 1/10th of a percent below. But when we start ensembling the various models together, we saw an improvement of 0.17%. While this may seem negligible, think of an error rate in a realistic scope. For every 1,000 reviews, we classify 17 more correctly now. 
+
+## Closing Thoughts
+First, I know this can be further improved. Jeremy et al's paper shows they achieved 95% accuracy with Spacy, something I could not quite match. I believe I'm missing something and I need to look at what.
+
+Second, while the results seem negligibly better, I believe they are telling. I tried comparing when either the forwards or the backwards model was there as well, and there was a stark increase in accuracy when comparing them, putting merit to the thought this setup can achieve a new state of the art. 
+
+I want to revisit this after some talk on the fastai forums as to exactly what I may be missing within my training when compared with the paper and run again.
+
+All the source code is available at my Github [here](https://github.com/muellerzr/fastai-Experiments-and-tips)
+
+Thanks for reading!

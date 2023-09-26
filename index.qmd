@@ -1,0 +1,63 @@
+---
+title: "About"
+image: blog/media/profile.jpg
+about:
+    template: jolla
+toc: true
+---
+
+Hi! My name is Zachary Mueller, and I'm a **Machine Learning Software Engineer** at 🤗. I majored in **Software Design and Development** and I have minors in both **Computer Science** and **Environmental Science**.
+
+I have a heavy passion for **Deep Learning** and **Open Source** libraries. As a result, below you will find some notable articles I've written, a few courses I've made, some of software libraries I've written, interesting projects, and the open source libraries I have tried to contribute the most to.
+
+## My blogs
+
+Explore this website to learn more! Generally most of my larger articles are in `/blog`.
+
+## Outside Articles and Posts
+| | |
+|--------------|---------|
+| [From PyTorch DDP to Accelerate to Trainer, mastery of distributed training with ease (October 2022)](https://huggingface.co/blog/pytorch-ddp-accelerate-transformers) | An overview of training deep learning models in PyTorch, particularly focusing on Distributed Data Parallelism (DDP) for distributed training across multiple GPUs or machines. It discusses the setup and usage of DDP, as well as introduces 🤗 Accelerate, a library that simplifies distributed training with minimal code changes. Additionally, the article briefly covers the use of the 🤗 Trainer API, which abstracts training details for even easier distributed training. |
+| [Methods for Automating Learning Rate Finders (March 2021)](https://web.archive.org/web/20210316185248/https://www.novetta.com/2021/03/learning-rate/) | Addressing the challenges of manually selecting learning rates for deep learning models and presents automated methods for finding optimal learning rates. The methods, including Leslie Smith's approach and those developed by Novetta and ESRI, are compared across various datasets and domains, such as computer vision classification, semantic segmentation, tabular classification, and natural language processing. |
+| [lib2nbdev (June 2021)](https://web.archive.org/web/20220703230846/https://www.novetta.com/2021/06/lib2nbdev/) | Nbdev, originating from fast.ai, simplifies the software engineering process by centralizing code, documentation, and tests in Jupyter Notebooks, enhancing project readability and testing while streamlining development-to-production pipelines. It offers auto-generated documentation, release generators, multiprocessing for testing, and GitHub Actions integration, and Novetta's open-source tool, lib2nbdev, facilitates the conversion of existing Python projects into nbdev libraries, saving substantial time and effort. |
+: {tbl-colwidths="[40,60]"}
+
+## Scientific Publications
+
+| | |
+|--------------|---------|
+| [A Neural Network Model to Identify Relative Movements from Wearable Devices](https://ieeexplore.ieee.org/document/9368261) | Presents a neural network model for analyzing movement data from wearable devices, utilizing various base variables and extensive feature engineering to generate 171 unique features. The model achieves a remarkable 95% average accuracy on test datasets, outperforming a previous similar work by 20%. |
+| [Affordably Assessing and Comparing Trends in Particulate Matter Concentrations Around a University Campus](https://agu.confex.com/agu/fm19/meetingapp.cgi/Paper/519369) | Addresses the importance of air quality for human health by creating affordable IoT devices using Raspberry Pi Zeros and Honeywell PM sensors to monitor PM 10 and PM 2.5 air pollution around the University of West Florida campus. The goal was to track air quality trends during periods of high building usage and develop a neural network analysis for future predictions. |
+: {tbl-colwidths="[34,66]"}
+
+## Courses
+
+|  |  |
+|--------------|---------|
+| [Walk with fastai: Revisited](https://store.walkwithfastai.com/walk-with-fastai-revisited) | A full revamp of the original Walk with fastai course made for the modern version of the library and focusing on different aspects than the prior iterations. |
+| [Walk with fastai](https://walkwithfastai.com) | Walk with fastai was the second iteration of my exploration with courses. In it I taught over 10 lessons on the new fastai API, exploring new avenues that the API could preform and displaying unique situations often not covered within the orignal course. So far it has been wildly successful, with many of the lectures garnishing over a thousand views on YouTube | 
+| [Practical Deep Learning for Coders 2.0](https://github.com/muellerzr/Practical-Deep-Learning-for-Coders) | This was a rehash of the fastai course of the same name that I taught at the University of West Florida through the Artificial Intellegence Research Group in 2019|
+: {tbl-colwidths="[30,70]"}
+
+## Open Source Software Libraries
+
+|  |  |
+|--------------|---------|
+| [Accelerate](https://github.com/huggingface/accelerate) | While at Hugging Face, I have been a major developer on the Accelerate library; it is a framework designed to ensure PyTorch code can be ran on any system without code changes. |
+| [AdaptNLP](https://novetta.github.io/adaptnlp) | While at Novetta, I was the lead developer for the AdaptNLP library. This library wraps the HuggingFace Transformers and fastai libraries into an easy-to-use interface for both fine-tuning and performing inference with transformer-based models. It was featured in the Weights and Biases [HuggingFace Study Group](https://www.youtube.com/watch?v=lt9DtxwUTtI) | 
+| [lib2nbdev](https://novetta.github.io/lib2nbdev) | Seeing a need to ease integration of the [nbdev](https://nbdev.fast.ai) framework into more projects, I built lib2nbdev as a single-use library that will convert existing python projects into a compatible nbdev library. | 
+| [wwf](https://walkwithfastai) | Along with being a course, the Walk with fastai library (wwf) is also a conglomerate of useful documentation and code for fastai applications centralized in a single location | 
+| [nbverbose](https://muellerzr.github.io/nbverbose) | nbverbose aims at combining both the one-line documentation style that fastai incentivizes without losing best practices nor documentation accessability. By combining the fastcore library with nbdev, this library provides an efficient way to document your code while minimizing the vertical space needed to get there | 
+| [fastinference](https://muellerzr.github.io/fastinference) | The fastinference library was designed around making inference with the fastai library simpler, faster, and more approachable. This entailed providing ONNX exportability as well as in-house interpretability modules | 
+| [fastdebug](https://muellerzr.github.io/fastdebug) | Aimed at easing the annoyance of common bugs, this library helps users of both the PyTorch and fastai ecosystems provide clear debugging logs when it comes to extremely common exceptions that get thrown that could use a little touch-up | 
+| [fastshap](https://github.com/muellerzr/fastshap) | The fastshap library brought in SHAP into the fastai framework. It has since been merged with the fastinference module, though one compatible with fastai version 1 is available on pypi | 
+: {tbl-colwidths="[25,75]"}
+
+
+## Open Source Contributions
+
+| **Hugging Face** | **fastai** | 
+| -----------------|------------|
+| [Accelerate](https://github.com/huggingface/accelerate/pulls?q=is%3Apr+author%3Amuellerzr) | [fastai](https://github.com/fastai/fastai/pulls?q=is%3Apr+author%3Amuellerzr) |
+| [Hub](https://github.com/huggingface/huggingface_hub/pulls?q=is%3Apr+author%3Amuellerzr) | [fastcore](https://github.com/fastai/fastcore/pulls?q=is%3Apr+author%3Amuellerzr)
+| [transformers](https://github.com/huggingface/transformers/pulls?q=is%3Apr+author%3Amuellerzr) | [nbdev](https://github.com/fastai/nbdev/pulls?q=is%3Apr+author%3Amuellerzr)

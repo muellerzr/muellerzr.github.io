@@ -1,0 +1,137 @@
+---
+title: "Introducing nbquarto: A framework for Processing Jupyter Notebooks"
+date: "2023-06-05"
+categories: [tech, quarto, jupyter]
+image: media/blog/nbquarto/part_1.png
+---
+
+# Introducing nbquarto, a framework for processing Jupyter Notebooks with Quarto 
+
+## Introduction 
+
+Let's take a few steps back in time, to when I (Zach), was using tools like `nbdev` out of fastai. I wasn't using it for its 
+intended purpose (writing libraries in Jupyter Notebooks), I wasn't a big fan of that after a while. Instead, I was 
+trying to hack it in any way I could to help further the **course websites** I was writing. To help further the *documentation* 
+I was generating. 
+
+Then, `nbdev` 2.0.0 comes out, showing this integration to a wonderful rendering and processing framework: [Quarto](quarto.org/). 
+Immediatly I could see the potential with this framework for teaching purposes:
+
+- Quick and easy ways for me to create interactible documentation?
+- A way for me use my Jupyter Notebooks but still have special syntax it uses to render specific items?
+
+And most of all:
+
+- `nbdev` 2.0.0 introduced the concept of a `Processor` class. 
+
+Without diving into too much detail yet, it was a moduler way for me to 
+interact with the cells in a Jupyter Notebook and do whatever I wanted with them.
+
+I know, I know. Might have not quite sold you on it yet, and that's alright.
+
+This idea of post-processing these notebooks allowed me to create small "shortcut" commands for quarto to remove a 
+*ton* of boilerplate code, and soon let me create one of my favorite pieces, Code Notes, a way to annotate code from within 
+a single code cell and trailing markdown cells, to be rendered later side-by-side:
+
+![](media/blog/nbquarto/part_1.png)
+![](media/blog/nbquarto/part_2.png)
+
+For years as I was adventuring with `nbdev` I was creating custom forks, versions, and more to get something *remotely* close to this. And now
+thanks to this `Processor`, I could do it!
+
+But I also wasn't satisfied there. `nbdev` has very *real* problems that need solving, which this article will address and explore how my new library, [`nbquarto`](https://muellerzr.github.io/nbquarto),
+attempts to solve them.
+
+
+## Why not `nbdev`?
+
+First let's talk about the base framework of this idea: the `Processor`. `nbdev` designed this as a way to use special comment cells (`#| {name}`) that Quarto calls *directives*
+to export code to particular files that were defined in the cell block, or to interact with the documentation in particular ways as it was being auto-generated through their framework.
+
+For those familar with Quarto, this should sound exactly like how [Quarto Extensions](https://quarto.org/docs/extensions/creating.html) are made in Lua, but built in Python!
+
+This was a great idea, but it had a few problems:
+
+- `nbdev` itself is a framework built upon extreme abstraction and is entirely unreadable for those who truly want to know what's going on. It's a liability more than a tool, which is not good.
+- Also, `nbdev` is too many things at once, leading to the above. It tries to be a documentation wrapper framework, a tool that helps manage tests, and a tool that tries to export source code from notebooks to `.py` files.
+- Finally, the way it was done is exceedingly "magical". Errors are exceedingly hard to read and track, workflows would randomly break due to a random dependency upgrade that was *also* magical.
+
+As a result, I decided to see how I could write `nbdev` in such a way that can be:
+
+- Readable
+- Do exactly what it needs to do (process notebooks)
+- Be functional enough without *much* change to the overall API, because at a high level it was still quite good!
+
+## Enter `nbquarto`
+
+This framework is built on the **base** of `nbdev`. Quite literally with source code *ripped* from the project, and then rewritten to follow basic readability practices. As a result, code 
+is easier to dive into and understand.
+
+This framework has *zero* base dependencies for what it needs to do. As a result, any and all over-abstraction has been eliminated to make way for a framework that anyone 
+can understand through a basic viewership of the code. In fact only *one* class from `fastcore` (the foundational library for `nbdev`) made it through: the `AttributeDictionary`, which 
+basically makes a dictionary act as a namespace object by having its keys be accessible as attributes. The value of this class outweighted its "magicalness", however it was still rewritten in 
+a way that for a basic Python user, it's clear as to what is happening:
+
+```python
+class AttributeDictionary(dict):
+    """
+    `dict` subclass that also provides access to keys as attributes.
+
+    Example:
+        ```python
+        >>> d = AttrDict({'a': 1, 'b': 2})
+        >>> d.a
+        1
+        >>> d.b
+        2
+        >>> d.c = 3
+        >>> d['c']
+        3
+        ```
+    """
+
+    def __getattr__(self, k):
+        if k not in self:
+            raise AttributeError(k)
+        return self[k]
+
+    def __setattr__(self, k, v):
+        is_private = k[0] == "_"
+        if is_private:
+            super().__setattr__(k, v)
+        else:
+            self[k] = v
+
+    def __dir__(self):
+        res = [*self.keys()]
+        res.extend(super().__dir__())
+        return res
+```
+
+Finally, this framework is designed to be modularized and flexible, so that even if you're not processing for *Quarto specifically* you can still use this framework to 
+process your notebooks in any way you want!
+
+
+I've used the base idea of this framework to create [courses](https://store.walkwithfastai.com), various [blogs](https://muellerzr.github.io/til) and other materials for educational purposes.
+
+I truly believe that `nbquarto` is the right blend of utilizing exploratory programming practices with documentation to keep your code where it needs to go (and how the rest of the world expects it to go),
+while giving you the freedom to modify your documentation however you see fit.
+
+Just as an example, out-of-the-box with the current implementation of `nbquarto` you can do the following:
+
+- Create auto-populated [API documentation](https://muellerzr.github.io/nbquarto/package_reference/processors.html#nbquarto.processors.autodoc.AutoDocProcessor) built on the same tooling that [Hugging Face uses](https://github.com/huggingface/doc-builder)
+- Create [Code Notes](https://muellerzr.github.io/nbquarto/package_reference/processors.html#nbquarto.processors.codenote.CodeNoteProcessor) that allow you to annotate code from within a single code cell and trailing markdown cells, to be rendered later side-by-side as mentioned earlier.
+
+These two alone have improved my ability to write and create interactive documetation by *leagues* ahead of what it could before, and write it in a way that's sensible and succinct. 
+
+As a result, at it's core this is a framework that:
+
+- Has *minimal magic possible* while also:
+- Being *extremely* hackable and flexible
+- And is built on good software practices to ensure that this code will be stable and usable for years to come. 
+
+## Learn more
+
+If you'd like to learn more about `nbquarto`, I invite you to check out the [Getting Started](https://muellerzr.github.io/nbquarto/getting_started.html) page which is a lenghty tutorial on how to use every aspect 
+of `nbquarto` and how to get started with it. And of course feel free to peruse the source code, openly available [here](https://github.com/muellerzr/nbquarto/tree/main).
+

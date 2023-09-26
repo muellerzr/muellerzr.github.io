@@ -1,0 +1,237 @@
+---
+categories:
+  - python
+  - testing
+date: '2022-11-19'
+description: How to test against a Python script when you need to change how `__main__` behaves
+image: media/testing/01.png
+title: Mocking internals of a Python Script
+---
+
+This will be split into two parts. The first contains the contents of some `script.py` file, which is the base template script we want to use:
+
+::: {.panel-tabset}
+
+## Code
+
+```python
+#| language: python
+def test_function(): 
+    return 2
+
+def main():
+    result = test_function()
+    with open("someFile.txt", "w") as f:
+        f.write(str(result))
+        
+if __name__ == "__main__":
+    main()
+```
+
+## Code + Explanation
+
+```python
+#| language: python
+def test_function(): 
+    return 2
+
+def main():
+    result = test_function()
+    with open("someFile.txt", "w") as f:
+        f.write(str(result))
+        
+if __name__ == "__main__":
+    main()
+```
+
+
+***
+```python
+def test_function(): 
+    return 2
+```
+::: {style='padding-top: 0px;'}
+This is the function whose behavior we want to override during our mock
+:::
+
+
+***
+```python
+def main():
+    result = test_function()
+    with open("someFile.txt", "w") as f:
+        f.write(str(result))
+```
+::: {style='padding-top: 0px;'}
+The main function is what we will call when running the python script. This will write a string representation of `test_function()` to a file.
+:::
+
+
+***
+```python
+if __name__ == "__main__":
+    main()
+```
+::: {style='padding-top: 0px;'}
+This is a blocker to ensure that if anyone imports or calls this python script that it will be ran explicitly.
+:::
+
+:::
+
+::: {.callout-warning}
+
+## File Structure
+
+It should be assumed that for the next part the structure of the code files are as such:
+
+* `base_repository`
+  * `example`
+    * `script.py`
+  * `tests`
+    * `test_script.py`
+:::
+
+::: {.panel-tabset}
+
+## Code
+
+```python
+#| language: python
+import os
+import sys
+import unittest
+from unittest import mock
+SRC_DIRS = [
+    os.path.join(
+        os.path.dirname(__file__), "example"
+    )
+]
+sys.path.extend(SRC_DIRS)
+if SRC_DIRS is not None:
+    import script
+def new_function():
+    return 0
+@mock.patch("script.test_function", new_function)
+class ExampleTester(unittest.TestCase):
+    def test_example(self):
+        script.main()
+        with open("someFile.txt", "r") as f:
+            lines = f.read()
+        self.assertEquals(lines, "0")
+```
+
+## Code + Explanation
+
+```python
+#| language: python
+import os
+import sys
+import unittest
+from unittest import mock
+SRC_DIRS = [
+    os.path.join(
+        os.path.dirname(__file__), "example"
+    )
+]
+sys.path.extend(SRC_DIRS)
+if SRC_DIRS is not None:
+    import script
+def new_function():
+    return 0
+@mock.patch("script.test_function", new_function)
+class ExampleTester(unittest.TestCase):
+    def test_example(self):
+        script.main()
+        with open("someFile.txt", "r") as f:
+            lines = f.read()
+        self.assertEquals(lines, "0")
+```
+
+
+***
+```python
+import os
+import sys
+import unittest
+from unittest import mock
+```
+::: {style='padding-top: 0px;'}
+These are the imports we use
+:::
+
+
+***
+```python
+SRC_DIRS = [
+    os.path.join(
+        os.path.dirname(__file__), "example"
+    )
+]
+```
+::: {style='padding-top: 0px;'}
+This is a list of directories that have our script source code relative to the current file. In this case the `example` directory.
+:::
+
+
+***
+```python
+sys.path.extend(SRC_DIRS)
+```
+::: {style='padding-top: 0px;'}
+We add in our new SRC_DIRS to the sys.path which allows them to be imported through an import statement such as import script
+:::
+
+
+***
+```python
+if SRC_DIRS is not None:
+    import script
+```
+::: {style='padding-top: 0px;'}
+If the file exists (this makes it modular) go ahead and import it
+:::
+
+
+***
+```python
+def new_function():
+    return 0
+```
+::: {style='padding-top: 0px;'}
+This is the new function we will use to replace the `test_function` in our python script
+:::
+
+
+***
+```python
+@mock.patch("script.test_function", new_function)
+```
+::: {style='padding-top: 0px;'}
+This uses `unittest.mock` to mokey-patch and override the original `test_function` in the existing module with the new one we just defined. Calling `script.test_function()` will call `new_function()` as a result
+:::
+
+
+***
+```python
+class ExampleTester(unittest.TestCase):
+    def test_example(self):
+        script.main()
+```
+::: {style='padding-top: 0px;'}
+Calls the main function in our tester, but uses our `new_function()` when called
+:::
+
+
+***
+```python
+        with open("someFile.txt", "r") as f:
+            lines = f.read()
+        self.assertEquals(lines, "0")
+```
+::: {style='padding-top: 0px;'}
+Tests that the file which was written to has the properly mocked version of it, or 0
+:::
+
+:::
+
+

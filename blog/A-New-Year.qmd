@@ -1,0 +1,26 @@
+---
+title: "New Year, New Adventures"
+toc: true
+category: self-reflection
+date: 2020-01-21
+aliases:
+    - ../A-New-Year.html
+---
+
+I realize I haven't been updating this as much as I would have liked to, so this year I intend on publishing one new blog a month. These blogs will be on whatever topic I focused on that month (or previous months), along with any major guides or updates I might have had. Let's start with the New Year:
+
+`fastai2`, a new version of the `fastai` library is currently in development and I have plunged deep into the library learning all of its secrets. This was at first mostly due to just seeing what was new, but as I learned more about the new API, the framework, and how it all fits together I realized I liked it much more than `fastaiv1` (not saying there was anything *wrong* with the first version). From October of last year until now I've been doing this exploration which culminated into running a Study Group / Course: **A walk with fastai2**. The goal was to keep the library and teaching simplistic enough that most people could follow and join without too much back and forth. This will be going on from now until the end of the school year, when I begin my internship! (More to come on that). 
+
+While we are in the first few weeks of A walk with fastai2, I've received many questions asking about how to explore it's source code and documentation (versus the first version, which could struggle with code-understanding at times). The largest difference there is that the library is built with a different library, `nbdev`. `nbdev` is designed to help make the process of building a library and documentation all at once while never leaving your Jupyter environment. As a result, these `fastai2` notebooks come with working examples and tests that you can play around with to learn just what the code is really doing! One **very** great improvement. The notebooks follow the same names as the `.py` files, so tracking is very easy. 
+
+Another benefit with the new API is many of the struggles with the old library were solved:
+* Easier to make labeled test sets
+* Medium-level API is **much** easier to work with
+* Low-level API can be even easier than the medium level!
+* GPU transforms
+* Bring in more State-of-the-Art techniques
+
+But what does this all mean? How do I implement xyz task? I'm hoping in the study group to touch on most any problem that people would face. I've been away because I've been building numerous notebooks (planning  total of 37) dealing with tasks from as simple as telling your model "I don't know" to as complex as building a new addition to the API from scratch!
+
+## From there:
+While that is a lot, that is not the only things I will have been up to. Along with the new library, Sanyam Bhutani was kind enough to invite me onto his Chai-Time podcast series, and the episode will go live here in the next few weeks. This year I also want to get into Kaggling as I have been very intimidated to do so. While the course is running I will most likely not, as there is just too much on my plate. But once it is over I intend on joining one competition and seeing it start to finish (something I am notirous not to do!) Also just before winter break I was able to visit San Francisco and grab lunch with Jeremy Howard, which was an amazing experience. Finally, in some last news, this summer I will be interning at Novetta with an amazing team of interns looking to work with `fastai` and `fastai2` on a number of tasks! Thank you for reading, this one was rather brief due to the craziness that is getting this lecture together. The other blogs will be much more balanced.

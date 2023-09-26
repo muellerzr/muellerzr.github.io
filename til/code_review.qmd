@@ -1,0 +1,15 @@
+---
+categories:
+  - general
+date: '2022-11-18'
+date-format: short
+description: What to focus on during your code reviews
+title: The Code Review Pyramid
+---
+
+## What is it?
+
+This is a graphic written by Gunnar Morling on what is described as the "Code Review Pyramid." It's split into five "layers" that I'll quickly describe.
+
+![](media/code_review/01.png)
+

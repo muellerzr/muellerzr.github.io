@@ -1,0 +1,395 @@
+---
+categories:
+  - python
+  - cli
+date: '2022-11-21'
+date-format: short
+description: How to create a command that goes `a b c`
+image: media/sub_cli/01.png
+output-file: sub_cli.html
+title: Creating Nested CLI Commands with `argparse`
+jupyter: python3
+---
+
+## Motivation
+
+For the accelerate library we have a variety of commands, such as `accelerate config`, `accelerate launch`, etc. However I noticed that some functionality was wanted to write a default config file.
+
+On one hand, I could just do `accelerate config --default`. But then I'd have to deal with the fact that config is a Q/A interface that doesn't take parameters, and `--default` should. 
+
+I wanted `accelerate config default`, and I had to use `argparse` to get there
+
+## The Code
+
+::: {.panel-tabset}
+
+## Code
+
+```python
+#| filename: __init__.py
+#| language: python
+import argparse
+
+from command_1 import command_arg_parser
+from command_2 import subcommand_arg_parser
+
+def get_command_parser(subparsers=None):
+    # Create a base parser to link everything together
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    # Create a main parser that will be the driver
+    command_parser = command_arg_parser(subparsers)
+    # Create a subcommand driver
+    subcommands = command_parser.add_subparsers(
+        title="subcommands", 
+        dest="subcommand"
+    )
+    
+    # Add the other parsers
+    subcommand_arg_parser(
+        subcommands, 
+        parents=[parent_parser]
+    )
+    return command_parser
+
+def main():
+    parser = get_command_parser()
+    args = parser.parse_args()
+    
+if __name__ == "__main__":
+    main()
+```
+
+## Code + Explanation
+
+```python
+#| filename: __init__.py
+#| language: python
+import argparse
+
+from command_1 import command_arg_parser
+from command_2 import subcommand_arg_parser
+
+def get_command_parser(subparsers=None):
+    # Create a base parser to link everything together
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    # Create a main parser that will be the driver
+    command_parser = command_arg_parser(subparsers)
+    # Create a subcommand driver
+    subcommands = command_parser.add_subparsers(
+        title="subcommands", 
+        dest="subcommand"
+    )
+    
+    # Add the other parsers
+    subcommand_arg_parser(
+        subcommands, 
+        parents=[parent_parser]
+    )
+    return command_parser
+
+def main():
+    parser = get_command_parser()
+    args = parser.parse_args()
+    
+if __name__ == "__main__":
+    main()
+```
+
+
+***
+```python
+from command_1 import command_arg_parser
+from command_2 import subcommand_arg_parser
+```
+::: {style='padding-top: 0px;'}
+Each command part will have its own function that returns an argument parser
+:::
+
+
+***
+```python
+def get_command_parser(subparsers=None):
+```
+::: {style='padding-top: 0px;'}
+Similarly we create a function that will return a new parser
+:::
+
+
+***
+```python
+    parent_parser = argparse.ArgumentParser(add_help=False)
+```
+::: {style='padding-top: 0px;'}
+This will be the "base" parser that will tie everything together. Nothing will get *explicitly* added here but it will act as the parent for all subcommands
+:::
+
+
+***
+```python
+    command_parser = command_arg_parser(subparsers)
+```
+::: {style='padding-top: 0px;'}
+This will be our main driver parser.
+:::
+
+
+***
+```python
+    subcommands = command_parser.add_subparsers(
+        title="subcommands", 
+        dest="subcommand"
+    )
+```
+::: {style='padding-top: 0px;'}
+This subparser will contain all the subcommands in the style of `command_parser_command subcommand`
+:::
+
+
+***
+```python
+    subcommand_arg_parser(
+        subcommands, 
+        parents=[parent_parser]
+    )
+```
+::: {style='padding-top: 0px;'}
+We then add the subcommands subparser to the command_arg_parser and pass in the `parent_parser` as the *parents* for that parser. (This will make sense in a moment)
+:::
+
+:::
+
+::: {.panel-tabset}
+
+## Code
+
+```python
+#| filename: command_1.py
+#| language: python
+import argparse
+
+def command_arg_parser(subparsers=None):
+    if subparsers is not None:
+        parser = subparsers.add_parser("command_1", description="The first command")
+    else:
+        parser = argparse.ArgumentParser("Command 1", description="The first command")
+    
+    parser.add_argument(
+        "--do-the-thing",
+        default=None,
+        help="Whether to do the thing"
+    )
+    if subparsers is not None:
+        parser.set_defaults(func=command_func)
+    return parser
+
+def command_func(args):
+    print(args)
+```
+
+## Code + Explanation
+
+```python
+#| filename: command_1.py
+#| language: python
+import argparse
+
+def command_arg_parser(subparsers=None):
+    if subparsers is not None:
+        parser = subparsers.add_parser("command_1", description="The first command")
+    else:
+        parser = argparse.ArgumentParser("Command 1", description="The first command")
+    
+    parser.add_argument(
+        "--do-the-thing",
+        default=None,
+        help="Whether to do the thing"
+    )
+    if subparsers is not None:
+        parser.set_defaults(func=command_func)
+    return parser
+
+def command_func(args):
+    print(args)
+```
+
+
+***
+```python
+def command_arg_parser(subparsers=None):
+    if subparsers is not None:
+        parser = subparsers.add_parser("command_1", description="The first command")
+    else:
+        parser = argparse.ArgumentParser("Command 1", description="The first command")
+```
+::: {style='padding-top: 0px;'}
+We create a new `command_arg_parser` function that will either add a new *parser* to the passed in subparser or a new one in general. This is **extremely important**
+:::
+
+
+***
+```python
+    parser.add_argument(
+        "--do-the-thing",
+        default=None,
+        help="Whether to do the thing"
+    )
+```
+::: {style='padding-top: 0px;'}
+Then add in arguments like normal
+:::
+
+
+***
+```python
+    if subparsers is not None:
+        parser.set_defaults(func=command_func)
+    return parser
+```
+::: {style='padding-top: 0px;'}
+Set the defaults for the particular parser to be that of the function we intend to call
+:::
+
+
+***
+```python
+def command_func(args):
+    print(args)
+```
+::: {style='padding-top: 0px;'}
+The function that will be ran with this particular command, to keep the code clean. Accepts some argument namespace.
+:::
+
+:::
+
+And finally create the last subcommand:
+
+::: {.panel-tabset}
+
+## Code
+
+```python
+#| filename: command_2.py
+#| language: python
+import argparse
+from .utils import SubcommandHelpFormatter
+
+def subcommand_arg_parser(parser, parents):
+    parser = parser.add_parser(
+        "command_2", 
+        parents=parents, 
+        help="Command 2 help", 
+        formatter_class=SubcommandHelpFormatter
+    )
+    parser.add_argument(
+        "--do-another-thing",
+        default=None,
+        help="Whether to do the other thing"
+    )
+    parser.set_defaults(func=subcommand_func)
+    return parser
+
+def subcommand_func(args):
+    print(args)
+```
+
+## Code + Explanation
+
+```python
+#| filename: command_2.py
+#| language: python
+import argparse
+from .utils import SubcommandHelpFormatter
+
+def subcommand_arg_parser(parser, parents):
+    parser = parser.add_parser(
+        "command_2", 
+        parents=parents, 
+        help="Command 2 help", 
+        formatter_class=SubcommandHelpFormatter
+    )
+    parser.add_argument(
+        "--do-another-thing",
+        default=None,
+        help="Whether to do the other thing"
+    )
+    parser.set_defaults(func=subcommand_func)
+    return parser
+
+def subcommand_func(args):
+    print(args)
+```
+
+
+***
+```python
+def subcommand_arg_parser(parser, parents):
+```
+::: {style='padding-top: 0px;'}
+This function should take in both a parser and the parents for the parser. The latter will help link everything together
+:::
+
+
+***
+```python
+    parser = parser.add_parser(
+        "command_2", 
+        parents=parents, 
+        help="Command 2 help", 
+        formatter_class=SubcommandHelpFormatter
+    )
+```
+::: {style='padding-top: 0px;'}
+We then create a *new* parser that will act as our subcommand, i.e. `command_1 command_2 --args`
+:::
+
+
+***
+```python
+    parser.add_argument(
+        "--do-another-thing",
+        default=None,
+        help="Whether to do the other thing"
+    )
+    parser.set_defaults(func=subcommand_func)
+    return parser
+
+def subcommand_func(args):
+    print(args)
+```
+::: {style='padding-top: 0px;'}
+Then add a command and set the default func like before
+:::
+
+:::
+
+Finally the `SubcommandHelpFormatter`, which just helps make sure that when doing `--help` it actually looks *sound* (just trust me on this):
+
+```python
+#| filename: utils.py
+#| language: python
+import argparse
+
+class SubcommandHelpFormatter(argparse.RawDescriptionHelpFormatter):
+    """
+    A custom formatter that will remove the usage line from the help message for subcommands.
+    """
+
+    def _format_usage(self, usage, actions, groups, prefix):
+        usage = super()._format_usage(usage, actions, groups, prefix)
+        usage = usage.replace("<command> [<args>] ", "")
+        return usage
+```
+
+Now we can do something like `command_1` `command_2` and the `--help` will show that `command_1` has a subcommand and this can even be chained infinitely!
+
+```python
+#| language: python
+!python3 __init__.py -h
+```
+
+```python
+#| language: python
+!python3 __init__.py command_2 -h
+```
+
+

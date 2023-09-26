@@ -1,0 +1,36 @@
+---
+title: "Summer Smackdown - An Introduction"
+toc: true
+category: education
+date: 2019-07-05
+aliases:
+    - ../Fastai-Curriculum.html
+---
+
+
+Fast.AI offers a number of courses nowadays for anyone to take that are invaluable to Data Science practitioners including: 
+
+* [**Practical Deep Learning for Coders**](https://course.fast.ai/#)
+
+* [**Deep Learning: From the Foundations**](https://course.fast.ai/part2)
+
+* [**Computational Linear Algebra**](https://github.com/fastai/numerical-linear-algebra)
+
+* [**Matrix Calculus for Deep Learning**](https://explained.ai/matrix-calculus/index.html)
+
+* [**Natural Language Processing**](https://github.com/fastai/course-nlp)
+
+And as my University offers nothing close to that, and after taking the Practical Deep Learning course, I want to do my best to try them all and learn as much as I can. To do this, I have tasked myself with a challenge:
+
+The Fall semester begins in eight weeks. As such, in eight weeks time I want to have completed the Computational Linear Algebra, the Natural Language Processing, and Matrix Calculus for Deep Learning courses, and be well into most of the way through the Deep Learning: From the Foundations course. I will be calling this the **Summer Smackdown** 
+
+* **Note**: not affiliated with the WWE
+
+To help keep me up to pace with this, I will be writing a series of weekly blogs here describing what I learned that week from each course, how I went and did something with it, and what challenges I may be facing. 
+
+At the end of all of the courses I want to have some form of a Capstone project for either each course, or for all of them combined. I have not quite figured out what that looks like, but I have a few ideas to play around with.
+
+
+I invite anyone who wants to tag along with me these next few months to join me. All of my notes and course materials are available here: [Fast.AI Summer Curriculum](https://github.com/muellerzr/Fast.AI-Summer-Curriculum)
+
+** Please do note, the NLP course is not officially released yet, so while I will be going through it initially right now, I do plan to revisit it when the videos are out.

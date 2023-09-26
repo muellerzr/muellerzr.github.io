@@ -1,0 +1,34 @@
+project:
+  type: website
+
+website:
+  google-analytics: "G-99XP3R051T"
+  title: "Zach Mueller"
+  navbar:
+    right:
+      - icon: github
+        href: https://github.com/muellerzr
+      - icon: twitter
+        href: https://twitter.com/TheZachMueller
+    left:
+      - text: "About Me"
+        file: index.qmd
+      - text: "Blog"
+        file: blog/index.qmd
+      - text: "Today I Learned"
+        file: til/index.qmd
+    background: primary
+    search: true
+  sidebar: 
+    style: floating
+        
+format:
+  html:
+    theme: 
+      - cosmo
+      - custom.scss
+    css: styles.css
+    embed-resources: true
+
+
+

@@ -1,0 +1,470 @@
+---
+title: Hacking the Enum
+date: 2022-03-25
+category: projects
+aliases:
+    - ../fastblog/2022/03/25/HackingTheEnum.html
+---
+
+
+> A tale of how to work around some of the limitations of the `Enum` class and expanding it to behave in ways that seem user-intuitive as an API
+
+## What will we talk about in this blog?
+
+This will be a straightforward story of how I went down a rabbit-hole to get `Enum` working how I wanted it to, why this came in the first place, and it's very specific use-case.
+
+Hopefully what you, the reader, get out of this is learning a bit more about the `Enum` class, how metaclasses work, and potentially finding capabilities to use this class in your own user-centric API's.
+
+
+## Okay... but what is an Enum? And why do you need to *hack it*?
+
+So what is the `Enum`?
+
+Enum's are a way to write namespace classes in a very dataclass-style API and is part of the python standard library.
+
+Below is a literate example using the days of the week:
+
+```python
+import enum
+
+class DayOfWeek(enum.Enum):
+    "An enum containing values of days of the week"
+    MONDAY = 1
+    TUESDAY = 2
+    WEDNESDAY = 3
+    THURDAY = 4
+    FRIDAY = 5
+    SATURDAY = 6
+    SUNDAY = 7
+```
+
+Now when we do `DaysOfTheWeek.{DAY}`, we return back that number we assigned as its property:
+
+```python
+DayOfWeek.MONDAY
+```
+
+But wait, that's not `1`? That's some weird thing!
+
+Correct. `Enum`'s return their member values as a struct-like object. So we can get the value by doing:
+
+```python
+DayOfWeek.MONDAY.value
+```
+
+And the name of that member:
+
+```python
+DayOfWeek.MONDAY.name
+```
+
+As you can see it's a very quick way for us to write out some structure that contains some values in an object-oriented sense. But what are some of its limitations?
+
+Even though we know that `DayOfTheWeek.MONDAY` was set to `1`, we can't do a raw comparison in python to check this, e.g.:
+
+```python
+DayOfWeek.MONDAY == 1
+```
+
+Because it expects to check that `.value` attribute instead:
+
+```python
+DayOfWeek.MONDAY.value == 1
+```
+
+This can get quite annoyting when you want to use the `Enum` as a convience user-interface, but still want your user to be able to put in the raw values in as well, since adding one should not limit the base API. 
+
+There's also the off-chance that you may wish to have your `Enum` options be documentable. 
+
+Ideally this shouldn't be the case too often, as typically the values in an enum should be quick representations of a generic item (such as `SUNDAY` and `1`, or `TORCH` and `"torch"`). 
+
+But there may be an API where this could benefit from having explicit documentation for what each special `Enum` convention means.
+
+In the next two sections, we'll try and figure out how this can be done
+
+## Having `Enum` return the raw values, and the idea of metaclasses
+
+What is a metaclass? Metaclasses can generally be thought of as inner classes, that change some innate behavior in the superclass *before* that superclass is compiled.
+
+Uhhh... what?
+
+A better way to think about it, is there are certain functionalities every class does in Python in a factory-way, that you don't need to think about or implement when writing a `class`, such as a `class`'s `__new__` method, which is automatically called when you run `__init__`, and it handles creating of a new object for you. 
+
+Okay so... back to the `Enum` then please? How does this all connect?
+
+The `Enum` class has one of these core functionalities called `__getattribute__`. It's what the `Enum` uses to get our `MONDAY` enum we saw earlier:
+
+```python
+DayOfWeek.__getattribute__(DayOfWeek, "MONDAY")
+```
+
+But we don't ever have to write that to get the value of `MONDAY`, we just call the attribute directly:
+
+```python
+DayOfWeek.MONDAY
+```
+
+To override this, we *must* do so in a metaclass, as this `__getattribute__` must be set and used *before* a class is compiled.
+
+But what happens if we don't?
+
+Let's first write what we would think our potential "raw value return" `__getattribute__` function should look like.
+
+
+It should take in a `name`, and then get the attribute in the same way we did just above, before finally getting the `value.value`.
+
+> Note: When `Enum`'s are returned, they are of type `Enum` themselves.
+
+```python
+def __getattribute__(cls, name):
+    value = cls.__getattribute__(name)
+    if isinstance(value, cls):
+        value = value.value
+    return value
+```
+
+That seems like that should work right? First we grab the value from `cls`, then check if it's an instance of our `Enum`, and if so then go dig and get it's `.value`.
+
+So, what happens if we throw this into our `DayOfWeek`?
+
+```python
+class DayOfWeek(enum.Enum):
+    "An enum containing values of days of the week"
+    def __getattribute__(cls, name):
+        value = cls.__getattribute__(name)
+        if isinstance(value, cls):
+            value = value.value
+        return value
+    MONDAY = 1
+    TUESDAY = 2
+    WEDNESDAY = 3
+    THURDAY = 4
+    FRIDAY = 5
+    SATURDAY = 6
+    SUNDAY = 7
+```
+
+Uh oh! A recursion error!
+
+This is because it's fighting with its original implementation when first compiling, and as a result hit a continuous loop. 
+
+This goes back to that note I made earlier, about how there are certain functions loaded *before* a class is compiled. 
+
+So, how do we bypass this? Through a metaclass.
+
+Enum has a specific metaclass, designed to be utilized for overriding these functions, the `EnumMeta`:
+
+```python
+class DirectValueMeta(enum.EnumMeta):
+    "Metaclass that allows for directly getting an enum attribute"
+    def __getattribute__(cls, name):
+        value = super().__getattribute__(name)
+        if isinstance(value, cls):
+            value = value.value
+        return value
+```
+
+Since we're using a metaclass now, we can replace `cls` with `super()`, and now the two are seperated. 
+
+From here the class will then know to return `value`, and all will be as it should.
+
+To specify metaclasses in python, during any class declaration use the `metaclass=` notation and it will be applied
+
+```python
+class DayOfWeek(enum.Enum, metaclass=DirectValueMeta):
+    "An enum containing values of days of the week"
+    MONDAY = 1
+    TUESDAY = 2
+    WEDNESDAY = 3
+    THURDAY = 4
+    FRIDAY = 5
+    SATURDAY = 6
+    SUNDAY = 7
+```
+
+What winds up happening however is now the type of `DayOfWeek` has changed, since it's underlying implementation is one of `DirectValueMeta`:
+
+```python
+type(DayOfWeek)
+```
+
+So, something to keep in mind when testing out and watching for typings (such as `isinstance`)
+
+```python
+isinstance(DayOfWeek, enum.Enum)
+```
+
+> Note: You can get the original class types of an object with a metadata implementation by looking inside of `class.__bases__`
+
+```python
+DayOfWeek.__bases__
+```
+
+Alright so... did it work?
+
+```python
+DayOfWeek.MONDAY
+```
+
+Yes it did! And since we overrode how `__getattribute__` functions, we can also directly do comparisons between the enum and a non-enum, as though they are the same:
+
+```python
+DayOfWeek.MONDAY == 1
+```
+
+Awesome! Now let's talk about that second idea
+
+## Documenting members inside of an Enum
+
+This idea came to me during a feverdream at 2am, when I was considering how fastai's `Callback` events are documented.
+
+Specifically, they live inside of a namespace-like object that lists every single possible event inside of their training loop, such as `before_epoch` (before an epoch begins) and `after_train` (after the training phase was completed).
+
+This namespace object was created by using the `mk_class` function and passing in a list of possible events. From there it stores it as a namespace class that can have a docstring in just a few short lines of code:
+
+```python
+_attrs = L(["attrA", "attrB", "attrC"])
+
+mk_class("SomeClass", **_attrs.map_dict(), 
+  doc="All possible attrs as attributes to get tab-completion and typo-proofing")
+```
+
+This then creates `SomeClass` that let's us perform `SomeClass.attrA`, and it will return `"attrA"`
+
+
+I wanted to complete three goals with my namespace-hacking endevor here:
+
+- It should be as simple to create as the original implementation was, meaning I should only have to write `"attrA"` *once*
+
+- It should be assumed that every attribute should be documented, but they can contain a value instead of just `"attrA"` (such as in our `DayOfWeek` example where `SUNDAY` has a value of 7)
+
+- The `repr` should then be changed to include the added docstring, if present. 
+
+As a result, I should be able to perform `DayOfWeek.SUNDAY?` or `help(DayOfWeek.SUNDAY)` and get back our documentation.
+
+> Note: A defined limitation is we assume that every enum **must** either have a value of itself in lowercase form, or a specified value if it is joined with a docstring. We cannot just have an undocumented value that is special
+
+Before we begin, let's write a clear example of how this API should look, though it cannot be ran of course:
+
+```python
+class Weekday(SomeInheritedEnumClass):
+    "The days of the week"
+    MONDAY = 1, "The first day of the week"
+    TUESDAY = "The second day of the week"
+    WEDNESDAY = _
+    THURSDAY = 4, "The fourth day of the week"
+    FRIDAY = 5, "The fifth day of the week"
+    SATURDAY = 6, "The sixth day of the week"
+    SUNDAY = "The seventh day of the week"
+```
+
+What are the special cases here?
+
+- When checking `MONDAY`, it should have a value of `1` and a docstring of `"The first day of the week"`
+- When checking `TUESDAY` it should have a value of `"tuesday"` and a docstring of `"The second day of the week"
+- When checking `WEDNESDAY`, it should have *no* documentation, and a value of `"wednesday"`
+
+Let's break this down step-by-step. First, let's try and write an implementation that sets `Enum.value` to be the first value we passed in, as by default it will currently set both items as the value:
+
+```python
+class SmallEnum(enum.Enum, metaclass=DirectValueMeta):
+    "An enum containing values of days of the week"
+    SOMEVALUE = 1, "Some docstring"
+```
+
+```python
+SmallEnum.SOMEVALUE
+```
+
+The Enum [documentation](https://docs.python.org/3/library/enum.html#when-to-use-new-vs-init) says that when we want to override the returned value of an enum, we should override the `__new__` function, create a new object, and then set the `_value_`, which is where our `.value` attribute really gets set. 
+
+Their example is extremely straightforward, so we can adapt it easily:
+```python
+>>> class Coordinate(bytes, Enum):
+...     """
+...     Coordinate with binary codes that can be indexed by the int code.
+...     """
+...     def __new__(cls, value, label, unit):
+...         obj = bytes.__new__(cls, [value])
+...         obj._value_ = value
+...         obj.label = label
+...         obj.unit = unit
+...         return obj
+...     PX = (0, 'P.X', 'km')
+...     PY = (1, 'P.Y', 'km')
+...     VX = (2, 'V.X', 'km/s')
+...     VY = (3, 'V.Y', 'km/s')
+```
+
+> Note: I am choosing to use inheritence and a new `Enum` type rather than keeping the `__new__` implementation in the same class, due to the fact I want this to be a reusable capability
+
+For naming conventions, we'll call this a `DocumentedEnum`, or an enum with documentation!
+
+And to keep our first iteration simple, we should assume that we will *always* pass in tuples of `(value, docstring)`. While this won't be what the final product will look like, it's a great starting point
+
+> Note: We won't be using our metaclass here for a myriad of reasons. The main reason is the interaction between the docstring, the metaclass, and the value we want isn't meant to be toyed with. So as a result we'll keep this as a base `Enum`
+
+```python
+class DocumentedEnum(enum.Enum):
+    """
+    An `Enum` capabile of having its members have docstrings
+
+    Should be passed in the form of:
+      value, docstring
+
+    Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
+    """
+
+    def __new__(cls, *args):
+        obj = object.__new__(cls)
+        obj._value_ = args[0] # Assign `_value_` to the first argument
+        return obj
+
+    def __init__(self, *args):
+        """
+        Creates a generic enumeration with potential assigning of a member docstring
+
+        Should be passed in the form of:
+          value, docstring
+        Or:
+          docstring
+        """
+        if len(args) == 2 and isinstance(args[-1], str):
+            self.__doc__ = args[-1]
+```
+
+Let's break down what we've done here.
+
+First, `__new__`:
+
+* Similar to the example, we create a new generic object. Then we assign the first value in `args` to be the value.
+
+* We keep the parameter unspecified (`*args`) so we can pass in as many parameters as needed, be it either one (for just the docstring) or two (value and a docstring). Documenting this behavior should be done in `__init__`, as we've done here.
+
+Next that `__init__`:
+* `init` right now is very simple, we check if the last argument is a string, and if so set that to the docstring. This type-check is just to make sure we can set our docstring as a valid *string*.
+* We could likely change this implementation to better guarded, such as checking if it's a string and the length of `args` matches what we should expect. The final implementaiton will reflect i|t. 
+
+Now let's see it in action, with our `Weekday` proposal earlier:
+
+```python
+class Weekday(DocumentedEnum):
+    "The days of the week"
+    MONDAY = 1, "The first day of the week"
+    THURSDAY = 4, "The fourth day of the week"
+    FRIDAY = 5, "The fifth day of the week"
+    SATURDAY = 6, "The sixth day of the week"
+```
+
+Let's see how this looks so far, by checking Monday, Tuesday, and Wednesday:
+
+```python
+Weekday.MONDAY, Weekday.MONDAY.__doc__
+```
+
+This looks good! That's what we expected.
+
+But wait, I can't do our comparisons anymore, can I?
+
+That is indeed correct. So, what can we do? 
+
+We can instead implement our own custom `__eq__`. It should be *very* simple, checking first if we can perform the regular `eq` (e.g. they're of the same type), and if not then we check their `.value`:
+
+```python
+class DocumentedEnum(enum.Enum):
+    """
+    An `Enum` capabile of having its members have docstrings
+
+    Should be passed in the form of:
+      value, docstring
+
+    Based on https://stackoverflow.com/questions/19330460/how-do-i-put-docstrings-on-enums
+    """
+
+    def __new__(cls, *args):
+        obj = object.__new__(cls)
+        obj._value_ = args[0] # Assign `_value_` to the first argument
+        return obj
+
+    def __eq__(self, obj):
+        if type(self) == type(obj): 
+            return super().__eq__(obj)
+        return self.value == obj
+
+    def __ne__(self, obj):
+        if type(self) == type(obj):
+            return super().__ne__(obj)
+        return self.value != obj
+
+    def __init__(self, *args):
+        """
+        Creates a generic enumeration with potential assigning of a member docstring
+
+        Should be passed in the form of:
+          value, docstring
+        Or:
+          docstring
+        """
+        if len(args) == 2 and isinstance(args[-1], str):
+            self.__doc__ = args[-1]
+```
+
+```python
+class Weekday(DocumentedEnum):
+    "The days of the week"
+    MONDAY = 1, "The first day of the week"
+    THURSDAY = 4, "The fourth day of the week"
+    FRIDAY = 5, "The fifth day of the week"
+    SATURDAY = 6, "The sixth day of the week"
+```
+
+```python
+Weekday.MONDAY == Weekday.MONDAY
+```
+
+```python
+Weekday.MONDAY == 1
+```
+
+```python
+Weekday.MONDAY != 1
+```
+
+Great! While we may have lost the ability to just pull `1` when doing `Weekday.MONDAY`, we can still use it logically when doing `==` or `!=`, so we haven't lost that functionality
+
+## Reflection
+
+Alright, so we just implemented a *lot*. Is it worth it?
+
+Let's analyze each implementation, and it's costs, benefits, and potential use case:
+
+### Getting direct values from Enums
+
+If you are writing a user-centric API, where the Enum acts as a convience towards some parameter, while also still wanting to accept the string, this should absolutely be implemented. It keeps the API readable and allows for tab-completion for your user (very important!)
+
+As we saw later on, the cost of doing so is you limit yourself to a base `Enum` class and you cannot apply any metaclasses you might want without a large chunk of frustration.
+
+Recommendation: 7/10
+
+> Note: For a more abstract example of something similar, see `fastcore`'s [AttrDict](https://fastcore.fast.ai/basics.html#AttrDict)
+
+### Documented Enums
+
+If you're creating your namespace classes well, you shouldn't need to document them as their meanings should be straightforward to understand.
+
+**But**: If there is ever a case where this is not possible, then you *absolutely should*. Not having special acronyms or meanings documented directly with the code in a reachable manner hurts code usability to the user, and can potentially frustrate them. 
+
+Recommendation: 9/10
+
+### Adding custom comparators to your Enum
+
+Similarly to the direct values, if you are writing a user API it is better for *you* (the writer!) to be able to have a simple interface to perform logic that shouldn't need heavy refactoring just to allow for a particular interface.
+
+Recommendation: 9/10
+
+## Conclusion
+
+I hope you all enjoyed this little exploration into Enums and subclassing. If you liked this content please make sure to give me a follow on [twitter](https://twitter.com/TheZachMueller) as that's where I'll post new articles and relevent tips or tricks!
+
+Thanks for reading!
+
