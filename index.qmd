@@ -1,6 +1,6 @@
 ---
 title: "About"
-image: blog/media/profile.jpg
+image: media/profile.jpg
 about:
     template: jolla
 toc: true
