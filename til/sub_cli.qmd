@@ -6,9 +6,7 @@ date: '2022-11-21'
 date-format: short
 description: How to create a command that goes `a b c`
 image: media/sub_cli/01.png
-output-file: sub_cli.html
 title: Creating Nested CLI Commands with `argparse`
-jupyter: python3
 ---
 
 ## Motivation
