@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-99.9.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2019-07-07">
+
+<title>Zach Mueller - Suspecto - Analyzing News Articles with Natural Language Processing to Score Credibility</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Zach Mueller</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../til/index.html"> 
+<span class="menu-text">Today I Learned</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/muellerzr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/TheZachMueller"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Suspecto - Analyzing News Articles with Natural Language Processing to Score Credibility</li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Suspecto - Analyzing News Articles with Natural Language Processing to Score Credibility</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 7, 2019</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><img align="left" src="media/blog/Suspecto/01.png" height="170" style="padding-right: 20px; float; left;"> Annually, the University of West Florida runs an event called “CodeFest”<sub>[1]</sub>. The idea behind the event is teams of 5 to 6 individuals generate an end user experience on a topic and idea of your choosing related to the theme of the year. This year, the theme was “smart” within a context of: helping people to make smarter decisions, smart cities, or forming smart habits. The goal is to develop this implementation within a 48-hour period.</p>
+<h2 class="anchored">
+The Project:
+</h2>
+<p>Develop an interface where a user may enter a selection of text and is served a score of how “credible” that text may be.</p>
+<h2 class="anchored">
+The Team:
+</h2>
+<ul>
+<li>Myself</li>
+<li>Carson Wilber, dual major in Cybersecurity and Computer Science with a minor in Mathematics</li>
+<li>Christian Um Kaman, major in Computer Science and has a B.S. in Psychology</li>
+<li>Sarah Pham, major in Computer Science specializing in Software Engineering</li>
+<li>Basil Kuloba, major in Computer Science.</li>
+</ul>
+<p><br></p>
+<h2 class="anchored">
+The Data:
+</h2>
+<blockquote class="blockquote">
+<p>The Fake News Corpus[6] is “an open source dataset composed of millions of news articles mostly scraped from a curated list of 1001 domains from http://www.opensources.co/. Because the list does not contain many reliable websites, additionally NYTimes and WebHose English News Articles articles has been included to better balance the classes.”</p>
+</blockquote>
+<p>In order to download the data to your local machine, run the following in your Jupyter notebook:</p>
+<p><code>wget https://storage.googleapis.com/researchably-fake-news-recognition/news_cleaned_2018_02_13.csv.zip</code></p>
+<p>The CSV document downloaded is approximately 30 GB in size and includes 8.5 million articles. For the sake of the competition and time available, the language model only used the first 120,000 articles. The metric we wanted to produce measures the credibility of an input text based on its similarity to this dataset. We call it the Eddy Score, named after Dr.&nbsp;Brian Eddy, one of our dear mentors and the creator of CodeFest.</p>
+<h2 class="anchored">
+ULMFiT
+</h2>
+<p>ULMFiT <sub>[2][3]</sub> , or Universal Language Model Fine-Tuning, is used for text classification. It originates by building a language model that is trained on the English language, or what corpus of language your model will be using. Then, the model is refined using a corpus of text from the specific domain; in our case, it was approximately 30 GB of sample news articles. Finally, the data includes the specific domain labels, which are used to train the final classifier built on top of the language model. ULMFiT essentially operates by inputting an article and taking the first word from the article, and using the model from the second stage, attempts to guess what the next word will be in that sentence. This allows it to perform a semantic comparison with the classes previously used by the model based upon predicted content versus real content, producing a logit similarity of each class. At the end of the article, we have an overall percentage of how well the writing style fit into the categories.</p>
+<p>The categories in which the data are labeled are as follows:</p>
+<table class="table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 94%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><b>Type</b></th>
+<th><b>Description</b></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Fake News</td>
+<td>Sources that entirely fabricate information, disseminate deceptive content, or grossly distort actual news reports.</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Satire</td>
+<td>Sources that use humor, irony, exaggeration, ridicule, and false information to comment on current events</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Extreme Bias</td>
+<td>Sources that come from a particular point of view and may rely on propaganda, decontextualized information, and opinions distorted as facts.</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Conspiracy Theory</td>
+<td>Sources that are well-known promoters of kooky conspiracy theories.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">State News</td>
+<td>Sources in repressive states operating under government sanction.</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Junk Science</td>
+<td>Sources that promote pseudoscience, metaphysics, naturalistic fallacies, and other scientifically dubious claims.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Hate News</td>
+<td>Sources that actively promote racism, misogyny, homophobia, and other forms of discrimination.</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Click-Bait</td>
+<td>Sources that provide generally credible content, but use exaggerated, misleading, or questionable headlines, social media descriptions, and/or images.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Unreliable</td>
+<td>Sources that may be reliable but whose contents require further verification.</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Political</td>
+<td>Sources that provide generally verifiable information in support of certain points of view or political orientations.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Credible/Reliable</td>
+<td>Sources that circulate news and information in a manner consistent with traditional and ethical practices in journalism (Remember: even credible sources sometimes rely on clickbait-style headlines or occasionally make mistakes. No news organization is perfect, which is why a healthy news diet consists of multiple sources of information.)</td>
+</tr>
+</tbody>
+</table>
+<p>When we reach the end of an article or series of text, a culmination of these percentages has been done, and standardly it would output the highest percentage found. For our case though, this is where the Eddy Score comes in and why it is important. Our credibility score, which is a percentage, takes initially into account the credibility rating the model found, then we subtract a variety of criteria listed below. The reasoning is this is not simply black and white. While the political category in itself may not be bias and verifiable, if it is political and has extreme bias, we need to factor that in. The Eddy Score is calculated as such:</p>
+<div style="text-align:center">
+<pre><code>&lt;img src="media/blogs/Suspecto/06.png" /&gt;</code></pre>
+</div>
+<p>The result is a score from 0-100 denoting the relative credibility of a sentence or series of sentences.</p>
+<p>Before continuing, it is important to make a note on the ethical implications of this model: <b>this application alone is not sufficiently thorough enough to take for granted.</b> It provides a baseline for further work, but presently does <b>not</b> analyze any claims or facts stated for authenticity. As a result, regardless of the Eddy Score of a selection of text, always be skeptical.</p>
+Now for the application’s build process. I utilized the Fast.AI libraries below:
+<p style="text-align:left">
+</p><p><code class="python3"> from fastai import * <br> from fastai.text import * </code></p>
+<p></p>
+<p>When importing the dataset, a small subset was used for memory and time constraints (another indicator of further work to be done). As mentioned before, training was performed using 120,000 of the 8.5 million samples of the Fake News Corpus. The data was read into pandas, split and labeled into ‘Training’ and ‘Validation’ sets, recombined, and then packaged into a TextDataBunch.</p>
+<p style="text-align:left">
+<code class="python3"> dfTrain = pd.read_csv(‘news_cleaned_2018_02_13.csv’, nrows=100000) <br> dfValid = pd.read_csv(‘news_cleaned_2018_02_13.csv’, names=[‘type’,’content’], skiprows=10000, nrows=20000) <br><br> dfDatasetTrain = pd.DataFrame()<br> dfDatasetTrain[‘type’] = dfTrain[‘type’]<br> dfDatasetTrain[‘content’] = dfTrain[‘content’]<br> dfDatasetTrain[‘is_valid’] = ‘True’<br><br> dfDatasetValid = pd.DataFrame()<br> dfDatasetValid[‘type’] = dfTrain[‘type’]<br> dfDatasetValid[‘content’] = dfTrain[‘content’]<br> dfDatasetValid[‘is_valid’] = ‘True’<br> <br> dfAll = pd.concat([dfDatasetTrain, dfDatasetValid])<br> dfAll.to_csv(‘good_small_dataset.csv’)<br><br> data_lm= TextDataBunch.from_csv(’‘, ’good_small_dataset.csv’) </code>
+</p>
+<p>Now that we have a databunch, we can create a <code>language_model_learner</code> using a long short-term memory (LSTM) architecture, known as AWD_LSTM. This will allow us to have that initial model that understands the corpus of what we are planning to be looking at. Afterwards, we can find the proper learning rate, and train the first section of layers within our model.</p>
+<p style="text-align:left">
+<code class="python3"> learn = language_model_learner(data_lm, AWD_LSTM, drop_mult=0.5)<br> learn.lr_find()<br> learn.recorder.plot()<br> </code>
+</p>
+<p>Here is an output of what our model’s summary looks like, as well as the learning rate plot:</p>
+<p>The model:</p>
+<p><img src="https://i.imgur.com/p7iY4PK.png"></p>
+<p>The LR plot:</p>
+<p><img src="https://i.imgur.com/KhilwNi.png"></p>
+<p>With this, we can now pick a learning rate of roughly 1e-2 and train for one epoch at our current layer-levels. We are doing what is called “gradually unfreezing” of our model. This is often done with transfer-learning so we can re-use related weights, and start from a pretty close baseline to what we want to get to. Most people should be familiar with the image-version of this, when we use the ImageNet weights!</p>
+<p style="text-align:left">
+<code class="python3"> learn.fit_one_cycle(1, 1e-2) </code>
+</p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="media/blog/Suspecto/02.png" id="fig-539a35d47e664c97a50115a146a7f1bd-1" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<ul>
+<li>One thing to note here, I was using Google Colab at the time and this was before Jeremy Howard and Sylvain Gugger had managed to bring down that training time.</li>
+</ul>
+<p>Now we can unfreeze our weights, do another instance of lr_find() and train for one more epoch.</p>
+<p style="text-align:left">
+<code class="python3"> learn.fit_one_cycle(1, 1e-3) </code>
+</p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="media/blog/Suspecto/03.png" id="fig-539a35d47e664c97a50115a146a7f1bd-2" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<p>After training, the model understands how to construct primitive sentences in the given language. The overall accuracy achieved was approximately 40%, which for an overall language model is not bad at all! In total, training 2 epochs took 8 hours on a free GPU instance on Google Colaboratory.</p>
+<p>Now that we have this done, why not have some fun and make sure we are doing okay, text-generatio wise? Fast.AI comes with a wonderful <code>learn.predict()</code> function, which in this case can allow us to pass any string of text, and we can query the model for the next few words. Let’s try the following sentence, along with the next six words: “Kim Kardashian released a new photo depicting her doing”</p>
+<p><code>learn.predict("Kim Kardashian released a new photo depicting her doing", n_words=5)</code></p>
+<p>“Kim Kardashian released a new photo depicting her doing <strong>humanitarian acts with Korean immigrants</strong>”</p>
+<p>Interesting choice of words! This demonstrates that our model has a very basic understand of the fundamental grammer within the corpus language. Now that we have this, we can work on our classification model next.</p>
+<p>For this, we will need a TextClasDatabunch, with arguments for vocab, which should be equal to the language model’s vocabulary.</p>
+<p style="text-align:left">
+<code class="python3"> data_clas = TextClasDataBunch.from_csv(path, ‘Dataset_clean.csv’, vocab=data_lm.train_ds.vocab, text_cols=‘content’, label_cols=‘type’, bs=16) </code>
+</p>
+Next we can create our new Learner object:
+<p style="text-align:left">
+<code class="python3"> learn = text_classifier_learner(data_clas, AWD_LSTM, drop_mult=0.5) </code>
+</p>
+<p>This model has an initial encoder of our language model, followed by a classification layer set that will help us determine what class of language words fall into: <img src="media/blog/Suspecto/04.png" class="img-fluid"></p>
+<p>This new model was then trained for another 3 epochs, with the gradual unfreezing being applied. Afterwards, the overall accuracy of the model was approximately 93.3% on the training set, not bad!</p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-3" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="media/blog/Suspecto/05.png" id="fig-539a35d47e664c97a50115a146a7f1bd-3" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<p>With the complete model, any application may be built to compute an Eddy Score and provide this information to the user. For the purposes of CodeFest, an interface was built using the Starlette Python library deployed on the simple web deployment platform Render. During competitive demonstration, a more consumer oriented brand was designed and deployed on React.js with a link to download an eventual Chrome Extension. The implementation in the end was quite simple: ask the user to copy and paste their article, pass this selection into the model, and produce an Eddy Score within a few seconds. The score and an associated warning or affirmation regarding the content are then displayed to the user.</p>
+<p>Here is an example of the web-page the team developed for this project:<br></p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-4" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="https://i.imgur.com/6djzCpn.png" id="fig-539a35d47e664c97a50115a146a7f1bd-4" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<p>Now onto some things I learned from this experience and <em>very</em> stressful three days:</p>
+<p><strong>First</strong>: Make sure when you make your databunch you built it correctly. I made one mistake in the selection process and wound up generating a dictionary of category names… Oops! (Make sure you’re using the right index when selecting the data!)</p>
+<p><strong>Second</strong>: While Google Colab is a wonderful free resource, I turned to Paperspace for a Jupyter notebook due to the RAM and GPU requirements this model needed. The language model needs a lot of memory to run, and building the databunch needs a large amount of RAM. It is why my selection of articles was the first 120,000. Anything more and I would run out of memory!</p>
+<p><strong>Third</strong>: I learned how to deploy a web-app that was <strong>not</strong> an image classifier! Thankfully, Fast.AI has a very streamlined process, so I could get it running locally within an hour using the <a href="https://course.fast.ai/deployment_render.html">Render</a> guide as a resource.</p>
+<p><strong>Fourth</strong>: No idea is too complex for you to do. I had never touched a natural language processing model before this, and while I was extremely intimidated, I pushed through.</p>
+<p>Overall, this was a wonderful experience and I am honored to have built such an application with my team.</p>
+<p>I hope you all find this helpful, feel free to find me on the Fast.AI forums[5] with any questions, my handle is muellerzr.</p>
+<p>Thank you for reading!</p>
+<p>Zachary Mueller</p>
+<h2 class="anchored">
+Resources/Further Reading
+</h2>
+<p>[1] <a href="https://uwf.edu/hmcse/departments/computer-science/codefest/">CodeFest</a><br> [2] <a href="https://arxiv.org/abs/1801.06146">ULMFiT Paper</a><br> [3] <a href="https://arxiv.org/abs/1708.02182">LSTM Language Model Paper</a><br> [4] <a href="https://www.fast.ai">Fast.AI</a><br> [5] <a href="https://forums.fast.ai/">Fast.AI Forums</a><br> [6] <a href="https://github.com/OpenSourcesGroup/opensources">OpenSources</a><br></p>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-99.9.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2021-12-05">
+
+<title>Zach Mueller - Docker for Data Science, Efficient Image Instancing without System Issues</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Zach Mueller</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../til/index.html"> 
+<span class="menu-text">Today I Learned</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/muellerzr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/TheZachMueller"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Docker for Data Science, Efficient Image Instancing without System Issues</li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Docker for Data Science, Efficient Image Instancing without System Issues</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 5, 2021</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p>Covering how and why you should setup Docker for your local environment when developing Machine Learning models and products</p>
+</blockquote>
+<section id="what-is-docker-why-do-i-love-it-and-why-should-you-suddenly-worship-the-almighty-whale" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-docker-why-do-i-love-it-and-why-should-you-suddenly-worship-the-almighty-whale">What is Docker? Why do I love it? And why should you suddenly worship the Almighty Whale?</h2>
+<p>Ishmael once set out to conquer the seas by taking down the leviathan: Moby Dick. The unkillable being that haunted the seas. However, in his endevour, he failed. The Whale completely destroying his ship and crew, leaving him as the sole survivor.</p>
+<p>But have we ever stopped and thought: should we instead be worshiping this Whale? Is it too strong for mortal man? And how can we do so, and what gifts will it bring forth?</p>
+<p>Too weird? Too weird. Anyways, back on topic to somewhat whale-related things.</p>
+<p><a href="https://docker.com">Docker</a> is a <em>containerization</em> platform.</p>
+<p>What does this mean? Let’s do some quick introductions.</p>
+<p>Some of you may be familiar with the concept of a <strong>Virtual Machine</strong> (VM). These VM’s are often ran to boot Linux onto your Windows machine and work in an environment that has mild access to your internal system. What can get annoying very quickly with VM’s however is they require a <strong>hefty</strong> amount of system resources to be used, even if you might not get through all of it. Typically you have to direct the virtual machine to allocate X Gb of memory for you to use, X Gb of storage for it to utilize, and so forth. Limiting how much you can do.</p>
+<p>The result? Running over 3 virtual machines in a standard environment is near <em>impossible</em> to run efficiently.</p>
+<p>Alright, what about a “container”? Containers are a light-weight infrastructure that runs <em>atop</em> your current environment. It doesn’t have it’s own allocation in memory, and so it shares directly with what your system is doing.</p>
+<p>The result?</p>
+<p>You can quite easily spin up and run <em>hundreds</em> of low-resource intensive Docker images at once, have them do their jobs, and then shut down, without too much headache. (Think something along the lines of run a shell script that writes to a random txt document 1,000 times: low intensive).</p>
+<p>The image below is a good visualization of this, taken from the <a href="https://www.youtube.com/watch?v=TvnZTi_gaNc">Virtual machines vs Docker Containers</a> YouTube video:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="media/blog/DockerForDataScience/02.jpg" class="img-fluid figure-img"></p>
+<figcaption>Docker vs VMs</figcaption>
+</figure>
+</div>
+<p>You can see that while both the VM and the Docker containers require underlying infrastructure and a base host operating system (think what your every day environment is on your computer), VM’s require their own explicit Guest OS’s to be installed, while Docker containers are just a <em>thin</em> layer that lives within the Docker Daemon.</p>
+<p>As a result, the containers are extremely lightweight, typically don’t step on each others toes, and are quite efficient.</p>
+</section>
+<section id="moving-on-what-does-this-have-to-do-with-data-science" class="level2">
+<h2 class="anchored" data-anchor-id="moving-on-what-does-this-have-to-do-with-data-science">Moving on, what does this have to do with Data Science?</h2>
+<p>This sounds like quite a bit of DevOps work, doesn’t it? (That’s because it is!) Let’s try and tie this back into our world of Data Science and Machine Learning.</p>
+<p>Setting up a local environment (be it GPU enabled or not) is one of the most frustrating aspects of our field. You can follow a million tutorials and <em>still</em> not get it right. God forbid you mess up your conda environment too, and then you’re really in a pickle.</p>
+<p>The nice thing about these Docker containers is so long as we supply it with the right underlying <strong>hardware</strong> to use (yes, that means we’ll be covering installing CUDA and whatnot sadly), managing your environment is as simple as throwing up a new Docker image. But what if I break that environment? Rebuild it. I don’t lose my data (if we configure it properly), and I can just say goodbye to that environment configuration and start anew.</p>
+<p>We get access to this capability through a shared resource called the <a href="https://hub.docker.com/">Docker Hub</a>. Through here, we can host our own pre-built Docker configurations and can run them on our local machines!</p>
+<blockquote class="blockquote">
+<p><strong>Important Notice</strong>: We will <em>not</em> be talking about writing Dockerfile’s here. We will be discussing utilizing them instead. For a good tutorial/curriculum, my course I took in school utilized <a href="https://www.docker.com/101-tutorial">Docker 101</a>, and here’s a good <a href="https://docs.docker.com/develop/develop-images/dockerfile_best-practices/">best practices</a> reference</p>
+</blockquote>
+</section>
+<section id="awesome-so-how-do-i-setup-my-environment" class="level2">
+<h2 class="anchored" data-anchor-id="awesome-so-how-do-i-setup-my-environment">Awesome, so how do I setup my environment?</h2>
+<p>I’ll be following you through the exact same steps it took me to setup my new MSI Laptop, which came with a NVIDIA GPU attached with it. It’ll be a process, with many links, but it should <em>not</em> take you more than 30 minutes in total!</p>
+<p>This will be the shortest part of this article, due to quite ltierally how quick this was. So, ready? Let’s get started!</p>
+</section>
+<section id="downloading-ubuntu" class="level2">
+<h2 class="anchored" data-anchor-id="downloading-ubuntu">Downloading Ubuntu</h2>
+<p>First step is (if you so choose) installing Ubuntu onto your machine. I did because I wanted the entire seperated operating system, but do note: <em>this is not required</em>. I didn’t want to deal with any thoroughput issues with WSL2, and I like staying on Windows 10, so this was the other main reason why I just went ahead with rolling Ubuntu.</p>
+<p>You will need a thumb drive of some form for this, as we will be making a bootable image to install from.</p>
+<p>First: Download and install <a href="https://rufus.ie/en/">Rufus</a>.</p>
+<p>Afterwards, navigate to the <a href="https://ubuntu.com/download/desktop">Ubuntu Desktop</a> homepage. Download the ISO, open it in Rufus, and hit <code>START</code>.</p>
+<p>It should prompt you saying we’ll completely wipe that thumb drive, that’s expected, then wait for it to finish.</p>
+<p>Once that is done, I’d personally recommend allocating a chunk of your hard drive to be your Linux partition.</p>
+<p>Considering I do a solid 50/50 of my work between Windows and Ubuntu, I just left half of my hard drive partitioned. Read how to do so <a href="https://support.microsoft.com/en-us/windows/create-and-format-a-hard-disk-partition-bbb8e185-1bda-ecd1-3465-c9728f7d7d2e">here</a> &gt; Note: Do not choose to allocate the storage as an NTFS drive, leave it directly unallocated. Ubuntu can’t utilize NTFS drives for booting</p>
+</section>
+<section id="installing-ubuntu" class="level2">
+<h2 class="anchored" data-anchor-id="installing-ubuntu">Installing Ubuntu</h2>
+<p>Next, you’ll want to install Ubuntu. Word of advice: <strong>bring <a href="https://www.itzgeek.com/post/how-to-install-ubuntu-20-04-alongside-with-windows-10-in-dual-boot/">this article</a> up on your phone so you can keep reading</strong>. As during it, you won’t have access to your computer.</p>
+<p>You will need: - Your laptop, turned off - Our newly-made image installer on our thumb drive - An Ethernet cable.</p>
+<p>Yes, you heard me: an Ethernet cable. Even if you’re doing this through your laptop, you’ll want one.</p>
+<p>Out-of-the-box, Linux will likely not support your wireless card, and we’ll hit a switch during install to get that.</p>
+<p>Alright, are we all set? Great.</p>
+<p>Boot up your computer and open your BIOS (Google it for your laptop brand, for some it’s F7, F9, or even Delete).</p>
+<p>Once there, you’ll want to navigate to the <strong>Boot</strong> section, and find the <strong>Boot Order</strong>. If your BIOS supports you directly booting off of some hardware, navigate to your USB Bus (it should say Ubuntu on it), and hit “Boot”. If not, adjust the boot order to <em>start</em> with our little thumb drive, and then hit the “Save and Exit” button.</p>
+<p>Upon restarting, you should be on a new prompt asking you what you want to start in. You will get <em>extremely</em> familiar with the GNOME prompt, as it is what will handle telling your computer to either boot in Windows or Ubuntu. Here you just want to press the “Try Ubuntu” option (the first).</p>
+<p>After it boots, you should see on your desktop a “Install Ubuntu XYZ” shortcut, go ahead and click that to start installing it. &gt; Note: I had some issues with Ubuntu being laggy, it was just due to this preview. It went away post installation</p>
+<p>More or less just follow along the directions. <strong>HOWEVER</strong>: At one point it will prompt you with a radial button saying “Install just what I need”, with another option saying install 3rd-party drivers.</p>
+<p><em>For the love of everything, hit that button</em> (this is step You <strong>need</strong> to install 3rd-party drivers to have access to bluetooth, internet, and a slew of other things. So <em>do it</em>.</p>
+<p>Wait about 10-15 minutes if that for it to install, and you should have a functioning Linux install!</p>
+<p>Now boot up your new Ubuntu OS, and we can begin the fun!</p>
+</section>
+<section id="installing-nvidia-and-the-drivers" class="level2">
+<h2 class="anchored" data-anchor-id="installing-nvidia-and-the-drivers">Installing NVIDIA and the Drivers</h2>
+<p>We’re at the scary part now, installing the drivers. <strong>Follow this tutorial exactly and you will be fine</strong>. Ensure you find the right driver for your GPU, by looking <a href="https://www.nvidia.com/Download/index.aspx?lang=en-us">here</a>.</p>
+<p>I had heard a rumour in a tweet that Ubuntu enjoyed eating up our GPU RAM for rendering our screen. That’s not good! I want as much VRAM as I can for running ML!</p>
+<p>Is there a solution? <em>Of course</em>. And here it is on a silver platter:</p>
+<p>A wonderful little gist on <a href="https://gist.github.com/alexlee-gk/76a409f62a53883971a18a11af93241b">Setting up integrated graphics for display</a></p>
+<p>Pretty much follow that gist 1:1, and by the end you will have CUDA installed without hating yourself. Below are a few important notes I’ll highlight:</p>
+<blockquote class="blockquote">
+<p>The path to the xorg.conf file should be /etc/X11/xorg.conf and not /etx/X11/xorg.conf</p>
+</blockquote>
+<p>And <strong>especially</strong> this post by <span class="citation" data-cites="scaomath">@scaomath</span> further in the comments:</p>
+<blockquote class="blockquote">
+<p>Thanks for the post. I was able to get the iGPU in 10th gen Intel running using the xorg.conf given, as well as CUDA running VSCode. However, I got all pixelated and weird color strips across the screen. So I did some Google-fu and found that in order that X works on Intel UHD 630 (8th-10th gen desktop CPU). The iGPU part needs to be changed to:</p>
+</blockquote>
+<pre><code>Section "Device"
+    Identifier  "Intel Graphics"
+    Driver      "modesetting"
+    BusID       "PCI:0:2:0"
+EndSection</code></pre>
+<blockquote class="blockquote">
+<p>The driver has to be modesetting which is in xserver-xorg-core. Just to be safe, it is recommended to uninstall xserver-xorg-video-intel as well.</p>
+</blockquote>
+<p>I did both, and afterwards I got ~10mb of constant usage out of my monitor from the GPU. Not perfect, but 10mb won’t kill me or my performance <em>too</em> much</p>
+</section>
+<section id="next-up-docker" class="level2">
+<h2 class="anchored" data-anchor-id="next-up-docker">Next up: Docker</h2>
+<p>Okay, that was the hardest part of this entire thing. Seriously.</p>
+<p>All that’s left is for you to download Docker-GPU, and we’re ready to rock and roll.</p>
+<p>First, follow the docker installation directions from this digital ocean article: - <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04">Installation directions</a></p>
+<p>Once that’s done, we’ll follow the directions for installing the CUDA capability for Docker <a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#setting-up-nvidia-container-toolkit">here</a></p>
+<blockquote class="blockquote">
+<p><strong>Important</strong>: Skip the “Setting up Docker” portion, you have already done so.</p>
+</blockquote>
+<p>And, I kid you not, you’re done!</p>
+<p>You can quickly test if it’s working by doing the following:</p>
+<p>Test: <code>nvidia-smi</code> and make sure your GPU comes up</p>
+<p>Run: <code>docker run --rm --gpus all nvidia/cuda:XX.X-base nvidia-smi</code></p>
+<p>(replace XX.X with the CUDA version that showed up in <code>nvidia-smi</code>). you should see the GPU show there as well.</p>
+<p>The rest of this article will be covering some basic docker know-how for you to help utilize this great process, as well as some bash shortcuts I’ve made to speed up my development.</p>
+</section>
+<section id="docker-the-basics" class="level2">
+<h2 class="anchored" data-anchor-id="docker-the-basics">Docker: The Basics</h2>
+<p>In all reality, you need to know about four commands:</p>
+<ul>
+<li><code>docker container list</code></li>
+<li><code>docker search</code></li>
+<li><code>docker pull</code></li>
+<li><code>docker run</code></li>
+<li><code>docker kill</code></li>
+</ul>
+<p>Let’s go over each quickly:</p>
+<section id="docker-container-list" class="level3">
+<h3 class="anchored" data-anchor-id="docker-container-list"><code>docker container list</code></h3>
+<p>This command will list all active docker containers and their current status. You can see an example output of mine below:</p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="media/blog/DockerForDataScience/03.png" id="fig-539a35d47e664c97a50115a146a7f1bd-1" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<blockquote class="blockquote">
+<p>Note: the terminal doesn’t look too pretty or readable here, for now that’s fine. I wrote something to deal with that later.</p>
+</blockquote>
+<p>What’s important to read here: - Names: A nickname for a particular container, when referencing them in docker commands you can either use this or the CONTAINER ID</p>
+<ul>
+<li><p>Image: What the base image of the container is using</p></li>
+<li><p>Ports: What exposed ports are running that you can connect to (more on this later).</p></li>
+</ul>
+<p>The rest you can look at or see if you need, but these are the three I pay the most attention to (along with Status).</p>
+</section>
+<section id="docker-search" class="level3">
+<h3 class="anchored" data-anchor-id="docker-search"><code>docker search</code></h3>
+<p>This is what you (should) be using to find any docker containers you’re interested in running. this will search the Docker Hub and find what you need. Below is an example of me searching for <code>fastai</code> images:</p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="media/blog/DockerForDataScience/04.png" id="fig-539a35d47e664c97a50115a146a7f1bd-2" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<p>Let’s keep a note of how the official fastai image is <code>fastdotai/fastai</code>. We’ll need this for later.</p>
+</section>
+<section id="docker-pull" class="level3">
+<h3 class="anchored" data-anchor-id="docker-pull"><code>docker pull</code></h3>
+<p><code>docker pull</code> is what will actually take that docker image on the hub, and bring it to our local device. It’s a fairly straightfoward command as well. To download that fastai image, we do:</p>
+<p><code>docker pull fastdotai/fastai</code>.</p>
+<p>That’s about it!</p>
+</section>
+<section id="docker-run" class="level3">
+<h3 class="anchored" data-anchor-id="docker-run"><code>docker run</code></h3>
+<p>Docker run is how you will start up most of your docker images. For a full list of parameters you can pass in, see the documentation <a href="https://docs.docker.com/engine/reference/commandline/run/">here</a>, but for our sake I’ll TL;DR the most important ones for you:</p>
+<ul>
+<li><code>-v</code> specifies a <em>volume</em> for you to mount. It follows the syntax of <code>path/on/mine/from/root:/mnt/docker_volume/name</code>, where the latter half of that path is where it appears locally on your docker image. This will directly link to your local system, allowing you to touch your local files directly.</li>
+</ul>
+<blockquote class="blockquote">
+<p>Note: Docker containers mount different file storage systems. Ensure you figure out the direct path it boots up in and then setup your volume there. This will alleviate quite a number of headaches</p>
+</blockquote>
+<ul>
+<li><code>-p</code> specifies exposed <em>ports</em> on your system. This is <strong>extremely</strong> important for say running Jupyter servers inside the image, and wanting to talk with them. Typically they follow a format of <code>-p 8888:8888</code>. The 8888 is the port on <em>your</em> system, and the second 8888 is the port <em>inside the docker image</em>. So, for example if inside the docker image is a server spin-up script, that exposes a jupyter port on <code>localhost:8888</code>, we <em>could</em> just leave it be and connect to port 8888. But we run into issues if I try and run two of this image, as the servers would mess with each other. By changing that first port number, we can perform <em>port forwarding</em>, and we will tell the docker container to send all data coming from port 8888 to 8887, something not in use.</li>
+</ul>
+<blockquote class="blockquote">
+<p>Note: Depending on the setup, it may still say “connect to 127.x.x.x:8888”. Remember that this is <em>not</em> the port we exposed, so trust your port changing and go to the right web address</p>
+</blockquote>
+<ul>
+<li><code>--gpus</code> specifies the number of GPUs to use. You can specify 1, 2, or <code>all</code>. I typically just use all. This is specific from us installing the CUDA version of docker earlier, so do take note to run your images with <code>--gpus</code> if you’re hoping to make use of your GPU in your system.</li>
+</ul>
+<p>If we wanted to run that downloaded image of fastai we grabbed earlier and spin it up in our current working directory, here’s how that would look: (I’ll explain the fancy bash)</p>
+<p><code>docker run $(pwd):/home/runner/$(basename $(pwd)) -p 8888:8888 --gpus all fastdotai/fastai ./run_jupyter.sh</code></p>
+<p>Now, let’s quickly talk about what this does.</p>
+<ul>
+<li><code>pwd</code> grabs your current working directory, and its <em>full</em> path</li>
+<li><code>basename</code> takes the last path in a long path (such as one returned by pwd)</li>
+</ul>
+<p>Doing this should now expose a jupyter server running on <code>localhost:8888</code> (that requires a token), and is utilizing your GPU!</p>
+</section>
+<section id="docker-kill" class="level3">
+<h3 class="anchored" data-anchor-id="docker-kill"><code>docker kill</code></h3>
+<p>Finally, we have the death command: <code>docker kill</code>. With this, you simply specify either the <code>container id</code> from earlier, or the nickname it gave you, and it will immediatly shut it down. An example of shutting down our container from earlier (the nbdev one running in the script) would look like the following:</p>
+<p><code>docker kill happy_poincare</code></p>
+<blockquote class="blockquote">
+<p>Note: Since we can run multiple containers of the same image, this is the importance of us specifying the nickname affiliated with it</p>
+</blockquote>
+</section>
+</section>
+<section id="my-secret-sauce" class="level2">
+<h2 class="anchored" data-anchor-id="my-secret-sauce">My Secret Sauce</h2>
+<p>What follows now will be my own secret commands I’ve written up, along with a library, to make my own life easier.</p>
+<p>I threw all of these into <code>./bash_aliases</code>.</p>
+<p>When it comes to docker commands, I’m lazy and don’t want to write <code>docker container</code>, so we have the following:</p>
+<ul>
+<li><code>alias dkill="docker kill</code> (kill a container)</li>
+<li><code>alias dp="docker pull</code> (pull a container)</li>
+<li><code>alias dr="docker run</code> (run a container)</li>
+</ul>
+<p>They still maintain their arguments (and respective helps), while also keeping my own sanity.</p>
+<p>I also have a few of the following for Python: - <code>alias python=python3</code> - <code>alias py=python3</code></p>
+<p>Finally, we have some that handle running <code>docker run</code>, but before we get too deep into it, just set the following:</p>
+<ul>
+<li><code>alias start="dr "</code></li>
+</ul>
+<blockquote class="blockquote">
+<p>By setting a space at the end, we can have it trail off into commands directly below it, which we will utilize. You’ll understand why for semantics I have “start” instead of dr in a moment</p>
+</blockquote>
+</section>
+<section id="docker-buddy" class="level2">
+<h2 class="anchored" data-anchor-id="docker-buddy">Docker Buddy</h2>
+<p>As I was working my way through this, I didn’t like how some of the outputs looked (very bland, unreadbale). So as a result, I wrote <a href="https://github.com/muellerzr/docker_buddy">docker_buddy</a>, which utilizes Rich to introduce <em>clean</em> and concise versions of the same commands I just ran earlier.</p>
+<p>There are three alternatives in it:</p>
+<ul>
+<li><code>ds</code> for <code>docker search</code></li>
+<li><code>dls</code> for <code>docker container list</code></li>
+<li><code>di</code> for inspecting docker containers, I nickname it as <code>docker investigate</code> in my head (though is not directly docker)</li>
+</ul>
+<p>To install:</p>
+<p><code>pip install docker_buddy</code></p>
+<p>And also do:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install npm</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> i <span class="at">-g</span> rekcod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For an example of how those help us out, take a quick peek at the images I provided for <code>docker search</code> and <code>docker container list</code>. Here’s our new ones:</p>
+<p><strong>Docker Search (ds)</strong>: <img src="media/blog/DockerForDataScience/05.png" class="img-fluid"></p>
+<p><strong>Docker Container List (dls)</strong>: <img src="media/blog/DockerForDataScience/06.png" class="img-fluid"></p>
+<p>Thanks entirely to <a href="https://rich.readthedocs.io/en/latest/introduction.html">Rich</a>, we’re able to pull off this beautiful looking UI.</p>
+<p>I also wrote <code>di</code> as a way for us to see what inherit arguments are available for the <em>docker image specifically</em>, i.e.&nbsp;their configurations. An example output is below:</p>
+<div id="fig-539a35d47e664c97a50115a146a7f1bd-3" class="quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div>
+<img src="media/blog/DockerForDataScience/07.png" id="fig-539a35d47e664c97a50115a146a7f1bd-3" class="img-fluid figure-img">
+</div>
+</figure>
+</div>
+<p>Now that we have <code>docker_buddy</code> on our system, here’s those last two cheats I have in my alias:</p>
+<ul>
+<li><code>alias nbdev="-v $(pwd):/home/runner/$(basename $(pwd)) -p 8888:8888 fastdotai/nbdev</code></li>
+<li><code>alias jupyt="-v $(pwd):/home/jovyan/$(basename $(pwd)) -p 8886:8888 jupyter/minimal-notebook</code></li>
+</ul>
+<p>Combined, these all now allow me to quickly do:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">start</span> fastai</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>or</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">start</span> jupyt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To skip <em>all</em> of the long configuration setups to start my server. If needed we can of course go through and run them manually, but these are quick shortcuts I wrote for myself.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>I truly hope this has helped many of you setup some brand new environemnts, and use CUDA with as minimal headache as possible. The moment I got this working my mind got racing with all the possibilities this could bring, which is what drove me to write this article.</p>
+<p>If you’ve enjoyed this, please do let me know!</p>
+<p>You can find me on my socials at:</p>
+<ul>
+<li>Twitter: <a href="https://twitter.com/thezachmueller"><span class="citation" data-cites="TheZachMueller">@TheZachMueller</span></a></li>
+<li>LinkedIn: <a href="https://www.linkedin.com/in/zachary-mueller-135257118">Zach Mueller</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

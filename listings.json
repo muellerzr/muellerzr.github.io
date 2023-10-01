@@ -1,0 +1,41 @@
+[
+  {
+    "listing": "/blog/index.html",
+    "items": [
+      "/blog/nbquarto.html",
+      "/blog/gradient_accumulation.html",
+      "/blog/happiness.html",
+      "/blog/dear-me-2022.html",
+      "/blog/Walkwithfastai.html",
+      "/blog/Decorators.html",
+      "/blog/PyTorchInference.html",
+      "/blog/adhd.html",
+      "/blog/HackingTheEnum.html",
+      "/blog/DockerforDataScience.html",
+      "/blog/HuggingFaceLesson1.html",
+      "/blog/Pytorchtofastai.html",
+      "/blog/CAMVID.html",
+      "/blog/intermediate.html",
+      "/blog/beginner.html",
+      "/blog/TabularNumpy.html",
+      "/blog/TransformFunctions.html",
+      "/blog/DataBlockAPI.html",
+      "/blog/A-New-Year.html",
+      "/blog/NLP-Capstone.html",
+      "/blog/ClassConfusion.html",
+      "/blog/FeatureImportance-TestSet.html",
+      "/blog/Suspecto.html",
+      "/blog/Week-1.html",
+      "/blog/Fastai-Curriculum.html"
+    ]
+  },
+  {
+    "listing": "/til/index.html",
+    "items": [
+      "/til/sub_cli.html",
+      "/til/wraps.html",
+      "/til/testing.html",
+      "/til/code_review.html"
+    ]
+  }
+]

@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-99.9.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2020-08-21">
+
+<title>Zach Mueller - Zero to Hero with fastai - Beginner</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Zach Mueller</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../til/index.html"> 
+<span class="menu-text">Today I Learned</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/muellerzr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/TheZachMueller"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Zero to Hero with <code>fastai</code> - Beginner</li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Zero to Hero with <code>fastai</code> - Beginner</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">fastai</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 21, 2020</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p>An introduction to the world of Deep Learning, what the <code>fastai</code> library is, and the problems it attempts to solve</p>
+</blockquote>
+<section id="zero-to-hero" class="level2">
+<h2 class="anchored" data-anchor-id="zero-to-hero">Zero to Hero</h2>
+<p>The “Zero to Hero” series is a collection of three seperate articles geared towards getting anyone familair with the <code>fastai</code> library based upon their skill sets. This article is geared towards those who have barely heard of “Deep Learning” and have zero experience with frameworks. The <a href="https://muellerzr.github.io/fastblog/2020/08/20/_08_21-intermediate.html">intermediate</a> article comes from a perspective of those who utilized the original fastai library in the past and understand the broad strokes of the library. Finally, the last article will briefly explain the advanced artifacts inside of <code>fastai</code> and how they all function.</p>
+</section>
+<section id="who-am-i" class="level2">
+<h2 class="anchored" data-anchor-id="who-am-i">Who am I</h2>
+<p>My name is Zach Mueller, I’ve extensively been involved and using fastai (and the newest version) for the better part of two years now. I’ve designed my own course geared around the library from an implementation standpoint without getting too complex. At the time of writing this I’m still an Undergraduate at the University of West Florida majoring in Computer Science. I’m also heavily involved inside the <a href="https://forums.fast.ai/">fastai community</a>, of which I would emplore you to join! My goal is to make fastai more approachable at all levels through examples and help further Jeremy’s dream in the process. My specific interests involve <a href="https://github.com/muellerzr/fastinference">speeding up the framework for deployment</a>, tabular neural networks, and providing overall usage guides to help further the community</p>
+</section>
+<section id="what-will-we-cover-in-this-article" class="level2">
+<h2 class="anchored" data-anchor-id="what-will-we-cover-in-this-article">What will we cover in this article?</h2>
+<p>In broad strokes, this article will cover what exactly a “Jupyter Notebook” is and why it is popular among the Machine Learning community. Next we will divulge into <code>fastai</code>, what the library aims to do, and why it can be considered a “library for all.” Afterwards we will close by showing examples of what a “model” is and how to utilize the framework at a high level to complete your Deep Learning tasks.</p>
+</section>
+<section id="what-is-a-jupyter-notebook" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-a-jupyter-notebook">What is a “Jupyter Notebook”?</h2>
+<p>Why, you’re reading one now! A Jupyter Notebook is a type of workflow that involves <em>active</em> coding. In a typical software development setting, normally everything would be put into various files and run from a console (such as <code>.cpp</code>, <code>.py</code>, etc). This does not provide much interactability to the user, nor anyone reading the code over.</p>
+<p>Jupyter provides a middle-ground for this. Each “cell” in a notebook can be run independantly of others, such as a quick example below where we do a basic addition:</p>
+<blockquote class="blockquote">
+<p>To run a Jupyter cell, you can press “shift + enter”</p>
+</blockquote>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>o <span class="op">=</span> <span class="dv">1</span><span class="op">+</span><span class="dv">2</span><span class="op">;</span> <span class="bu">print</span>(o)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Jupyter uses <a href="https://docs.python.org/3/library/pprint.html">pretty print</a> to make outputs display readable, so they may differ from your regular console outputs. This in turn allows us to break up code when writing documentation directly inside the contained notebook and not rely on just code comments. As mentioned earlier, this blog was written from a Jupyter Notebook! The platform is evolving as the needs grow, and as such the library leans into this. If you are curious to how, read the documentation for <a href="http://nbdev.fast.ai/">nbdev</a> and the <a href="https://www.fast.ai/2019/12/02/nbdev/">fastai article</a> as well.</p>
+<p>For absolute beginners, <a href="colab.research.google.com">Google Colaboratory</a> is a great free platform to get familiar with Jupyter Notebooks and how the environment operates. For this series we will be running our code inside of Google Colab with the GPU enabled, which helps speed up training time. &gt; Note: Google Colaboratory’s environment is not standard Jupyter, so some things may differ but the overall appearance and operation remains the same.</p>
+</section>
+<section id="what-is-this-fastai-library-and-deep-learning-what-is-the-goal" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-this-fastai-library-and-deep-learning-what-is-the-goal">What is this <code>fastai</code> library, and Deep Learning? What is the goal?</h2>
+<p><code>fastai</code> is an open-source library designed to make State-of-the-Art Machine Learning and Deep Learning approachable for everyone. Spearheaded by Jeremy Howard, this library has seen many iterations, with each looking radically different than the last. The newest version seeks to solve many of the headaches most frameworks have, where there is too much code and not enough readability to those who may not have the coding background. This is the goal of fastai: make machine learning approachable by <em>anyone</em> regardless of their backgrounds to help further progress. Along with this, the <a href="https://arxiv.org/abs/2002.04688">layered API</a> makes it suitable for researchers that want to customize absolutely everythign while ensuring strong-performing baselines.</p>
+<p>These problems come in a variety of shapes and sizes, but can absolutely touch every aspect of the world. Something as simple as <a href="https://www.kaggle.com/c/dogs-vs-cats">identifying cats versus dogs</a> to helping <a href="https://www.kaggle.com/c/3d-object-detection-for-autonomous-vehicles">self-driving vehicles</a> operate safer and more effectively. All of which, while may not be able to solved by <code>fastai</code> <em>directly</em> without some work, Deep Learning can help provide the solution.</p>
+<p>Finally, in an attempt to mitigate this, fast.ai has provided numerous resources for you to peruse and learn from thanks to the hard efforts of Jeremy, Rachel Thomas, and Sylvain Gugger. Their new course, the fourth edition of Practical Deep Learning for Coders, is available <a href="https://render.githubusercontent.com/view/course.fast.ai">here</a>, and their newly released book is available off <a href="https://www.amazon.com/Deep-Learning-Coders-fastai-PyTorch/dp/1492045527">Amazon</a> and available for free with <a href="https://github.com/fastai/fastbook">fastbook</a>. Finally, I have released my own sub-course based on fastai from an application-only perspective available <a href="https://github.com/muellerzr/Practical-Deep-Learning-for-Coders-2.0">here</a>.</p>
+</section>
+<section id="installing-the-library-and-a-general-overview" class="level2">
+<h2 class="anchored" data-anchor-id="installing-the-library-and-a-general-overview">Installing the Library and a General Overview:</h2>
+<p>In Python (what these notebooks run on), we can install specific programming packages with <code>pip</code>. We’ll do so with <code>fastai</code> below:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install fastai <span class="op">-</span>qqq</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We include the three <code>q</code>’s to silence the installation and keep our notebook pretty clean. If your code outputs ever get too cumbersome, you can always clear their outputs.</p>
+<p>Now let’s talk about an interesting coding practice. The <code>fastai</code> library revolves around importing sections of the library with <code>from fastai.module.all import *</code>. This can be extremely uncomfortable (or just wrong) to some, however this library is built upon utilizing every import and making it available. In general <code>fastai</code> has four submodules geared towards specific tasks: * <code>vision</code> - Image-related problems * <code>tabular</code> - Structured data-related problems * <code>text</code> - Text related problems * <code>collab</code> - Collaborative filtering-related tasks</p>
+<p>As you can see, it’s a very readable library. We would call semantically based on what task is being performed. For our example, we will classify between species of dogs and cats based on their pictures. Given we are using images, let’s import the <code>vision</code> module:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastai.vision.<span class="bu">all</span> <span class="im">import</span> <span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The first step is to gather our data. Since this is a pre-made dataset, <code>fastai</code> can download the <code>.tar</code> file using <code>untar_data</code>. The path itself is stored inside <code>URLs.PETS</code>, and calling this function will return where our data was stored:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> untar_data(URLs.PETS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="pre-processing-our-data-and-the-high-level-api" class="level2">
+<h2 class="anchored" data-anchor-id="pre-processing-our-data-and-the-high-level-api">Pre-Processing our Data and the High-Level API</h2>
+<p>When training Machine Learning models, we need to gather our data into something that can be grouped into mini sets or “batches”, and apply some form of adjustments to our data, or augmentation. This in turn lets us feed our model data efficiently and can provide unique challenges in our data that may not have been present before. Such augmentations could be flipping the image, rotating it, adjusting the exposure, etc. <code>fastai</code> has available one-liners to allow our data to be processed. Let’s walk through our PETs example more.</p>
+<p>First, we want to check where and how the data is stored:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>path.ls()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In this particular instance, our images are stored in the <code>images</code> folder. Now let’s pull the filenames and take a look:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>imgs <span class="op">=</span> get_image_files(path<span class="op">/</span><span class="st">'images'</span>)<span class="op">;</span> imgs[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can see that our label is inside of our filename. Using a technique called <a href="https://regexone.com/">regex</a>, we can extract it. fastai comes equipped with a <code>RegexLabeller</code> to do so. &gt; There are a suit of other labellers you can explore in the documentation as well as other examples including how to build your own.</p>
+<p>First we’ll need a regex pattern capable of extracting our filename. This is provided below for our example:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pat <span class="op">=</span> <span class="vs">r'(.+)_\d+.jpg$'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Next let’s define a few of those “augmentations” for our data. We’ll want to ensure that before stacking multiple images into batches (so they can be run efficently through our models) they are the same size. There are many resize transforms available and for our case we will use <code>RandomResizedCrop</code> which will randomly resize the image before cropping it to the determined size. Our example will crop our image to a 460 pixel by 460 pixel image:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>item_tfms <span class="op">=</span> [RandomResizedCrop(<span class="dv">460</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You will notice that I named this <code>item_tfms</code>. To seperate what is applied individually on an input-by-input bases versus into batches, they are seperated by <code>item</code> and <code>batch</code> tfms.</p>
+<p>Next our batch transforms will apply some basic random agumentation before finally normalizing all of our data. This example will utilize something called <a href="https://towardsdatascience.com/what-is-transfer-learning-8b1a0fa42b4">transfer learning</a>. This involves taking another model which has been trained initially on some dataset and utilizing it for our own dataset. This allows for us to train models faster to our datasets. To do so we need to utilize the original model’s training statistics (the mean and standard deviation) and we then normalize our input data based on these values. Our pre-trained model used the ImageNet dataset, so this will be reflected here:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>batch_tfms <span class="op">=</span> [<span class="op">*</span>aug_transforms(size<span class="op">=</span><span class="dv">224</span>), Normalize.from_stats(<span class="op">*</span>imagenet_stats)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Finally we need to define how many images get fed into our model at one time. This is called our “batch size”. Our example will feed 64:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>bs <span class="op">=</span> <span class="dv">64</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now let’s bring it all together into <code>DataLoaders</code>. These contain our transform information and apply them to our data as we want to feed it to our Machine Learning models. We will feed it a relative <code>path</code> to our data, a list of images to use, the pattern to extract our labels, our transforms, and finally our batch size.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dls <span class="op">=</span> ImageDataLoaders.from_name_re(path, imgs, pat, item_tfms<span class="op">=</span>item_tfms, batch_tfms<span class="op">=</span>batch_tfms,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                                    bs<span class="op">=</span>bs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Under the surface here our data was automatically split with 80% going to the training dataset and 20% going to the validation set. We can see how many classes there are in our problem as well as their names by looking inside <code>dls.c</code> and <code>dls.vocab</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dls.vocab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dls.c</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can view a batch of our data with <code>dls.show_batch</code></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dls.show_batch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As well as specify which <code>DataLoader</code> (the training or validation) we want to see:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>dls.train.show_batch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="training-your-model" class="level2">
+<h2 class="anchored" data-anchor-id="training-your-model">Training Your Model</h2>
+<p>Next we will need to make a model to train on our data. This example will use the <a href="https://towardsdatascience.com/an-overview-of-resnet-and-its-variants-5281e2f56035">ResNet34</a> architecture. To do so, we will call <code>cnn_learner</code> (or convolutional-neural-network) to generate a <code>Learner</code> ready to train.</p>
+<p>We will pass in our <code>DataLoaders</code> we made a moment ago, an architecture to use, as well as any metrics we would like to use. Metrics provide a human-readable understanding of the results in our model. We’ll use the error rate in this example:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>learn <span class="op">=</span> cnn_learner(dls, resnet34, pretrained<span class="op">=</span><span class="va">True</span>, metrics<span class="op">=</span>error_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now all that’s needed is to fit our model to our data. This can be done quickly and effectively with <code>fastai</code>’s <code>fine_tune</code> method for transfer learning. We’ll fit for six iterations through our data (or epochs):</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>learn.fine_tune(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>Note: if each epoch takes more than a minute or two, you do not have the GPU enabled on your platform and are relying on the CPU</p>
+</blockquote>
+<p>Great! We have only a 8% error rate at identifying 37 different types of cats and dogs, and we did so in less than 15 lines of code with the defaults! Not bad! If you want to take this further I invite you to learn about the <code>DataBlock</code> API in the next article or through any of the other fastai-related resources mentioned earlier.</p>
+<p>Lastly we can take a look at the results of our model by calling, you guessed it, <code>learn.show_results()</code>! Let’s take a peek:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>learn.show_results()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="now-what-can-i-do" class="level2">
+<h2 class="anchored" data-anchor-id="now-what-can-i-do">Now what can I do?</h2>
+<p>We have a trained model, and we need to utilize it in production. The first initial step is to <code>export</code> our model. This will package everything important to us in a production-level environment. Specifically this includes how our data was made (but not the data itself!), the transforms applied to them, and the model itself.</p>
+<p>We’ll do so below:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>learn.export(fname<span class="op">=</span><span class="st">'export.pkl'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To load our models back in we call <code>load_learner</code>. We can then further map these to the CPU (by default) or GPU. We’ll map to the GPU since we are still in our GPU instance:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>learn <span class="op">=</span> load_learner(fname<span class="op">=</span>path<span class="op">/</span><span class="st">'export.pkl'</span>, cpu<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="gathering-predictions" class="level2">
+<h2 class="anchored" data-anchor-id="gathering-predictions">Gathering Predictions</h2>
+<p><code>fastai</code> has two methods to do this, <code>predict</code>, and <code>get_preds</code>. We’ll focus on the prior but still mention the latter.</p>
+<section id="predict" class="level3">
+<h3 class="anchored" data-anchor-id="predict">Predict</h3>
+<p>Predict is aimed at predicting one item. It will apply all the transforms done to our validation set only and then feed it to the model. Let’s grab one of our filenames we trained on:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>test_im <span class="op">=</span> imgs[<span class="dv">0</span>]<span class="op">;</span> test_im</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We simply pass this <code>path</code> into <code>predict</code> and it will tell us the relative class, the class index in the vocabulary, as well as the percentages:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>learn.predict(test_im)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If we are dealing with a slew of data at once, we can convert them into more of those batches again by calling <code>learn.dls.test_dl</code>. This will make a new validation <code>DataLoader</code> we can pass to <code>get_preds</code> to get predictions off of. We’ll make one based on the first five images:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fnames_test <span class="op">=</span> imgs[:<span class="dv">5</span>]</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>dl <span class="op">=</span> learn.dls.test_dl(fnames_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can see it’s just like our <code>DataLoaders</code> from earlier by calling <code>show_batch</code>:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>dl.show_batch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>And finally we can grab predictions by passing our <code>dl</code> to <code>get_preds</code>:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>preds <span class="op">=</span> learn.get_preds(dl<span class="op">=</span>dl, with_decoded<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>preds[<span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You’ll notice it’s a little different from <code>predict</code>, instead we get the raw probabilities and the class indicies inside of vocab:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>learn.dls.vocab[<span class="dv">18</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>And that’s it! Again if you wish to learn more, there is a <a href="https://muellerzr.github.io/fastblog/2020/08/20/_08_21-intermediate.html">second part</a> to this series, Jeremy and Sylvains book, their new course, as well as my own course. Best of luck and enjoy the library!</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

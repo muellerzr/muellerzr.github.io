@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-99.9.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2022-05-06">
+<meta name="description" content="My lifetime journey with ADHD">
+
+<title>Zach Mueller - Neuro-Diversity in Tech, The Slippery Slope to Burnout</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Zach Mueller</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../til/index.html"> 
+<span class="menu-text">Today I Learned</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/muellerzr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/TheZachMueller"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Neuro-Diversity in Tech, The Slippery Slope to Burnout</li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#neuro-diversity-in-tech-the-slippery-slope-to-burnout" id="toc-neuro-diversity-in-tech-the-slippery-slope-to-burnout" class="nav-link active" data-scroll-target="#neuro-diversity-in-tech-the-slippery-slope-to-burnout">Neuro-Diversity in Tech, The Slippery Slope to Burnout</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-warning-signs-for-me" id="toc-the-warning-signs-for-me" class="nav-link" data-scroll-target="#the-warning-signs-for-me">The Warning Signs for Me</a></li>
+  <li><a href="#hyperfocus-and-burnout" id="toc-hyperfocus-and-burnout" class="nav-link" data-scroll-target="#hyperfocus-and-burnout">HyperFocus and Burnout</a></li>
+  <li><a href="#you-know-i-have-adhd.-i-glazed-through-all-of-that.-what-does-it-mean" id="toc-you-know-i-have-adhd.-i-glazed-through-all-of-that.-what-does-it-mean" class="nav-link" data-scroll-target="#you-know-i-have-adhd.-i-glazed-through-all-of-that.-what-does-it-mean">You know I have ADHD. I glazed through all of that. What does it mean?</a></li>
+  <li><a href="#how-to-be-successful" id="toc-how-to-be-successful" class="nav-link" data-scroll-target="#how-to-be-successful">How to be successful</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Neuro-Diversity in Tech, The Slippery Slope to Burnout</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">markdown</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    My lifetime journey with ADHD
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 6, 2022</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="neuro-diversity-in-tech-the-slippery-slope-to-burnout" class="level1">
+<h1>Neuro-Diversity in Tech, The Slippery Slope to Burnout</h1>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>I’ve been struggling for a few weeks trying to figure out exactly how I want this post written. Many individuals have either come to me privately or publicly saying I need to write about this, as lack of resources in our field on what ADHD in tech looks like, both the good and bad, is very limited.</p>
+<p>Which I don’t disagree. When I first was investigating all I found were horror stories from Reddit saying how “ADHD had ruined their life and field in tech.”</p>
+<p>This is of course terrifying and disheartening to hear. So I’ll state this now:</p>
+<p><strong>When you know how to utilize the tools you were given, you will struggle some but you will be able to succeed. And you can survive in tech.</strong></p>
+<p><em>However</em>, if you don’t even know you have a tool in the toolbox, how do know to use it?</p>
+</section>
+<section id="the-warning-signs-for-me" class="level2">
+<h2 class="anchored" data-anchor-id="the-warning-signs-for-me">The Warning Signs for Me</h2>
+<p>Take all of this article with a grain of salt, as it is put through my own lens. Every single one of us is different, I am simply putting my story out as a datapoint for others. Your ADHD could show entirely different behaviors than mine, or none of what I say may even apply to you! And that is <em>ok</em>. I do not represent the entire community, and I would never say I would.</p>
+<p>But, there is also value in stating what I went through and how I found and avoided future pitfalls.</p>
+<p>Alright, let’s discuss warning signs.</p>
+<p>For me, this culminated in three different ways:</p>
+<ul>
+<li>Insane hyperfocus</li>
+<li>Constant burnout</li>
+</ul>
+</section>
+<section id="hyperfocus-and-burnout" class="level2">
+<h2 class="anchored" data-anchor-id="hyperfocus-and-burnout">HyperFocus and Burnout</h2>
+<p>So. Let’s talk about that. (Enter Rhett and Link).</p>
+<p>I have “mixed” type ADHD. Which means I have both the energetic tendencies, and also on the other end of the threshold the <em>hyperfocus</em> tendencies.</p>
+<p>Oh, so I’m just one of those people that plays games for 12+ hours a day right? That doesn’t mean anything.</p>
+<p><strong>You are right!</strong> There isn’t much of a link to extended video game time and ADHD, because video games are a form of stimulant.</p>
+<p>Instead, this culminates to working on one specific thing, without breaks (bar sleep) for a day if not <strong>days</strong> on end. This was fantastic in school, because I would do our programming projects 1-2 days before the due date, and knock out the entire thing in one go.</p>
+<p>But, doing so leads to an explosion at the end: <strong><em>Burnout</em></strong>. I cannot <em>overstate</em> how easy it was for me to burn out doing things I enjoyed. Because it immediately took all of my focus for the weekend, the week, etc.</p>
+<p>But then, if I didn’t finish it by the end of my focus session, I’d give up. Either due to fatigue, or (as I found out later) because some ADHD folks have problems successfully finishing long-term projects all the way.</p>
+<p>They thrive on short effort (but considerable) and high return/reward.</p>
+<p>Let me provide an example to this.</p>
+<p>If you’re familiar with me, you know that I wrote https://www.walkwithfastai.com. A mini course of Jeremy Howard’s wonderful fastai course v3, geared towards fastai version 2 and was the only course in existence covering v2 of fastai until the book and previous iteration of the current course.</p>
+<p>I had quite a bit planned for this course. A section on Computer Vision, Tabular, and NLP. I knew the bare basics of NLP, but I knew I had to keep it in there to be “complete.”</p>
+<p>So I burned and burned and burned through the notebooks. I was smart and got all of the easy ones out of the way within the first month or two (~14-16 notebooks or so). Things were going well. Some bits I was struggling with, but there was only 3 more notebooks to go, the NLP section.</p>
+<p>I wrote that first notebook and knew immediately it just wasn’t going to happen. I did not know enough about the topic, and that lesson was happening in 2 weeks after I made it to that point. And then, the burnout finally hit as well. <strong>Months-long prolonged burnout</strong>.</p>
+<p>So, it didn’t. It vanished.</p>
+<p>I consider Walk with fastai both one of my greatest achievements but also one of my biggest failures. Because it was a considerable project I <strong>could not see through to the end</strong>.</p>
+<p>But Zach! You made all those other wonderful lessons!</p>
+<p>Yeah, but my brain has a hard time acknowledging the good there.</p>
+<p>Since then, I’ve gotten much better at understanding what is the tipping point of my burnout, how I can balance it well, and worked with some wonderful folks to help me get onto my feet.</p>
+<p>But I would <strong>never</strong> put myself through that again. In that specific way.</p>
+<p>I’m not some magical being. I’m human. If I could just hyperfocus all day long, who knows what I’d be able to solve! But I can’t, and it has real physical consequences when left unregulated.</p>
+<p>So, if you do have this part of ADHD, remind yourself that you need to take breaks. That working for hours on end uninterrupted for too long <strong>can hurt you and will</strong>. Oh and, <strong>take your PTO</strong>. <em>You need to rest</em>. <strong>Communicate</strong> with your manager when this happens. They can’t “magically know” that you’re close or at a tipping point, because (at least for me), you don’t show signs until it’s <em>far</em> too late.</p>
+</section>
+<section id="you-know-i-have-adhd.-i-glazed-through-all-of-that.-what-does-it-mean" class="level2">
+<h2 class="anchored" data-anchor-id="you-know-i-have-adhd.-i-glazed-through-all-of-that.-what-does-it-mean">You know I have ADHD. I glazed through all of that. What does it mean?</h2>
+<p>Okay, so, that painted a <strong>very</strong> bleak picture. But I wanted to make sure you knew it wasn’t all rainbows and unicorns here.</p>
+<p>So, what can I do then?</p>
+<p>First: be as top as you can about your mental state. You’ve been living with it for all your life. You know how you work. This is me telling you that if you’re constantly burned out, you might be genuinely working too hard. Talk with your manager and see if something can be negotiated.</p>
+<p>Second: Work. Out. I mean it. Studies have shown that working out increases the chemical in our brain that people with ADHD lack. Heavy lifting is even better. I work out every single day, and aim to be a power lifter how I can. There is genuine clarity for me for an hour or so after a heavy lift, where I feel “normal”. It’s a 2:1 benefit, you get to stay healthy and your brain actually works right!</p>
+<p>Third: Be educated and go with an assumption of <em>might</em>, and treat it (not chemically) as if its truth. The only harm here is you tried something and it just might not work. And that’s okay. It’s a <strong>step forward not a step backwards</strong>.</p>
+<p>The biggest resource for me starting out was <a href="https://www.alieward.com/ologies/adhd">Ologies with Alie Ward</a>. She had two episodes on ADHD, with the first having Dr.&nbsp;Russell Barkley. It opened my world to “hey, you might not be crazy and really actually have this thing!” And on top of that, it was approachable where even if you <strong>don’t</strong> have ADHD, but you know someone who does, I’m <em>begging</em> you to listen to it. It’s a very real world of the potential (on both sides) of how individuals with ADHD function, what the studies have shown, and how to be successful in their situations.</p>
+</section>
+<section id="how-to-be-successful" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-be-successful">How to be successful</h2>
+<p>Alright, now we’ve finally hit the “how to win” part of this. Which is not a sure-all-fire-way, it’s just the way that worked for me. On top of this, I’ll also include bits from that podcast that they mentioned as well.</p>
+<p>People with ADHD do <strong>exceptionally well</strong> in short time/effort high reward systems. Tech is actually one of those places where this works well, <strong>especially in a healthy startup</strong>. So, work with your manager to give yourself short-term projects (I’ve found this to be about 2 weeks), that take <em>chunks</em> out of a larger project. This helps you stay on track, you’re not overworked, and by the end you’ve finished an amazing goal!</p>
+<p>Next, as I said above please make sure to eat well and stay active how you can. It’s <strong>okay</strong> to have your food delivered if you need to, because you’re afraid you might overwork through lunch and suddenly it’s 7pm and you haven’t eaten since 6am. (Sounds like I’ve done this before, doesn’t it heh). Meal prep if you can, or find easy ways to just microwave something quickly for you to eat throughout the day.</p>
+<p>Third, try to actually get tested if you’re not. And if so, try and talk to a doctor. There are horror stories from folks that have done this, and I have my own. It took 3 tries over a 4 month period before I was finally diagnosed and could get tested. For individuals who give up easily, that’s not a fun time. But <strong>it is worth it so keep it up</strong>. If you choose to explore medication, genuinely be honest with your doctor while you’re at it, as they only serve to help you.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Well, if you’ve made it to the end of this thank you. You’ve somehow survived my rant and I truly hope you got something worthwile out of it. At the bare minimum, seeing how one instance of ADHD in tech looks like.</p>
+<p>Below I have some links to folks I follow on twitter who are either ADHD advocates or have ADHD in tech. They’ve been immensely helpful to have on my day-to-day twitter feed, and have helped me through my journey. Hopefully they can help you through yours as well.</p>
+<ul>
+<li><a href="https://www.alieward.com/ologies/adhd">Part 1: Attention-Deficit Neuropsychology (ADHD) with Russel Barkley</a></li>
+<li><a href="https://twitter.com/ADHD_Alien"><span class="citation" data-cites="ADHD_Alien">@ADHD_Alien</span></a></li>
+<li><a href="https://twitter.com/kefimochi"><span class="citation" data-cites="kefimochi">@kefimochi</span></a></li>
+<li>[<span class="citation" data-cites="AdhdAngsty">@AdhdAngsty</span>](https://twitter.com/AdhdAngsty</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
