@@ -28,7 +28,6 @@ format:
       - cosmo
       - custom.scss
     css: styles.css
-    embed-resources: true
 
 
 
