@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2023-01-02">
+<meta name="description" content="How to free memory in PyTorch “fully”">
 
-<title>Zach Mueller - How to be happy, or ways to try your best</title>
+<title>Zach Mueller - Memory Management in PyTorch</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -126,7 +160,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">How to be happy, or ways to try your best</li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Memory Management in PyTorch</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -145,12 +179,17 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">How to be happy, or ways to try your best</h1>
+<h1 class="title">Memory Management in PyTorch</h1>
   <div class="quarto-categories">
-    <div class="quarto-category">life</div>
+    <div class="quarto-category">pytorch</div>
   </div>
   </div>
 
+<div>
+  <div class="description">
+    How to free memory in PyTorch “fully”
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -159,7 +198,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 2, 2023</p>
+      <p class="date">10/4/23</p>
     </div>
   </div>
   
@@ -169,99 +208,108 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 </header>
 
-<section id="how-to-be-happy-or-ways-to-try-your-best" class="level1">
-<h1>How to be happy, or ways to try your best</h1>
-<section id="motivation" class="level2">
-<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
-<p>For a while now I’ve been going back to two particular studies that stuck with me. They provide guidelines on <em>scientifically acknowledged</em> ways to be happy. I’ve been trying to follow them, and this year I plan to try even more of them.</p>
-<p>This article will focus on these two studies, what I believe are valuable from them, and how I plan to implement them into my life.</p>
+<section id="the-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem">The Problem</h2>
+<p>Given say a simple PyTorch evaluation loop, how can we remove <em>most</em> of the memory we’ve allocated?</p>
 </section>
-<section id="tldr" class="level2">
-<h2 class="anchored" data-anchor-id="tldr">TL;DR</h2>
-<p>Check out <a href="https://www.researchgate.net/publication/339053050/figure/tbl2/AS:866502018342913@1583601588912/Expert-ratings-of-ways-to-greater-happiness-for-a-greater-number-of-citizens-policy.png">this table</a>, and <a href="https://www.researchgate.net/publication/339053050_Ways_to_Greater_Happiness_A_Delphi_Study">these</a> <a href="https://www.nature.com/articles/s41598-019-44097-3">papers</a></p>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<p>At work today I was dealing with a bug where a user was trying to free all the memory used after <code>transformers</code>’ <code>Trainer.train()</code> was called, and I was finding that no matter what I tried, it wouldn’t work!</p>
+<p>What I wound up discovering is we can’t fully de-allocate everything, but we can deallocate <em>most</em> of it down to a neglible amount.</p>
 </section>
-<section id="ways-to-greater-happiness-a-delphi-study" class="level2">
-<h2 class="anchored" data-anchor-id="ways-to-greater-happiness-a-delphi-study">Ways to Greater Happiness: A Delphi Study</h2>
-<p>Given a pool of 20 or so experts, the study asked them to think of ways to be happier. But even further, they were asked to focus on methods that increased happiness in the context of <strong>life satisfaction</strong>.</p>
-<div class="margin">
-<p>Life satisfaction means your overall enjoyment of life as a whole.</p>
-</div>
-<p>Specifically they were asked two questions:</p>
+<section id="why" class="level2">
+<h2 class="anchored" data-anchor-id="why">Why?</h2>
+<p>You can free most everything on CUDA: removing the objects from memory, deallocating things, and such, but the CUDA memory used by <em>CUDA context itself</em> will always remain.</p>
+</section>
+<section id="how-can-i-free-up-the-most-memory-then" class="level2">
+<h2 class="anchored" data-anchor-id="how-can-i-free-up-the-most-memory-then">How can I free up the most memory then?</h2>
+<p>Let’s take a barebones PyTorch inference script:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TinyModel(torch.nn.Module):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>(TinyModel, <span class="va">self</span>).<span class="fu">__init__</span>()</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear1 <span class="op">=</span> torch.nn.Linear(<span class="dv">100</span>, <span class="dv">200</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.activation <span class="op">=</span> torch.nn.ReLU()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear2 <span class="op">=</span> torch.nn.Linear(<span class="dv">200</span>, <span class="dv">10</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.softmax <span class="op">=</span> torch.nn.Softmax(dim<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.linear1(x)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.activation(x)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.linear2(x)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.softmax(x)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> TinyModel().cuda()</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>batch <span class="op">=</span> torch.rand(<span class="dv">64</span>,<span class="dv">100</span>).cuda()</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">eval</span>()</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.inference_mode():</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> model(batch)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>All I’ve simply done is made a model called <code>TinyModel</code>, generated an input, and used <code>inference_mode</code> to generate some outputs. We can find the total memory used and allocated easily enough:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> print_memory():</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"Memory allocated: </span><span class="sc">{</span>torch<span class="sc">.</span>cuda<span class="sc">.</span>memory_allocated()<span class="op">/</span><span class="dv">1024</span><span class="op">**</span><span class="dv">2</span><span class="sc">}</span><span class="ch">\n</span><span class="ss">Memory reserved: </span><span class="sc">{</span>torch<span class="sc">.</span>cuda<span class="sc">.</span>memory_reserved()<span class="op">/</span><span class="dv">1024</span><span class="op">**</span><span class="dv">2</span><span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Doing so will tell us how much memory we have allocated:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>print_memory()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <blockquote class="blockquote">
-<p>What <strong>policies</strong> are most likely to <em>yield greater happiness</em> for a greater <em>number</em> of <strong>cities</strong> in nations</p>
+<p><code>Memory allocated: 8.23779296875</code> <code>Memory reserved: 22.0</code></p>
 </blockquote>
+<p>Great, so we have assumingly the <code>model</code>, <code>batch</code>, and <code>output</code> now on CUDA, but no computational graphs were saved due to <code>inference_mode</code>. How can we try to free up that memory?</p>
+<p>That’s the fun part, <em>we can’t really</em>.</p>
+<p>This minimal part shown here is the limit to what we can actually free.</p>
+<p>But what about in other cases?</p>
+</section>
+<section id="actually-freeing-memory" class="level2">
+<h2 class="anchored" data-anchor-id="actually-freeing-memory">Actually freeing memory</h2>
+<p>In any other case where you’re finding after you’ve attempted to delete all of the memory some of it still remains, there are some reference management items we can work on releasing as well.</p>
+<p>Now the order in which we do this matters, and I’ve provided an annotated script below which can be utilized:</p>
+<div class="sourceCode" id="annotated-cell-4"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-4-1"><a href="#annotated-cell-4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gc</span>
+<span id="annotated-cell-4-2"><a href="#annotated-cell-4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> release_memory(<span class="op">*</span>objects):</span>
+<span id="annotated-cell-4-3"><a href="#annotated-cell-4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(objects, <span class="bu">list</span>):</span>
+<span id="annotated-cell-4-4"><a href="#annotated-cell-4-4" aria-hidden="true" tabindex="-1"></a>        objects <span class="op">=</span> <span class="bu">list</span>(objects)</span>
+<span id="annotated-cell-4-5"><a href="#annotated-cell-4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(objects)):</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-4-6" class="code-annotation-target"><a href="#annotated-cell-4-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">hasattr</span>(objects[i], <span class="st">"to"</span>):</span>
+<span id="annotated-cell-4-7"><a href="#annotated-cell-4-7" aria-hidden="true" tabindex="-1"></a>            objects[i] <span class="op">=</span> objects[i].to(<span class="st">"cpu"</span>)</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-4-8" class="code-annotation-target"><a href="#annotated-cell-4-8" aria-hidden="true" tabindex="-1"></a>        objects[i] <span class="op">=</span> <span class="va">None</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="annotated-cell-4-9" class="code-annotation-target"><a href="#annotated-cell-4-9" aria-hidden="true" tabindex="-1"></a>    gc.collect()</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="annotated-cell-4-10" class="code-annotation-target"><a href="#annotated-cell-4-10" aria-hidden="true" tabindex="-1"></a>    torch.cuda.empty_cache()</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="5" onclick="event.preventDefault();">5</a><span id="annotated-cell-4-11" class="code-annotation-target"><a href="#annotated-cell-4-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> objects</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-4" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-annotation="1" data-code-lines="6,7" data-code-cell="annotated-cell-4">First check if the object has a <code>to</code> attribute and call <code>to("cpu")</code> to move it off the GPU</span>
+</dd>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-annotation="2" data-code-lines="8" data-code-cell="annotated-cell-4">Second set each object to <code>None</code>, this will help garbage collection actually collect it</span>
+</dd>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-annotation="3" data-code-lines="9" data-code-cell="annotated-cell-4">Then actually run the garbage collection which will remove all hanging reference objects</span>
+</dd>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-annotation="4" data-code-lines="10" data-code-cell="annotated-cell-4">Call <code>torch.cuda.empty_cache()</code> to release all the CUDA memory possible</span>
+</dd>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-annotation="5" data-code-lines="11" data-code-cell="annotated-cell-4">Finally return back all our objects and override them with <code>None</code></span>
+</dd>
+</dl>
+<p>With this function, if we had extra objects that were CUDA we wanted to release (such as a much bigger model), we can do so:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>model, batch, output <span class="op">=</span> release_memory(model, batch, output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Doing this even for our small memory footprint will actually show less memory allocated, <em>proving</em> that CUDA will just perminantly eat up a few megabytes of memory:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>print_memory()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <blockquote class="blockquote">
-<p>What <strong>individual</strong> strategies are most likely to enhance people’s happiness <strong>in the long run</strong></p>
+<p><code>Memory allocated: 8.20849609375</code> <code>Memory reserved: 22.0</code></p>
 </blockquote>
-<p>This article will focus solely on the latter portion of the questions.</p>
-<p>These results were ranked based on effectiveness, cost-effectiveness, and feasability.</p>
-<p>Now that you have the background, let’s go into the results. I’ve split the ones that I personally have highlighted into different groupings based on their life category.</p>
-<section id="financial" class="level3">
-<h3 class="anchored" data-anchor-id="financial">Financial</h3>
-<p>The first on the list in financial was <strong>investing in experiences</strong>. Experiences don’t need to be big or fancy, like a vacation overseas or a trip to a theme park. I’ve found that smaller, simpler experiences to invest in are just as good. For example, I had a routine of going to the aquarium, a local bar for dinner, and finally sometimes a concert once a week or so for a few months. Just getting out of the house and being around the aquarium (something I’m very passionate about and love) was phenominal. Mix that in with memories of good food and a great concert, and it’s something I cannot wait to do again once concert season hits.</p>
-<p>The second is <strong>enrolling in automatic savings</strong>. The paper discusses how monitary items don’t really attribute towards overall happiness, with savings being the one exception to the list. Due to the fact that you can safeguard emergencies, future large purchases, and retirement, it makes sense that it would be ranked highly on their list. If you don’t do this, the rule of thumb I grew up with is to save at least 10% of your income if you can. I need to do more of this myself.</p>
-</section>
-<section id="health-self-care" class="level3">
-<h3 class="anchored" data-anchor-id="health-self-care">Health Self Care</h3>
-<p>These next options are more feasible than the first for many. They involve taking care of your physical body without a “magic solution.”</p>
-<p>The first was to <strong>get physical exercise.</strong> Other studies have shown that exercise releases endorphins, which are chemicals that improve your mood and in those with ADHD it reduces symtoms. I can personally attest to that as well. This can come in many different forms, such as the gym or going for a walk. However I will also mention <a href="https://www.nature.com/articles/s41598-019-44097-3">another study</a> which discussed how relative happiness was seen when compared to the length of time someone spends outside a week. While there was a cliff, it was generally found that going outside around 120 minutes a week was the sweet spot for happiness. This can be done by going for a walk, going to the park, or even just sitting outside. After reading these papers I decided to add a 30 minute walk to my daily routine in a spot completely devoid of urban life and it was an excellent way for me to start my day mentally and I anecdotally felt happier. I also have noticed the lack of it as the colder months have come and I’ve been less inclined to go outside for a walk and instead head directly to the gym.</p>
-<p>The second was to <strong>check your health.</strong> This includes regular visits to the doctor, going to the dentist, and talking to a therapist. Post-pandemic I need to do this much more often myself, and I intend to do so in the 2023 year. Take care of your body and it will return the favor tenfold.</p>
-<p>The last one was <strong>regular and ample sleep.</strong> Studies have also shown that aligning your circatium rythum to the sun can have increased benefits as well. To help with this I use the Android “Sleep” app which tracks my sleep and let’s me set alarms based on <strong>time fully asleep</strong>. As a result my average sleep over the last few months has been a proper 7-8 hours of sleep, rather than my 5-6 hours I used to get. I haven’t tried aligning my circatium rythum to the sun yet, but I plan to do so for three months to see how it compares to my current sleep schedule.</p>
-</section>
-<section id="home-environment" class="level3">
-<h3 class="anchored" data-anchor-id="home-environment">Home Environment</h3>
-<p>This category blends in with a few of the previous ones in their recommendations, compounding their importance.</p>
-<p>Two of which were <em>experience nature</em> and <em>maximize sunlight</em>. If you’re following these tips, then in my opinion you’ve already succeeded in these two. If you have a west-facing window it may be good to spend more time there to help with “maximizing sunlight”. I personally work out of a cave (den) as my office, so my new apartment I plan on looking for one with more windows to help with it. I also plan on trying bonsai trees and other plants to help more with the “experience nature” aspect.</p>
-<p>The last one is to <strong>optimize your bedroom for sleep.</strong> The Sleep Foundation states that the following are some of the best recommendations for a good night’s sleep:</p>
-<ul>
-<li>Keep your bedroom at 65 degrees Fahrenheit (18 degrees Celsius) if possible. A healthy adult will have their core temperature drop when they sleep, so lowering the temperature at night helps induce this. A range between 60 and 71 should be suitable for most people.</li>
-<li>Minimizing the noise in your room is their second recommendation. Strive to keep the bedroom as quiet as possible.</li>
-<li>Keep as much natural lighting as possible. Exposure to artificial lighting in the evening can delay circadian rhythms and make it harder to fall asleep. A lux of 10 or higher in the evening leads to a more restless sleep.</li>
-</ul>
-</section>
-<section id="life-style" class="level3">
-<h3 class="anchored" data-anchor-id="life-style">Life Style</h3>
-<p>The life style category is aimed at helping your <em>overall lifestyle</em> be happy and healthy.</p>
-<p>The first of which is to be <strong>active physically and mentally</strong>. As before, being active and going for walks every day, working out, or bringing some physical routine into your life is recommended. Having a hobby or job that you can mentally work yourself towards is also recommended. I generally do this with my job, but I also have a few hobbies that let me utilize this as well, mostly centered around coding or creating courses.</p>
-<p>The second is to <strong>set goals.</strong> I have mixed feelings about this recommendation, because typical “goals” don’t work well for me. What I have found works best is to use goals as milemarkers, not end-all-be-all deadlines. Doing this over the last year I’ve found I’ve done <strong>more</strong> of what I’ve wanted to do without the guilt of not getting something done in time.</p>
-<p>The third recommendation is to <strong>enjoy things.</strong> Clear, I know. Generally what this means though is to find something you enjoy, be it a walk in the park, a hobby, or your job. Anything that let’s you experience happiness as you do it.</p>
-<p>The final recommendation, and hardest one, is to <strong>finda way of life that fits you.</strong> This requires a gigantic amount of self-reflection and understanding your own personal values, but is the most worthwhile in the long run. I spent the last year exploring this and to some degree I still am, however actually focusing on just “me” and what <em>I</em> want out of my life has helped align my thoughts and goals for work, hobbies, and relationships.</p>
-</section>
-<section id="meaning" class="level3">
-<h3 class="anchored" data-anchor-id="meaning">Meaning</h3>
-<p>Finding meaning in life is also extremely important. But how can you do this? The paper recommends the following three opportunities:</p>
-<p>First, <strong>be generous</strong>. Holding the door open for someone, being kind to everyone you meet, this one is very easy for you to get started today.</p>
-<p>The second and third recommnedations I will tie together: <strong>don’t seek happiness, seek purpose.</strong> Chasing happiness will (in my opinion) leave you forever dissatisfied because you’re running after an <em>idea</em> rather than something tangeble. It’s the same thought process as a man can own everything in the world but still not be happy, because experiencing life and people for who they truly are is an immaterial thing. Instead, seek purpose. What is your purpose in life? What do you want to do? What do you want to be? What do you want to accomplish? These are all questions that can help you find meaning in your life and align yourself with your values.</p>
-</section>
-<section id="mental-development" class="level3">
-<h3 class="anchored" data-anchor-id="mental-development">Mental Development</h3>
-<p>These are ways to help you develop your mind and improve your mental health. There were not many under this category, considering much of these are already covered in the other categories. However, there were a few that stood out.</p>
-<p>The first was to <strong>keep learning</strong>. Never be satisfied with the knowledge you have, and enter every conversation with the mindset of someone will teach you something new. I’ve constantly done this with the field of tech for the last few years and it’s kept work extremely enjoyable and entertaining.</p>
-<p>The second is to <strong>seek challenges</strong>. Constantly push yourself to do more, to learn more, to be more. Try out that new project, see if you can go for that gold Kaggle medal, or just try to add a new habit to your daily routine. Something that forces you to tackle a new hurdle and be adamant about overcoming it.</p>
-</section>
-<section id="positive-outlook" class="level3">
-<h3 class="anchored" data-anchor-id="positive-outlook">Positive Outlook</h3>
-<p>This next category is all about how you view the world. It’s about how you view yourself, how you view others, and how you view the world around you. The main one they recommended implementing, which is also single-handedly the hardest on their list, is to <strong>accept yourself</strong> for who you are. I could tangent on this all day, but the end-all-be-all is to just love yourself. Discover what makes you tick, and acknowledge the strengths and weaknesses you have. Fighting yourself is a tiring battle, and changing yourself dramatically is fighting a flood. Instead, learn about who you are, hone your strengths, and accept your weaknesses.</p>
-</section>
-<section id="social-bonds" class="level3">
-<h3 class="anchored" data-anchor-id="social-bonds">Social Bonds</h3>
-<p>Humans are social beings, and we need to be around others to be happy. The paper recommends the following ways to improve your social bonds:</p>
-<p>First, <strong>invest in your friends and family</strong>. Investing doesn’t mean to spend lavish gifts on them, but instead to spend time with them. Go out to dinner, go for a walk, or just sit down and talk with them. Your time is the investment and everyone knows that your time is a precious resource.</p>
-<p>The second and third recommendations I again pull together: <strong>act nicely and focus on the happiness of others</strong>. Going back to the idea of chasing happiness will never let you get there, focusing on the happiness of others instead of your own will provide you with a much more fulfilling life.</p>
-</section>
-<section id="work" class="level3">
-<h3 class="anchored" data-anchor-id="work">Work</h3>
-<p>The last category were items related to work. Overall there weren’t many recommendations here that actually were shown to make a difference, but the main one is to limit your work hours if possible. Have the seperation between work and life.</p>
-<p>It’s also important to know that <strong>building wealth</strong> was <em>not</em> advised as part of living a happier life. This includes both getting a part-time job and working for yourself. This is mostly because they are ineffective and not very feasable for most individuals. This <em>is</em> counterintuitive to the building of savings earlier mentioned, but I don’t actually believe so since one is aimed at financial security and the other is <strong>adding more work to your life</strong>.</p>
-</section>
-</section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Hopefully you found this post interesting and useful. Slowly I have been adding more and more of these practices into my life, and so far I have found they only benefit. I wanted a location to keep track of these, and bookmark these two papers, considering I go back to them <em>constantly</em> and thus here we are.</p>
-<p>I wish you luck on your journey to happiness, and hopefully some of these ideas can help you along the way.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

@@ -15,8 +15,8 @@
       "/blog/HuggingFaceLesson1.html",
       "/blog/Pytorchtofastai.html",
       "/blog/CAMVID.html",
-      "/blog/intermediate.html",
       "/blog/beginner.html",
+      "/blog/intermediate.html",
       "/blog/TabularNumpy.html",
       "/blog/TransformFunctions.html",
       "/blog/DataBlockAPI.html",
@@ -32,6 +32,7 @@
   {
     "listing": "/til/index.html",
     "items": [
+      "/til/free_memory.html",
       "/til/sub_cli.html",
       "/til/wraps.html",
       "/til/testing.html",
