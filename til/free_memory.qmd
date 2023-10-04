@@ -1,0 +1,115 @@
+---
+categories:
+  - pytorch
+date: '2023-10-04'
+date-format: short
+description: How to free memory in PyTorch "fully"
+title: Memory Management in PyTorch
+---
+
+## The Problem
+
+Given say a simple PyTorch evaluation loop, how can we remove *most* of the memory we've allocated?
+
+## Background
+
+At work today I was dealing with a bug where a user was trying to free all the memory used after `transformers`' `Trainer.train()` was called, and I was finding that no matter what I tried, it wouldn't work!
+
+What I wound up discovering is we can't fully de-allocate everything, but we can deallocate *most* of it down to a neglible amount. 
+
+## Why?
+
+You can free most everything on CUDA: removing the objects from memory, deallocating things, and such, but the CUDA memory used by *CUDA context itself* will always remain.
+
+## How can I free up the most memory then?
+
+Let's take a barebones PyTorch inference script:
+
+```python
+import torch
+
+class TinyModel(torch.nn.Module):
+    def __init__(self):
+        super(TinyModel, self).__init__()
+
+        self.linear1 = torch.nn.Linear(100, 200)
+        self.activation = torch.nn.ReLU()
+        self.linear2 = torch.nn.Linear(200, 10)
+        self.softmax = torch.nn.Softmax(dim=0)
+
+    def forward(self, x):
+        x = self.linear1(x)
+        x = self.activation(x)
+        x = self.linear2(x)
+        x = self.softmax(x)
+        return x
+    
+model = TinyModel().cuda()
+batch = torch.rand(64,100).cuda()
+
+model.eval()
+
+with torch.inference_mode():
+    output = model(batch)
+```
+
+All I've simply done is made a model called `TinyModel`, generated an input, and used `inference_mode` to generate some outputs. We can find the total memory used and allocated easily enough:
+
+```python
+def print_memory():
+    print(
+        f"Memory allocated: {torch.cuda.memory_allocated()/1024**2}\nMemory reserved: {torch.cuda.memory_reserved()/1024**2}"
+    )
+```
+
+Doing so will tell us how much memory we have allocated:
+```python
+print_memory()
+```
+> `Memory allocated: 8.23779296875`
+> `Memory reserved: 22.0`
+
+Great, so we have assumingly the `model`, `batch`, and `output` now on CUDA, but no computational graphs were saved due to `inference_mode`. How can we try to free up that memory?
+
+That's the fun part, *we can't really*. 
+
+This minimal part shown here is the limit to what we can actually free.
+
+But what about in other cases?
+
+## Actually freeing memory
+
+In any other case where you're finding after you've attempted to delete all of the memory some of it still remains, there are some reference management items we can work on releasing as well. 
+
+Now the order in which we do this matters, and I've provided an annotated script below which can be utilized:
+
+```python
+import gc
+def release_memory(*objects):
+    if not isinstance(objects, list):
+        objects = list(objects)
+    for i in range(len(objects)):
+        if hasattr(objects[i], "to"): # <1>
+            objects[i] = objects[i].to("cpu") # <1>
+        objects[i] = None # <2> 
+    gc.collect() # <3> 
+    torch.cuda.empty_cache() # <4> 
+    return objects # <5> 
+```
+1. First check if the object has a `to` attribute and call `to("cpu")` to move it off the GPU
+2. Second set each object to `None`, this will help garbage collection actually collect it
+3. Then actually run the garbage collection which will remove all hanging reference objects
+4. Call `torch.cuda.empty_cache()` to release all the CUDA memory possible
+5. Finally return back all our objects and override them with `None`
+
+With this function, if we had extra objects that were CUDA we wanted to release (such as a much bigger model), we can do so:
+```python
+model, batch, output = release_memory(model, batch, output)
+```
+
+Doing this even for our small memory footprint will actually show less memory allocated, *proving* that CUDA will just perminantly eat up a few megabytes of memory:
+```python
+print_memory()
+```
+> `Memory allocated: 8.20849609375`
+> `Memory reserved: 22.0`
