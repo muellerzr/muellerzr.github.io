@@ -1,0 +1,240 @@
+---
+categories:
+    - python
+date: '2023-10-16'
+date-format: short
+description: How to use `argparse` without the CLI
+title: Calling `argparse` without subprocess
+---
+
+## Motivation
+
+While working on [accelerate](https://github.com/huggingface/accelerate) I was finding it more and more annoying having to use `subprocess.run` when trying to run items through CLI commands (such as `python` and `torchrun`). These led to very hard to read stack traces if issues happened, and you couldn't do `try ... catch ...` on any of them efficiently.
+
+This then got me thinking, can we just keep everything natively through python?
+
+The answer: yes
+
+## Setting up the interface
+
+Any `argparse` interface will create their arguments using `argparse.ArgumentParser`, such as:
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser(description="Some base arguments")
+parser.add_argument(
+    "--arg1", type=str, help="The first argument"
+)
+parser.add_argument(
+    "--arg2", type=int, help="The second argument", choices=[0,1,2,3]
+)
+```
+
+At some point later in the script, you add `parse_args()` to pick up on the CLI arguments:
+
+```python
+def main():
+    args = parser.parse_args()
+    do_something(args)
+```
+
+## Removing the command line
+
+Did you know it's possible to not use the command-line whatsoever here? Instead we can just call `parse_args()` and pass in the parameters we want to set:
+
+```python
+args = parser.parse_args(["--arg1", "something", "--arg2", 2])
+do_something(args)
+```
+
+Given this, I then knew that we could write out interfaces that can call any python-based CLI function internally *without* needing `subprocess`! There were two key steps needed, however:
+
+1. The function in which to pass the arguments must be importable
+2. The arguments themselves *must* be returned in a function which generates them.
+
+What do I mean by 2?
+
+So far we have the following:
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser(description="Some base arguments")
+parser.add_argument(
+    "--arg1", type=str, help="The first argument"
+)
+parser.add_argument(
+    "--arg2", type=int, help="The second argument", choices=[0,1,2,3]
+)
+
+def main():
+    args = parser.parse_args(["--arg1", "something", "--arg2", 2])
+    do_something(args)
+```
+We can't really import the argument parser here efficiently, and there's nothing we can particularly do. It gets even more complex when you have API's that nest the creation and usage of the parser inside various functions, making it impossible.
+
+Instead, let's rewrite the `parser` to be a function which returns it:
+
+```python
+import argparse
+
+def make_parser():
+    parser = argparse.ArgumentParser(description="Some base arguments")
+    parser.add_argument(
+        "--arg1", type=str, help="The first argument"
+    )
+    parser.add_argument(
+        "--arg2", type=int, help="The second argument", choices=[0,1,2,3]
+    )
+    return parser
+
+def main():
+    parser = make_parser()
+    args = parser.parse_args(["--arg1", "something", "--arg2", 2])
+    do_something(args)
+```
+
+We've now set it up so that we can:
+1. Create a function which populates an argument parser
+2. Make this function importable and we can pass our arguments to it such that
+3. We can then call `do_something` without needing to use `subprocess` on the command!
+
+## Going further, nested commands
+
+A futher API for something like nested commands would take in existing `parsers` and add the new `sub-command` to it. For example, let's say we've created a base parser for the command `do`:
+
+```python
+import argparse
+
+def main():
+    parser = argparse.ArgumentParser(
+        "My CLI tool", usage="do <command> [<args>]", allow_abbrev=False
+    )
+    subparsers = parser.add_subparsers(help="do command helpers")
+```
+
+Let's modify our function to take in a subparser potentially and add to it, calling our new function `the-thing`:
+
+```python
+def make_parser(subparsers=None):
+    if subparsers is not None:
+        parser = subparsers.add_parser("the-thing")
+    else:
+        parser = argparse.ArgumentParser(description="Some base arguments")
+    parser.add_argument(
+        "--arg1", type=str, help="The first argument"
+    )
+    parser.add_argument(
+        "--arg2", type=int, help="The second argument", choices=[0,1,2,3]
+    )
+    if subparsers is not None:
+        parser.set_defaults(func=do_something)
+    return parser
+```
+
+And then register it with our main CLI caller:
+
+```python
+import argparse
+from .the_thing import make_parser
+
+def main():
+    parser = argparse.ArgumentParser(
+        "My CLI tool", usage="do <command> [<args>]", allow_abbrev=False
+    )
+    subparsers = parser.add_subparsers(help="do command helpers")
+
+    # Register command
+    make_parser(subparsers=subparsers)
+
+    # Parse args
+    args = parser.parse_args()
+
+    # Run
+    args.func(args)
+```
+
+Now with this, as long as we register `do` in our `setup.py` as a CLI argument, we can call it directly via `do the-thing`.
+
+## Code in full
+
+```python
+# Inside `the_thing.py`
+def do_something(args):
+    first_item = args.arg1
+    second_item = args.arg2
+    print(f'First arg {first_item}, second arg {second_item}')
+    
+def make_parser(subparsers=None):
+    if subparsers is not None:
+        parser = subparsers.add_parser("the-thing")
+    else:
+        parser = argparse.ArgumentParser(description="Some base arguments")
+    parser.add_argument(
+        "--arg1", type=str, help="The first argument"
+    )
+    parser.add_argument(
+        "--arg2", type=int, help="The second argument", choices=[0,1,2,3]
+    )
+    if subparsers is not None:
+        parser.set_defaults(func=do_something)
+    return parser
+```
+
+```python
+# Inside `main.py`
+import argparse
+from .the_thing import make_parser
+
+def main():
+    parser = argparse.ArgumentParser(
+        "My CLI tool", usage="do <command> [<args>]", allow_abbrev=False
+    )
+    subparsers = parser.add_subparsers(help="do command helpers")
+
+    # Register command
+    make_parser(subparsers=subparsers)
+
+    # Parse args
+    args = parser.parse_args()
+
+    # Run
+    args.func(args)
+```
+
+Or called through python directly:
+
+```python
+from .the_thing import make_parser, do_something
+
+def main():
+    parser = make_parser()
+    args = parser.parse_args(["--arg1", "something", "--arg2", 2])
+    do_something(args)
+```
+
+## A more concrete example: PyTorch
+
+Here is (some) of how I do this in Accelerate to do `torchrun` without needing any calls to subprocess:
+
+```python
+import torch.distributed.run as distrib_run
+
+parser = distrib_run.get_args_parser()
+
+args = parser.parse_args([
+  "--n_proc_per_node", "2", 
+  "--training_script", "myscript.py", 
+  "--training_script_args", "--arg1", 
+  ...
+])
+
+# You can add a `try`/`catch` here to catch any errors pytorch gives you without needing to stress
+# about subprocess issues!
+distrib_run.run(args)
+```
+
+
+
+
