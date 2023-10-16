@@ -32,6 +32,7 @@
   {
     "listing": "/til/index.html",
     "items": [
+      "/til/argparse.html",
       "/til/free_memory.html",
       "/til/sub_cli.html",
       "/til/wraps.html",
