@@ -1,0 +1,123 @@
+---
+title: "Building my own mini-home server"
+date: "2024-01-24"
+categories: [tech]
+---
+
+## Why do this?
+
+Recently I was finding a need to have some form of a home server. Specifically:
+
+1. I was running Home Assisant (my home automation utility) on a heavy-draw GPU laptop that was raking up my electric bill and not very efficient
+2. I wanted to enable Wake-on-LAN + remote access to my GPU machines when I was away, or wanting to be especially lazy and not go into the next room to wake them up.
+
+Given this, I took it as a challenge to try and find the most minimal and cost effective way of doing so.
+
+## What you will learn
+
+This article will teach you how I:
+1. Built this system and setup the hardware (rather difficult if you don't have any good set of directions telling you how to do this)
+2. How to setup the software (Wake-on-LAN solution)
+
+## The Raspberry-Pi
+
+I decided to use a raspberry-pi as I know they are low power draw and can be reliable.
+
+All-in-all the build cost me $147.10, parts broken down as follows:
+
+* 1x Samsung EVO Micro SD 64gb card: $11.99
+* 1x Timetec 256gb SSD M.2 SSD: $18.99 **NOTE: Must be *non*-NVME!**
+* 1x Argon ONE M.2 Aluminum case: $47.00
+* 1x Raspberry Pi 4 Model B 4 GB: $63.12
+* 1x USB-C cord: 6
+
+There's one or two areas in here that may confuse you. Zach, why an SSD? And if you have an SSD, why do you still need a micro-SD?
+
+I wanted an SSD for faster response times for home-assistant, as no one wants to wait more than a few ms for some lights to turn on when you click a button on your phone. 
+
+And the SD card is needed as eventually the end operating system on the Pi is going to run Ubuntu-server. *Getting* there however wound up being rather... complicated.
+
+### Flashing the OS
+
+First thing I recommend doing is using the Raspberry Pi Imager (on your main PC) to flash Pi *Desktop OS* onto the SD card. 
+
+This is the best way I found to get to the next step of actually installing Ubuntu-Server onto the SSD as a boot drive, as Pi Imager **cannot recognize SSD cards plugged in via USB** to use as imaging drives
+
+Next, after installing the SSD into the case and inserting the pi (tip: don't screw in all the screws yet), from inside Pi OS run the Imager **again**. Here we're going to select the M.2 drive -> Other Platforms -> Ubuntu Server.
+
+After this has flashed, you can shutdown the Pi and fully remove the SD card and just have the SSD inserted. 
+
+Congrats! You've now hit one of the trickest parts that 10+ guides found much more complicated solutions to do, you have a Pi running Ubuntu server off just an M.2 drive!
+
+You can end reading this article here if needed, that alone should help quite a number of people. The next parts are a bit more need-specific and involve setting up Wake-On-LAN and installing Home Assistant.
+
+## Wake-on-LAN
+
+Wake-on-LAN and Wireless-Wake-on-LAN are two forms of waking up a computer remotely when it's asleep. I wanted to do this to save on electricity, since it's often I just want to run a small job on my local machines. 
+
+This section is broken down into two parts:
+
+1. How to setup a linux computer to use Wake-on-LAN
+2. How to then do this remotely anywhere in the world
+
+### Setting up Wake-on-LAN
+
+First thing that we have to do is find your local MAC address for the computer you want to run remotely. After using a variety of tools, I wound up using the `arp` tool:
+
+```bash
+arp -a MY.LOCAL.IP.ADDRESS
+```
+> Tip: `MY.LOCAL.IP.ADDRESS` should be the machine you want to *wake up*
+
+What we're aiming for is the MAC address (a 12 hexidecimal combination) that is unique to the particular machine. 
+
+After you have found this you need to know what the receiving machine is using for LAN hardware (it's device name). I used the `ip route get` command to do so:
+
+```bash
+ip route get MY.LOCAL.IP.ADDRESS
+```
+This should then get you the name of the hardware used. In my case this wound up being `wlan0` (and may be the case for many of you). I originally had a unique device name like `enp15s0`, but I found that wasn't what was really handling it and `wlan0` was the true name for it. Confusing, right!
+
+### Ensuring Wake-on-LAN is supported
+
+The next step is making sure your motherboard on the machine you want to boot actually allows Wake-on-LAN. This should be a bios setting (down in the power capabilities on how the computer can actually turn on). From there I also had to enable some settings in the bios. This was the command I had to run (note that this is not using `wlan0` but the *other* hardware name):
+
+```bash
+sudo nmcli connection modify enp15s0 802-3-ethernet.wake-on-lan magic
+```
+
+This will ensure that (until the next reboot) you can wake the machine up from sleep with a magic packet (what powers wake-on-lan).
+
+### Actually performing the waking
+
+To actually do the waking, in the Pi I simply run the following:
+
+```bash
+sudo etherwake {DESTINATION_MAC_ADDRESS} -i wlan0
+```
+
+Now, within a few moments, your computer will be SSH'able!
+
+To then make it go back to sleep when done, I pair it with:
+
+```bash
+sudo systemctl suspend
+```
+
+### Accessing it from anywhere
+
+The last step I desired was being able to access these machines from anywhere in the world. This involved a piece of free software called [tailscale](https://tailscale.com/). 
+
+Essentially this added a new layer of security by exposing my machines on a public IP that needed OAuth to sign-in and access. I can then (by machine) choose who can actually login and access each. 
+
+After configuring tailscale on the pi and other machines, I simply ran `tailscale up`, logged in, and now from anywhere in the world I can boot up my system!
+
+In practice this looks like follows:
+
+SSH into pi -> Send magic packet -> Exit -> SSH into newly booted machine -> Send machine to sleep afterwards.
+
+I found it takes less than a second for the magic packet to wake the machine, so there isn't a heavy delay of waiting ages for it boot (since we're just waking from a suspended instance!)
+
+## Conclusion
+
+I hope this has helped you some, I tried to condence down all the steps and research I did here into a quick and easy-to-follow guide but allowed for you to do some more research in each area as needed. Thanks for reading!
