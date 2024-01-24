@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2024-01-24">
 
-<title>Zach Mueller - Today I Learned</title>
+<title>Zach Mueller - Building my own mini-home server</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +65,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -61,35 +94,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
 
 <script type="text/javascript">
@@ -100,8 +104,6 @@ gtag('js', new Date());
 gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -132,7 +134,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
  <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../til/index.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="../til/index.html" rel="" target="">
  <span class="menu-text">Today I Learned</span></a>
   </li>  
 </ul>
@@ -158,7 +160,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Today I Learned</li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Building my own mini-home server</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -177,14 +179,23 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Today I Learned</h1>
-</div>
+<h1 class="title">Building my own mini-home server</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">tech</div>
+  </div>
+  </div>
 
 
 
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 24, 2024</p>
+    </div>
+  </div>
   
     
   </div>
@@ -192,167 +203,95 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 </header>
 
+<section id="why-do-this" class="level2">
+<h2 class="anchored" data-anchor-id="why-do-this">Why do this?</h2>
+<p>Recently I was finding a need to have some form of a home server. Specifically:</p>
+<ol type="1">
+<li>I was running Home Assisant (my home automation utility) on a heavy-draw GPU laptop that was raking up my electric bill and not very efficient</li>
+<li>I wanted to enable Wake-on-LAN + remote access to my GPU machines when I was away, or wanting to be especially lazy and not go into the next room to wake them up.</li>
+</ol>
+<p>Given this, I took it as a challenge to try and find the most minimal and cost effective way of doing so.</p>
+</section>
+<section id="what-you-will-learn" class="level2">
+<h2 class="anchored" data-anchor-id="what-you-will-learn">What you will learn</h2>
+<p>This article will teach you how I: 1. Built this system and setup the hardware (rather difficult if you don’t have any good set of directions telling you how to do this) 2. How to setup the software (Wake-on-LAN solution)</p>
+</section>
+<section id="the-raspberry-pi" class="level2">
+<h2 class="anchored" data-anchor-id="the-raspberry-pi">The Raspberry-Pi</h2>
+<p>I decided to use a raspberry-pi as I know they are low power draw and can be reliable.</p>
+<p>All-in-all the build cost me $147.10, parts broken down as follows:</p>
+<ul>
+<li>1x Samsung EVO Micro SD 64gb card: $11.99</li>
+<li>1x Timetec 256gb SSD M.2 SSD: $18.99 <strong>NOTE: Must be <em>non</em>-NVME!</strong></li>
+<li>1x Argon ONE M.2 Aluminum case: $47.00</li>
+<li>1x Raspberry Pi 4 Model B 4 GB: $63.12</li>
+<li>1x USB-C cord: 6</li>
+</ul>
+<p>There’s one or two areas in here that may confuse you. Zach, why an SSD? And if you have an SSD, why do you still need a micro-SD?</p>
+<p>I wanted an SSD for faster response times for home-assistant, as no one wants to wait more than a few ms for some lights to turn on when you click a button on your phone.</p>
+<p>And the SD card is needed as eventually the end operating system on the Pi is going to run Ubuntu-server. <em>Getting</em> there however wound up being rather… complicated.</p>
+<section id="flashing-the-os" class="level3">
+<h3 class="anchored" data-anchor-id="flashing-the-os">Flashing the OS</h3>
+<p>First thing I recommend doing is using the Raspberry Pi Imager (on your main PC) to flash Pi <em>Desktop OS</em> onto the SD card.</p>
+<p>This is the best way I found to get to the next step of actually installing Ubuntu-Server onto the SSD as a boot drive, as Pi Imager <strong>cannot recognize SSD cards plugged in via USB</strong> to use as imaging drives</p>
+<p>Next, after installing the SSD into the case and inserting the pi (tip: don’t screw in all the screws yet), from inside Pi OS run the Imager <strong>again</strong>. Here we’re going to select the M.2 drive -&gt; Other Platforms -&gt; Ubuntu Server.</p>
+<p>After this has flashed, you can shutdown the Pi and fully remove the SD card and just have the SSD inserted.</p>
+<p>Congrats! You’ve now hit one of the trickest parts that 10+ guides found much more complicated solutions to do, you have a Pi running Ubuntu server off just an M.2 drive!</p>
+<p>You can end reading this article here if needed, that alone should help quite a number of people. The next parts are a bit more need-specific and involve setting up Wake-On-LAN and installing Home Assistant.</p>
+</section>
+</section>
+<section id="wake-on-lan" class="level2">
+<h2 class="anchored" data-anchor-id="wake-on-lan">Wake-on-LAN</h2>
+<p>Wake-on-LAN and Wireless-Wake-on-LAN are two forms of waking up a computer remotely when it’s asleep. I wanted to do this to save on electricity, since it’s often I just want to run a small job on my local machines.</p>
+<p>This section is broken down into two parts:</p>
+<ol type="1">
+<li>How to setup a linux computer to use Wake-on-LAN</li>
+<li>How to then do this remotely anywhere in the world</li>
+</ol>
+<section id="setting-up-wake-on-lan" class="level3">
+<h3 class="anchored" data-anchor-id="setting-up-wake-on-lan">Setting up Wake-on-LAN</h3>
+<p>First thing that we have to do is find your local MAC address for the computer you want to run remotely. After using a variety of tools, I wound up using the <code>arp</code> tool:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">arp</span> <span class="at">-a</span> MY.LOCAL.IP.ADDRESS</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>Tip: <code>MY.LOCAL.IP.ADDRESS</code> should be the machine you want to <em>wake up</em></p>
+</blockquote>
+<p>What we’re aiming for is the MAC address (a 12 hexidecimal combination) that is unique to the particular machine.</p>
+<p>After you have found this you need to know what the receiving machine is using for LAN hardware (it’s device name). I used the <code>ip route get</code> command to do so:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ip</span> route get MY.LOCAL.IP.ADDRESS</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This should then get you the name of the hardware used. In my case this wound up being <code>wlan0</code> (and may be the case for many of you). I originally had a unique device name like <code>enp15s0</code>, but I found that wasn’t what was really handling it and <code>wlan0</code> was the true name for it. Confusing, right!</p>
+</section>
+<section id="ensuring-wake-on-lan-is-supported" class="level3">
+<h3 class="anchored" data-anchor-id="ensuring-wake-on-lan-is-supported">Ensuring Wake-on-LAN is supported</h3>
+<p>The next step is making sure your motherboard on the machine you want to boot actually allows Wake-on-LAN. This should be a bios setting (down in the power capabilities on how the computer can actually turn on). From there I also had to enable some settings in the bios. This was the command I had to run (note that this is not using <code>wlan0</code> but the <em>other</em> hardware name):</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> nmcli connection modify enp15s0 802-3-ethernet.wake-on-lan magic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This will ensure that (until the next reboot) you can wake the machine up from sleep with a magic packet (what powers wake-on-lan).</p>
+</section>
+<section id="actually-performing-the-waking" class="level3">
+<h3 class="anchored" data-anchor-id="actually-performing-the-waking">Actually performing the waking</h3>
+<p>To actually do the waking, in the Pi I simply run the following:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> etherwake {DESTINATION_MAC_ADDRESS} <span class="at">-i</span> wlan0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now, within a few moments, your computer will be SSH’able!</p>
+<p>To then make it go back to sleep when done, I pair it with:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl suspend</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="accessing-it-from-anywhere" class="level3">
+<h3 class="anchored" data-anchor-id="accessing-it-from-anywhere">Accessing it from anywhere</h3>
+<p>The last step I desired was being able to access these machines from anywhere in the world. This involved a piece of free software called <a href="https://tailscale.com/">tailscale</a>.</p>
+<p>Essentially this added a new layer of security by exposing my machines on a public IP that needed OAuth to sign-in and access. I can then (by machine) choose who can actually login and access each.</p>
+<p>After configuring tailscale on the pi and other machines, I simply ran <code>tailscale up</code>, logged in, and now from anywhere in the world I can boot up my system!</p>
+<p>In practice this looks like follows:</p>
+<p>SSH into pi -&gt; Send magic packet -&gt; Exit -&gt; SSH into newly booted machine -&gt; Send machine to sleep afterwards.</p>
+<p>I found it takes less than a second for the magic packet to wake the machine, so there isn’t a heavy delay of waiting ages for it boot (since we’re just waking from a suspended instance!)</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>I hope this has helped you some, I tried to condence down all the steps and research I did here into a quick and easy-to-follow guide but allowed for you to do some more research in each area as needed. Thanks for reading!</p>
 
 
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="python" data-listing-date-sort="1697407200000" data-listing-file-modified-sort="1697465481207" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
-<div class="thumbnail">
-<p><a href="../til/argparse.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
-</div>
-<div class="body">
-<a href="../til/argparse.html">
-<h3 class="no-anchor listing-title">
-Calling <code>argparse</code> without subprocess
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>How to use <code>argparse</code> without the CLI</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/argparse.html">
-<div class="listing-date">
-Oct 16, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="pytorch" data-listing-date-sort="1696370400000" data-listing-file-modified-sort="1697463802087" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4">
-<div class="thumbnail">
-<p><a href="../til/free_memory.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
-</div>
-<div class="body">
-<a href="../til/free_memory.html">
-<h3 class="no-anchor listing-title">
-Memory Management in PyTorch
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>How to free memory in PyTorch “fully”</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/free_memory.html">
-<div class="listing-date">
-Oct 4, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="python,cli" data-listing-date-sort="1668985200000" data-listing-file-modified-sort="1697463802237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8">
-<div class="thumbnail">
-<p><a href="../til/sub_cli.html"> <img src="../til/media/sub_cli/01.png" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="../til/sub_cli.html">
-<h3 class="no-anchor listing-title">
-Creating Nested CLI Commands with <code>argparse</code>
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>How to create a command that goes <code>a b c</code></p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/sub_cli.html">
-<div class="listing-date">
-Nov 21, 2022
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="python" data-listing-date-sort="1668898800000" data-listing-file-modified-sort="1697463802237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
-<div class="thumbnail">
-<p><a href="../til/wraps.html"> <p class="card-img-top"><img src="media/wraps/01.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../til/wraps.html">
-<h3 class="no-anchor listing-title">
-Undoing a wrapped function
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>How to pickle an object that may have been wrapped</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/wraps.html">
-<div class="listing-date">
-Nov 20, 2022
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="python,testing" data-listing-date-sort="1668812400000" data-listing-file-modified-sort="1697463802237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4">
-<div class="thumbnail">
-<p><a href="../til/testing.html"> <img src="../til/media/testing/01.png" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="../til/testing.html">
-<h3 class="no-anchor listing-title">
-Mocking internals of a Python Script
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>How to test against a Python script when you need to change how <code>__main__</code> behaves</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/testing.html">
-<div class="listing-date">
-Nov 19, 2022
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="general" data-listing-date-sort="1668726000000" data-listing-file-modified-sort="1697463802087" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="thumbnail">
-<p><a href="../til/code_review.html"> <p class="card-img-top"><img src="media/code_review/01.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../til/code_review.html">
-<h3 class="no-anchor listing-title">
-The Code Review Pyramid
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>What to focus on during your code reviews</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/code_review.html">
-<div class="listing-date">
-Nov 18, 2022
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

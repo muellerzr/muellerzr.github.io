@@ -1,7 +1,19 @@
 [
   {
+    "listing": "/til/index.html",
+    "items": [
+      "/til/argparse.html",
+      "/til/free_memory.html",
+      "/til/sub_cli.html",
+      "/til/wraps.html",
+      "/til/testing.html",
+      "/til/code_review.html"
+    ]
+  },
+  {
     "listing": "/blog/index.html",
     "items": [
+      "/blog/diy-server.html",
       "/blog/nbquarto.html",
       "/blog/gradient_accumulation.html",
       "/blog/happiness.html",
@@ -27,17 +39,6 @@
       "/blog/Suspecto.html",
       "/blog/Week-1.html",
       "/blog/Fastai-Curriculum.html"
-    ]
-  },
-  {
-    "listing": "/til/index.html",
-    "items": [
-      "/til/argparse.html",
-      "/til/free_memory.html",
-      "/til/sub_cli.html",
-      "/til/wraps.html",
-      "/til/testing.html",
-      "/til/code_review.html"
     ]
   }
 ]
