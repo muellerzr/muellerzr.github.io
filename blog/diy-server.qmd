@@ -9,6 +9,7 @@ categories: [tech]
 Recently I was finding a need to have some form of a home server. Specifically:
 
 1. I was running Home Assisant (my home automation utility) on a heavy-draw GPU laptop that was raking up my electric bill and not very efficient
+
 2. I wanted to enable Wake-on-LAN + remote access to my GPU machines when I was away, or wanting to be especially lazy and not go into the next room to wake them up.
 
 Given this, I took it as a challenge to try and find the most minimal and cost effective way of doing so.
@@ -16,7 +17,9 @@ Given this, I took it as a challenge to try and find the most minimal and cost e
 ## What you will learn
 
 This article will teach you how I:
+
 1. Built this system and setup the hardware (rather difficult if you don't have any good set of directions telling you how to do this)
+   
 2. How to setup the software (Wake-on-LAN solution)
 
 ## The Raspberry-Pi
