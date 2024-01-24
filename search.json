@@ -263,7 +263,7 @@
     "href": "blog/diy-server.html#what-you-will-learn",
     "title": "Building my own mini-home server",
     "section": "What you will learn",
-    "text": "What you will learn\nThis article will teach you how I: 1. Built this system and setup the hardware (rather difficult if you don’t have any good set of directions telling you how to do this) 2. How to setup the software (Wake-on-LAN solution)"
+    "text": "What you will learn\nThis article will teach you how I:\n\nBuilt this system and setup the hardware (rather difficult if you don’t have any good set of directions telling you how to do this)\nHow to setup the software (Wake-on-LAN solution)"
   },
   {
     "objectID": "blog/diy-server.html#the-raspberry-pi",
