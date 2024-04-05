@@ -10,7 +10,7 @@ date: 2024-04-05
 Before we get into why *Docker* and the Hub matters, let's think about what the community relies on in terms of what we would call a "good release."
 
 ::: {.callout-important}
-    I'm defining a "good release" in general, I am not going into the nouonce of what is "open source", "open weights", etc.
+I'm defining a "good release" in general, I am not going into the nouonce of what is "open source", "open weights", etc.
 :::
 
 My own personal view on this is one would expect the following criteria for a *phenominal* release:
@@ -89,8 +89,8 @@ Your image is located based on the following format:
 * `{USERNAME}-{REPO_NAME}:latest`
 
 ::: {.callout-important}
-    Docker images are tagged with `latest` and by the commit-sha you pushed the updated `Dockerfile` to.
-    It currently doesn't support custom `tags`, as it will only be built from the `main` branch.
+Docker images are tagged with `latest` and by the commit-sha you pushed the updated `Dockerfile` to.
+It currently doesn't support custom `tags`, as it will only be built from the `main` branch.
 :::
 
 So here, we can pull down the newly created image by running:
@@ -100,7 +100,7 @@ docker pull registry.hf.space/muellerzr-accelerate-image:latest
 ```
 
 ::: {.callout-tip}
-    If your Space is private, users will need to input their hf credentials
+If your Space is private, users will need to input their hf credentials
 :::
 
 And that's it! You can now push, host, and pull Docker *images* themselves on the Hub, allowing for an even further ability to open-source research results by including the full package in one centralized Hugging Face [Collection](https://huggingface.co/collections/):
