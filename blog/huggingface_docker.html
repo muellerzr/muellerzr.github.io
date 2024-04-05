@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2024-04-05">
+<meta name="description" content="How to use the Hugging Face Hub as a Docker Registry, and why it matters">
 
-<title>Zach Mueller - Today I Learned</title>
+<title>Zach Mueller - Levering Hugging Face for Research, Docker is the Key</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +66,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -61,35 +95,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
 
 <script type="text/javascript">
@@ -100,8 +105,6 @@ gtag('js', new Date());
 gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -132,7 +135,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
  <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../til/index.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="../til/index.html" rel="" target="">
  <span class="menu-text">Today I Learned</span></a>
   </li>  
 </ul>
@@ -158,7 +161,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Today I Learned</li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Levering Hugging Face for Research, Docker is the Key</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -177,14 +180,30 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Today I Learned</h1>
-</div>
+<h1 class="title">Levering Hugging Face for Research, Docker is the Key</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">pytorch</div>
+    <div class="quarto-category">docker</div>
+    <div class="quarto-category">huggingface</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    How to use the Hugging Face Hub as a Docker Registry, and why it matters
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 5, 2024</p>
+    </div>
+  </div>
   
     
   </div>
@@ -192,167 +211,121 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 </header>
 
+<section id="what-makes-a-good-hugging-face-project" class="level2">
+<h2 class="anchored" data-anchor-id="what-makes-a-good-hugging-face-project">What makes a good Hugging Face Project?</h2>
+<p>Before we get into why <em>Docker</em> and the Hub matters, let’s think about what the community relies on in terms of what we would call a “good release.”</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<pre><code>I'm defining a "good release" in general, I am not going into the nouonce of what is "open source", "open weights", etc.</code></pre>
+</div>
+</div>
+<p>My own personal view on this is one would expect the following criteria for a <em>phenominal</em> release:</p>
+<ol type="1">
+<li>The model weights (be it whatever licence it needs)</li>
+<li>The dataset it was trained on</li>
+<li>A demo utilizing the model</li>
+<li><strong>A docker image of the training environment</strong></li>
+</ol>
+<p>The first three are being done in abundance now, and are centralized on the Hugging Face Hub itself.</p>
+<p>Case in point, the BLOOM(z) models and datasets, as seen <a href="https://huggingface.co/bigscience/bloomz">here</a>.</p>
+<p>But what about 4?</p>
+<p>A tweet from the other day said it best:</p>
+<p><img src="media/blog/huggingface_docker/01.png" class="img-fluid"></p>
+<p>One of the biggest headaches for users after looking at a chunk of code is to actually <em>run the damn thing</em> which can always lead to a <strong>slew</strong> of dependency issues, especially as codebases get outdated.</p>
+<p>The solution should be Docker, but how can we keep aligned with “one central location?”</p>
+</section>
+<section id="hugging-face-x-docker" class="level2">
+<h2 class="anchored" data-anchor-id="hugging-face-x-docker">Hugging Face x Docker</h2>
+<p>Hugging Face Spaces has supported the use of Dockerfile’s for a while and builds them on their own registry, see <a href="https://huggingface.co/docs/hub/en/spaces-sdks-docker">here</a>.</p>
+<p>However one key caviat that wasn’t working (until right now) is you couldn’t just build a Docker space without any app.</p>
+<p>Or another way to put this, using the Hub as an <em>alternative</em> to Docker Hub.</p>
+<p>As of today though, this is completely possible!</p>
+<p>Let’s walk through what a typical workflow might look like:</p>
+<ol type="1">
+<li>The dataset you’re training on has been uploaded to the HF Hub</li>
+<li>You train a model, and use <code>push_to_hub()</code> to upload the model</li>
+<li>Run <code>pip freeze</code> to generate a <code>requirements.txt</code>, and check <code>python -V</code> to grab your python version.</li>
+<li>(Optional, but good): Check your CUDA drivers and report those as well</li>
+<li>Shove all of this into a single Dockerfile and push that to the Hub, perminantly making your work 100% reproducable to the open-source community!</li>
+</ol>
+</section>
+<section id="how-to-create-a-docker-space" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-create-a-docker-space">How to create a “Docker Space”?</h2>
+<p>Or better put as, how to add a docker image to the registry HF hosts? (We’ll see how to pull it down later)</p>
+<p>The steps to follow are relatively straightforward.</p>
+<ol type="1">
+<li>From the <a href="https://huggingface.co/new-space">huggingface.co webpage</a>, create a new space.</li>
+<li>Specify the right settings to create a <em>blank</em> docker space <img src="media/blog/huggingface_docker/02.png" class="img-fluid"></li>
+<li>Clone it down locally using <code>git clone {MY_SPACE_URL}</code></li>
+<li>Add a <code>Dockerfile</code> to cloned repo, and push it back up.</li>
+</ol>
+<p>For my example here, I’m going to use the basic <code>accelerate-cpu</code> image and just build on it slightly:</p>
+<pre class="docker"><code>FROM huggingface/accelerate:cpu-nightly
+
+RUN echo "Hello world!"</code></pre>
+<p>After pushing it to the Hub, you should see your space being “built”. This doesn’t actually mean an app will run, but instead Hugging Face is building your Docker image and pushing it to their registry!</p>
+</section>
+<section id="how-do-i-pull-down-my-image-and-run-it" class="level2">
+<h2 class="anchored" data-anchor-id="how-do-i-pull-down-my-image-and-run-it">How do I pull down my image and run it?</h2>
+<p>Finally we’re at the good stuff. How do I grab my newly-created Docker image?</p>
+<p>What’s the hosting URL like?</p>
+<p>What tags can I have?</p>
+<p>Let’s talk about that.</p>
+<p>To pull down the image, the registry is <code>registry.hf.space</code>.</p>
+<p>Your image is located based on the following format: * <code>{USERNAME}-{REPO_NAME}:latest</code></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<pre><code>Docker images are tagged with `latest` and by the commit-sha you pushed the updated `Dockerfile` to.
+It currently doesn't support custom `tags`, as it will only be built from the `main` branch.</code></pre>
+</div>
+</div>
+<p>So here, we can pull down the newly created image by running:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull registry.hf.space/muellerzr-accelerate-image:latest</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<pre><code>If your Space is private, users will need to input their hf credentials</code></pre>
+</div>
+</div>
+<p>And that’s it! You can now push, host, and pull Docker <em>images</em> themselves on the Hub, allowing for an even further ability to open-source research results by including the full package in one centralized Hugging Face <a href="https://huggingface.co/collections/">Collection</a>:</p>
+<ul>
+<li>The model you trained</li>
+<li>The dataset you trained on</li>
+<li>A demo of the model</li>
+<li>A Dockerfile to allow for quick and easy local access to how you trained the model and the surrounding environment with it.</li>
+</ul>
+</section>
+<section id="final-thoughts" class="level2">
+<h2 class="anchored" data-anchor-id="final-thoughts">Final Thoughts</h2>
+<p>I truly hope that more teams and individuals start utilizing this side of the Hub more. Infra is never “fancy” or “pretty”, nor is it as buzz-sounding. But the community by-and-large will remember what models came packed with just the weights and a demo, and what ones came with not only this, but a fully containerized solution of the exact state they were doing everything in!</p>
 
 
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="python" data-listing-date-sort="1697428800000" data-listing-file-modified-sort="1712344267567" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
-<div class="thumbnail">
-<p><a href="../til/argparse.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
-</div>
-<div class="body">
-<a href="../til/argparse.html">
-<h3 class="no-anchor listing-title">
-Calling <code>argparse</code> without subprocess
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>How to use <code>argparse</code> without the CLI</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/argparse.html">
-<div class="listing-date">
-Oct 16, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="pytorch" data-listing-date-sort="1696392000000" data-listing-file-modified-sort="1697463802087" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4">
-<div class="thumbnail">
-<p><a href="../til/free_memory.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
-</div>
-<div class="body">
-<a href="../til/free_memory.html">
-<h3 class="no-anchor listing-title">
-Memory Management in PyTorch
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>How to free memory in PyTorch “fully”</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/free_memory.html">
-<div class="listing-date">
-Oct 4, 2023
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="python,cli" data-listing-date-sort="1669006800000" data-listing-file-modified-sort="1697463802237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8">
-<div class="thumbnail">
-<p><a href="../til/sub_cli.html"> <img src="../til/media/sub_cli/01.png" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="../til/sub_cli.html">
-<h3 class="no-anchor listing-title">
-Creating Nested CLI Commands with <code>argparse</code>
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>How to create a command that goes <code>a b c</code></p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/sub_cli.html">
-<div class="listing-date">
-Nov 21, 2022
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="python" data-listing-date-sort="1668920400000" data-listing-file-modified-sort="1697463802237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
-<div class="thumbnail">
-<p><a href="../til/wraps.html"> <p class="card-img-top"><img src="media/wraps/01.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../til/wraps.html">
-<h3 class="no-anchor listing-title">
-Undoing a wrapped function
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>How to pickle an object that may have been wrapped</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/wraps.html">
-<div class="listing-date">
-Nov 20, 2022
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="python,testing" data-listing-date-sort="1668834000000" data-listing-file-modified-sort="1697463802237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4">
-<div class="thumbnail">
-<p><a href="../til/testing.html"> <img src="../til/media/testing/01.png" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="../til/testing.html">
-<h3 class="no-anchor listing-title">
-Mocking internals of a Python Script
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>How to test against a Python script when you need to change how <code>__main__</code> behaves</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/testing.html">
-<div class="listing-date">
-Nov 19, 2022
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="general" data-listing-date-sort="1668747600000" data-listing-file-modified-sort="1697463802087" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="thumbnail">
-<p><a href="../til/code_review.html"> <p class="card-img-top"><img src="media/code_review/01.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../til/code_review.html">
-<h3 class="no-anchor listing-title">
-The Code Review Pyramid
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<p>What to focus on during your code reviews</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="../til/code_review.html">
-<div class="listing-date">
-Nov 18, 2022
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
