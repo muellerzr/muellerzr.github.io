@@ -1,0 +1,115 @@
+---
+title: Levering Hugging Face for Research, Docker is the Key
+description: How to use the Hugging Face Hub as a Docker Registry, and why it matters
+categories: [pytorch, docker, huggingface]
+date: 2024-04-05
+---
+
+## What makes a good Hugging Face Project?
+
+Before we get into why *Docker* and the Hub matters, let's think about what the community relies on in terms of what we would call a "good release."
+
+::: {.callout-important}
+    I'm defining a "good release" in general, I am not going into the nouonce of what is "open source", "open weights", etc.
+:::
+
+My own personal view on this is one would expect the following criteria for a *phenominal* release:
+
+1. The model weights (be it whatever licence it needs)
+2. The dataset it was trained on
+3. A demo utilizing the model
+4. **A docker image of the training environment**
+
+The first three are being done in abundance now, and are centralized on the Hugging Face Hub itself.
+
+Case in point, the BLOOM(z) models and datasets, as seen [here](https://huggingface.co/bigscience/bloomz).
+
+But what about 4? 
+
+A tweet from the other day said it best:
+
+![](media/blog/huggingface_docker/01.png)
+
+One of the biggest headaches for users after looking at a chunk of code is to actually *run the damn thing* which can always lead to a **slew** of dependency issues, especially as codebases get outdated.
+
+The solution should be Docker, but how can we keep aligned with "one central location?"
+
+## Hugging Face x Docker
+
+Hugging Face Spaces has supported the use of Dockerfile's for a while and builds them on their own registry, see [here](https://huggingface.co/docs/hub/en/spaces-sdks-docker).
+
+However one key caviat that wasn't working (until right now) is you couldn't just build a Docker space without any app.
+
+Or another way to put this, using the Hub as an *alternative* to Docker Hub. 
+
+As of today though, this is completely possible!
+
+Let's walk through what a typical workflow might look like:
+
+1. The dataset you're training on has been uploaded to the HF Hub
+2. You train a model, and use `push_to_hub()` to upload the model
+3. Run `pip freeze` to generate a `requirements.txt`, and check `python -V` to grab your python version.
+4. (Optional, but good): Check your CUDA drivers and report those as well
+5. Shove all of this into a single Dockerfile and push that to the Hub, perminantly making your work 100% reproducable to the open-source community!
+
+## How to create a "Docker Space"?
+
+Or better put as, how to add a docker image to the registry HF hosts? (We'll see how to pull it down later)
+
+The steps to follow are relatively straightforward.
+
+1. From the [huggingface.co webpage](https://huggingface.co/new-space), create a new space. 
+2. Specify the right settings to create a *blank* docker space ![](media/blog/huggingface_docker/02.png)
+3. Clone it down locally using `git clone {MY_SPACE_URL}`
+4. Add a `Dockerfile` to cloned repo, and push it back up.
+
+For my example here, I'm going to use the basic `accelerate-cpu` image and just build on it slightly:
+
+```docker
+FROM huggingface/accelerate:cpu-nightly
+
+RUN echo "Hello world!"
+```
+
+After pushing it to the Hub, you should see your space being "built". This doesn't actually mean an app will run, but instead Hugging Face is building your Docker image and pushing it to their registry!
+
+## How do I pull down my image and run it?
+
+Finally we're at the good stuff. How do I grab my newly-created Docker image?
+
+What's the hosting URL like?
+
+What tags can I have?
+
+Let's talk about that.
+
+To pull down the image, the registry is `registry.hf.space`. 
+
+Your image is located based on the following format:
+* `{USERNAME}-{REPO_NAME}:latest`
+
+::: {.callout-important}
+    Docker images are tagged with `latest` and by the commit-sha you pushed the updated `Dockerfile` to.
+    It currently doesn't support custom `tags`, as it will only be built from the `main` branch.
+:::
+
+So here, we can pull down the newly created image by running:
+
+```bash
+docker pull registry.hf.space/muellerzr-accelerate-image:latest
+```
+
+::: {.callout-tip}
+    If your Space is private, users will need to input their hf credentials
+:::
+
+And that's it! You can now push, host, and pull Docker *images* themselves on the Hub, allowing for an even further ability to open-source research results by including the full package in one centralized Hugging Face [Collection](https://huggingface.co/collections/):
+
+* The model you trained
+* The dataset you trained on
+* A demo of the model
+* A Dockerfile to allow for quick and easy local access to how you trained the model and the surrounding environment with it.
+
+## Final Thoughts
+
+I truly hope that more teams and individuals start utilizing this side of the Hub more. Infra is never "fancy" or "pretty", nor is it as buzz-sounding. But the community by-and-large will remember what models came packed with just the weights and a demo, and what ones came with not only this, but a fully containerized solution of the exact state they were doing everything in!
