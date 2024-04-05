@@ -224,7 +224,7 @@ Important
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<pre><code>I'm defining a "good release" in general, I am not going into the nouonce of what is "open source", "open weights", etc.</code></pre>
+<p>I’m defining a “good release” in general, I am not going into the nouonce of what is “open source”, “open weights”, etc.</p>
 </div>
 </div>
 <p>My own personal view on this is one would expect the following criteria for a <em>phenominal</em> release:</p>
@@ -291,12 +291,11 @@ Important
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<pre><code>Docker images are tagged with `latest` and by the commit-sha you pushed the updated `Dockerfile` to.
-It currently doesn't support custom `tags`, as it will only be built from the `main` branch.</code></pre>
+<p>Docker images are tagged with <code>latest</code> and by the commit-sha you pushed the updated <code>Dockerfile</code> to. It currently doesn’t support custom <code>tags</code>, as it will only be built from the <code>main</code> branch.</p>
 </div>
 </div>
 <p>So here, we can pull down the newly created image by running:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull registry.hf.space/muellerzr-accelerate-image:latest</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull registry.hf.space/muellerzr-accelerate-image:latest</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -307,7 +306,7 @@ Tip
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<pre><code>If your Space is private, users will need to input their hf credentials</code></pre>
+<p>If your Space is private, users will need to input their hf credentials</p>
 </div>
 </div>
 <p>And that’s it! You can now push, host, and pull Docker <em>images</em> themselves on the Hub, allowing for an even further ability to open-source research results by including the full package in one centralized Hugging Face <a href="https://huggingface.co/collections/">Collection</a>:</p>
