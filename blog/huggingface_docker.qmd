@@ -1,5 +1,5 @@
 ---
-title: Levering Hugging Face for Research, Docker is the Key
+title: Leveraging Hugging Face for Research, Docker is the Key
 description: How to use the Hugging Face Hub as a Docker Registry, and why it matters
 categories: [pytorch, docker, huggingface]
 date: 2024-04-05
@@ -10,7 +10,7 @@ date: 2024-04-05
 Before we get into why *Docker* and the Hub matters, let's think about what the community relies on in terms of what we would call a "good release."
 
 ::: {.callout-important}
-I'm defining a "good release" in general, I am not going into the nouonce of what is "open source", "open weights", etc.
+I'm defining a "good release" in general, I am not going into the nuance of what is "open source", "open weights", etc.
 :::
 
 My own personal view on this is one would expect the following criteria for a *phenominal* release:
@@ -38,7 +38,7 @@ The solution should be Docker, but how can we keep aligned with "one central loc
 
 Hugging Face Spaces has supported the use of Dockerfile's for a while and builds them on their own registry, see [here](https://huggingface.co/docs/hub/en/spaces-sdks-docker).
 
-However one key caviat that wasn't working (until right now) is you couldn't just build a Docker space without any app.
+However one key caveat that wasn't working (until right now) is you couldn't just build a Docker space without any app.
 
 Or another way to put this, using the Hub as an *alternative* to Docker Hub. 
 
@@ -50,7 +50,7 @@ Let's walk through what a typical workflow might look like:
 2. You train a model, and use `push_to_hub()` to upload the model
 3. Run `pip freeze` to generate a `requirements.txt`, and check `python -V` to grab your python version.
 4. (Optional, but good): Check your CUDA drivers and report those as well
-5. Shove all of this into a single Dockerfile and push that to the Hub, perminantly making your work 100% reproducable to the open-source community!
+5. Shove all of this into a single Dockerfile and push that to the Hub, permanently making your work 100% reproducable to the open-source community!
 
 ## How to create a "Docker Space"?
 
