@@ -9,7 +9,7 @@
 <meta name="dcterms.date" content="2024-04-05">
 <meta name="description" content="How to use the Hugging Face Hub as a Docker Registry, and why it matters">
 
-<title>Zach Mueller - Levering Hugging Face for Research, Docker is the Key</title>
+<title>Zach Mueller - Leveraging Hugging Face for Research, Docker is the Key</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -161,7 +161,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Levering Hugging Face for Research, Docker is the Key</li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Leveraging Hugging Face for Research, Docker is the Key</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -180,7 +180,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Levering Hugging Face for Research, Docker is the Key</h1>
+<h1 class="title">Leveraging Hugging Face for Research, Docker is the Key</h1>
   <div class="quarto-categories">
     <div class="quarto-category">pytorch</div>
     <div class="quarto-category">docker</div>
@@ -224,7 +224,7 @@ Important
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>I’m defining a “good release” in general, I am not going into the nouonce of what is “open source”, “open weights”, etc.</p>
+<p>I’m defining a “good release” in general, I am not going into the nuance of what is “open source”, “open weights”, etc.</p>
 </div>
 </div>
 <p>My own personal view on this is one would expect the following criteria for a <em>phenominal</em> release:</p>
@@ -245,7 +245,7 @@ Important
 <section id="hugging-face-x-docker" class="level2">
 <h2 class="anchored" data-anchor-id="hugging-face-x-docker">Hugging Face x Docker</h2>
 <p>Hugging Face Spaces has supported the use of Dockerfile’s for a while and builds them on their own registry, see <a href="https://huggingface.co/docs/hub/en/spaces-sdks-docker">here</a>.</p>
-<p>However one key caviat that wasn’t working (until right now) is you couldn’t just build a Docker space without any app.</p>
+<p>However one key caveat that wasn’t working (until right now) is you couldn’t just build a Docker space without any app.</p>
 <p>Or another way to put this, using the Hub as an <em>alternative</em> to Docker Hub.</p>
 <p>As of today though, this is completely possible!</p>
 <p>Let’s walk through what a typical workflow might look like:</p>
@@ -254,7 +254,7 @@ Important
 <li>You train a model, and use <code>push_to_hub()</code> to upload the model</li>
 <li>Run <code>pip freeze</code> to generate a <code>requirements.txt</code>, and check <code>python -V</code> to grab your python version.</li>
 <li>(Optional, but good): Check your CUDA drivers and report those as well</li>
-<li>Shove all of this into a single Dockerfile and push that to the Hub, perminantly making your work 100% reproducable to the open-source community!</li>
+<li>Shove all of this into a single Dockerfile and push that to the Hub, permanently making your work 100% reproducable to the open-source community!</li>
 </ol>
 </section>
 <section id="how-to-create-a-docker-space" class="level2">
