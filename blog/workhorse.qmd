@@ -87,7 +87,9 @@ Then, the weight of the 4090's broke one of the lower brackets, and I had to get
 Come to today, now we have a [custom driver](https://x.com/__tinygrad__/status/1778676746378002712) which added P2P support, 
 and my GPUs were looking hungry.
 
-The new motherboard of choice is a Asus ProArt X670E-Creator ATX motherboard. 
+The new motherboard of choice is a Asus ProArt X670E-Creator ATX motherboard:
+
+![Asus ProArt X670E-Creator](https://services.colamco.com/resources/v1/images/https%3a%7c%7ccontent.etilize.com%7cOriginal%7c1075799103.jpg/auto/600?cdv=1236)
 
 In my opinion, the ProArt boards are some of the best I've ever encountered. They're designed to give you an 8x/8x
 split on PCIE lanes when running two GPUs, come fashioned with helpful design choices such as:
