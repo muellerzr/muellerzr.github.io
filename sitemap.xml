@@ -1,147 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/DockerforDataScience.html</loc>
-    <lastmod>2024-04-06T10:52:09.842Z</lastmod>
+    <loc>https://muellerzr.github.io/index.html</loc>
+    <lastmod>2024-04-14T19:51:29.956Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/TabularNumpy.html</loc>
-    <lastmod>2024-04-06T10:52:08.172Z</lastmod>
+    <loc>https://muellerzr.github.io/til/wraps.html</loc>
+    <lastmod>2024-04-14T19:51:30.052Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/huggingface_docker.html</loc>
-    <lastmod>2024-04-06T10:52:06.832Z</lastmod>
+    <loc>https://muellerzr.github.io/til/free_memory.html</loc>
+    <lastmod>2024-04-14T19:51:29.956Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/HuggingFaceLesson1.html</loc>
-    <lastmod>2024-04-06T10:52:05.542Z</lastmod>
+    <loc>https://muellerzr.github.io/til/argparse.html</loc>
+    <lastmod>2024-04-14T19:51:29.956Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/HackingTheEnum.html</loc>
-    <lastmod>2024-04-06T10:52:04.452Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/diy-server.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/ClassConfusion.html</loc>
-    <lastmod>2024-04-06T10:52:03.142Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/beginner.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/CAMVID.html</loc>
-    <lastmod>2024-04-06T10:52:02.342Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/index.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/index.html</loc>
-    <lastmod>2024-04-06T10:52:00.312Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/gradient_accumulation.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/intermediate.html</loc>
-    <lastmod>2024-04-06T10:51:58.602Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/intermediate.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/beginner.html</loc>
-    <lastmod>2024-04-06T10:51:56.762Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/FeatureImportance-TestSet.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/gradient_accumulation.html</loc>
-    <lastmod>2024-04-06T10:51:55.462Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/CAMVID.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/A-New-Year.html</loc>
-    <lastmod>2024-04-06T10:51:54.282Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/dear-me-2022.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/Walkwithfastai.html</loc>
-    <lastmod>2024-04-06T10:51:53.432Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/Decorators.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/Week-1.html</loc>
-    <lastmod>2024-04-06T10:51:52.562Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/happiness.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/til/free_memory.html</loc>
-    <lastmod>2024-04-06T10:51:51.072Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/NLP-Capstone.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/til/wraps.html</loc>
-    <lastmod>2024-04-06T10:51:50.152Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/Walkwithfastai.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/til/sub_cli.html</loc>
-    <lastmod>2024-04-06T10:51:49.232Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/Suspecto.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/til/code_review.html</loc>
-    <lastmod>2024-04-06T10:51:48.112Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/DockerforDataScience.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/index.html</loc>
-    <lastmod>2024-04-06T10:51:47.782Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/workhorse.html</loc>
+    <lastmod>2024-04-14T21:11:49.508Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/til/argparse.html</loc>
-    <lastmod>2024-04-06T10:51:48.692Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/huggingface_docker.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/til/testing.html</loc>
-    <lastmod>2024-04-06T10:51:49.652Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/DataBlockAPI.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/til/index.html</loc>
-    <lastmod>2024-04-06T10:51:50.672Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/ClassConfusion.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/Suspecto.html</loc>
-    <lastmod>2024-04-06T10:51:51.842Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/nbquarto.html</loc>
+    <lastmod>2024-04-14T19:51:29.956Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/Pytorchtofastai.html</loc>
-    <lastmod>2024-04-06T10:51:53.032Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/PyTorchInference.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/TransformFunctions.html</loc>
-    <lastmod>2024-04-06T10:51:53.922Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/Pytorchtofastai.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/PyTorchInference.html</loc>
-    <lastmod>2024-04-06T10:51:54.842Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/adhd.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/DataBlockAPI.html</loc>
-    <lastmod>2024-04-06T10:51:56.082Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/Fastai-Curriculum.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/Decorators.html</loc>
-    <lastmod>2024-04-06T10:51:57.302Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/TabularNumpy.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/Fastai-Curriculum.html</loc>
-    <lastmod>2024-04-06T10:51:58.942Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/Week-1.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/dear-me-2022.html</loc>
-    <lastmod>2024-04-06T10:52:00.702Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/TransformFunctions.html</loc>
+    <lastmod>2024-04-14T19:51:29.900Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/diy-server.html</loc>
-    <lastmod>2024-04-06T10:52:02.802Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/HuggingFaceLesson1.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/NLP-Capstone.html</loc>
-    <lastmod>2024-04-06T10:52:03.682Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/HackingTheEnum.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/nbquarto.html</loc>
-    <lastmod>2024-04-06T10:52:04.962Z</lastmod>
+    <loc>https://muellerzr.github.io/blog/A-New-Year.html</loc>
+    <lastmod>2024-04-14T19:51:29.896Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/adhd.html</loc>
-    <lastmod>2024-04-06T10:52:06.082Z</lastmod>
+    <loc>https://muellerzr.github.io/til/testing.html</loc>
+    <lastmod>2024-04-14T19:51:30.052Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/FeatureImportance-TestSet.html</loc>
-    <lastmod>2024-04-06T10:52:07.372Z</lastmod>
+    <loc>https://muellerzr.github.io/til/code_review.html</loc>
+    <lastmod>2024-04-14T19:51:29.956Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/muellerzr/muellerzr.github.io/blog/happiness.html</loc>
-    <lastmod>2024-04-06T10:52:08.862Z</lastmod>
+    <loc>https://muellerzr.github.io/til/index.html</loc>
+    <lastmod>2024-04-14T19:51:29.956Z</lastmod>
+  </url>
+  <url>
+    <loc>https://muellerzr.github.io/til/sub_cli.html</loc>
+    <lastmod>2024-04-14T19:51:30.052Z</lastmod>
   </url>
 </urlset>

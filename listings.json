@@ -2,6 +2,7 @@
   {
     "listing": "/blog/index.html",
     "items": [
+      "/blog/workhorse.html",
       "/blog/huggingface_docker.html",
       "/blog/diy-server.html",
       "/blog/nbquarto.html",
@@ -17,8 +18,8 @@
       "/blog/HuggingFaceLesson1.html",
       "/blog/Pytorchtofastai.html",
       "/blog/CAMVID.html",
-      "/blog/beginner.html",
       "/blog/intermediate.html",
+      "/blog/beginner.html",
       "/blog/TabularNumpy.html",
       "/blog/TransformFunctions.html",
       "/blog/DataBlockAPI.html",

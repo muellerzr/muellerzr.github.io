@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-01-24">
+<meta name="dcterms.date" content="2024-04-14">
 
-<title>Zach Mueller - Building my own mini-home server</title>
+<title>Zach Mueller - Building a midrange dual 4090 rig</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -114,7 +80,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed fullcontent">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -166,7 +132,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Building my own mini-home server</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Building a midrange dual 4090 rig</li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -179,17 +145,32 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </nav>
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#just-give-me-the-parts" id="toc-just-give-me-the-parts" class="nav-link active" data-scroll-target="#just-give-me-the-parts">Just give me the parts</a></li>
+  <li><a href="#parts-explained" id="toc-parts-explained" class="nav-link" data-scroll-target="#parts-explained">Parts Explained</a>
+  <ul class="collapse">
+  <li><a href="#the-gpus" id="toc-the-gpus" class="nav-link" data-scroll-target="#the-gpus">The GPUs</a></li>
+  <li><a href="#the-cpu-cooler" id="toc-the-cpu-cooler" class="nav-link" data-scroll-target="#the-cpu-cooler">The CPU &amp; Cooler</a></li>
+  <li><a href="#the-motherboard" id="toc-the-motherboard" class="nav-link" data-scroll-target="#the-motherboard">The Motherboard</a></li>
+  <li><a href="#the-ram" id="toc-the-ram" class="nav-link" data-scroll-target="#the-ram">The RAM</a></li>
+  <li><a href="#psu" id="toc-psu" class="nav-link" data-scroll-target="#psu">PSU</a></li>
+  <li><a href="#the-case" id="toc-the-case" class="nav-link" data-scroll-target="#the-case">The Case</a></li>
+  </ul></li>
+  <li><a href="#concluding-thoughts" id="toc-concluding-thoughts" class="nav-link" data-scroll-target="#concluding-thoughts">Concluding thoughts</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Building my own mini-home server</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">tech</div>
-  </div>
-  </div>
+<h1 class="title">Building a midrange dual 4090 rig</h1>
+</div>
 
 
 
@@ -199,7 +180,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 24, 2024</p>
+      <p class="date">April 14, 2024</p>
     </div>
   </div>
   
@@ -211,94 +192,114 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </header>
 
 
-<section id="why-do-this" class="level2">
-<h2 class="anchored" data-anchor-id="why-do-this">Why do this?</h2>
-<p>Recently I was finding a need to have some form of a home server. Specifically:</p>
-<ol type="1">
-<li><p>I was running Home Assisant (my home automation utility) on a heavy-draw GPU laptop that was raking up my electric bill and not very efficient</p></li>
-<li><p>I wanted to enable Wake-on-LAN + remote access to my GPU machines when I was away, or wanting to be especially lazy and not go into the next room to wake them up.</p></li>
-</ol>
-<p>Given this, I took it as a challenge to try and find the most minimal and cost effective way of doing so.</p>
-</section>
-<section id="what-you-will-learn" class="level2">
-<h2 class="anchored" data-anchor-id="what-you-will-learn">What you will learn</h2>
-<p>This article will teach you how I:</p>
-<ol type="1">
-<li><p>Built this system and setup the hardware (rather difficult if you don’t have any good set of directions telling you how to do this)</p></li>
-<li><p>How to setup the software (Wake-on-LAN solution)</p></li>
-</ol>
-</section>
-<section id="the-raspberry-pi" class="level2">
-<h2 class="anchored" data-anchor-id="the-raspberry-pi">The Raspberry-Pi</h2>
-<p>I decided to use a raspberry-pi as I know they are low power draw and can be reliable.</p>
-<p>All-in-all the build cost me $147.10, parts broken down as follows:</p>
+<p>One of my work machines, what I have deemed as the Workhorse, has quite the interesting build. After receiving a number of requests off of Twitter, this article will cover some part choices that I went with for a dual-4090 deep-learning based rig.</p>
+<p>This build lands somewhere in the midrange-ish area (as much as 2x4090 can be “midrange”), and doesn’t contain anything that will <em>blow you out of the water</em>. (all-in-all around $6,000)</p>
+<p>However, it is a build that has allowed me to train a few models, do debugging work with NVIDIA’s FP8 capability, and now test out the new Open Source Peer-To-Peer drivers that were recently released for the 4090’s.</p>
+<p>This blog is organized first as just the parts list, then afterwards I go into detail about each area and talk about any problems I had around it.</p>
+<section id="just-give-me-the-parts" class="level2">
+<h2 class="anchored" data-anchor-id="just-give-me-the-parts">Just give me the parts</h2>
+<p>No worries, if you’re just here for a parts list, here’s a link to the <a href="https://pcpartpicker.com/user/muellerzr/saved/xWnwqs">pcpartpicker</a></p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Pricing
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>These prices are all from my local Micro Center, where all these parts were gathered from. Current values are based on prices on 04/14/2024 unless there is an *, in which case I couldn’t find it and am just listing the price bought at.</p>
+</div>
+</div>
 <ul>
-<li>1x Samsung EVO Micro SD 64gb card: $11.99</li>
-<li>1x Timetec 256gb SSD M.2 SSD: $18.99 <strong>NOTE: Must be <em>non</em>-NVME!</strong></li>
-<li>1x Argon ONE M.2 Aluminum case: $47.00</li>
-<li>1x Raspberry Pi 4 Model B 4 GB: $63.12</li>
-<li>1x USB-C cord: 6</li>
+<li>CPU: AMD Ryzen 9 7900x ($399.99)</li>
+<li>Cooler: Lian Li Galahad II Trinity 360mm ($149.99)</li>
+<li>GPUs: 2x MSI SUPRIM LIQUID X 4090’s ($3879.98)</li>
+<li>Motherboard: Asus ProArt X670E-CREATOR ($459.99)</li>
+<li>RAM: 96GB, 2x G.Skill Trident Z5 RGB 96 DDR5-6800 CL34 ($369.99)</li>
+<li>PSU: Super Flower Leadex Platinum 1600W 80+ Platinum* ($278.72)</li>
+<li>M.2: Samsung 990 Pro 2TB ($189.99)</li>
+<li>Case: Thermaltake Core P6 ATX Mid Tower ($189.99)</li>
 </ul>
-<p>There’s one or two areas in here that may confuse you. Zach, why an SSD? And if you have an SSD, why do you still need a micro-SD?</p>
-<p>I wanted an SSD for faster response times for home-assistant, as no one wants to wait more than a few ms for some lights to turn on when you click a button on your phone.</p>
-<p>And the SD card is needed as eventually the end operating system on the Pi is going to run Ubuntu-server. <em>Getting</em> there however wound up being rather… complicated.</p>
-<section id="flashing-the-os" class="level3">
-<h3 class="anchored" data-anchor-id="flashing-the-os">Flashing the OS</h3>
-<p>First thing I recommend doing is using the Raspberry Pi Imager (on your main PC) to flash Pi <em>Desktop OS</em> onto the SD card.</p>
-<p>This is the best way I found to get to the next step of actually installing Ubuntu-Server onto the SSD as a boot drive, as Pi Imager <strong>cannot recognize SSD cards plugged in via USB</strong> to use as imaging drives</p>
-<p>Next, after installing the SSD into the case and inserting the pi (tip: don’t screw in all the screws yet), from inside Pi OS run the Imager <strong>again</strong>. Here we’re going to select the M.2 drive -&gt; Other Platforms -&gt; Ubuntu Server.</p>
-<p>After this has flashed, you can shutdown the Pi and fully remove the SD card and just have the SSD inserted.</p>
-<p>Congrats! You’ve now hit one of the trickest parts that 10+ guides found much more complicated solutions to do, you have a Pi running Ubuntu server off just an M.2 drive!</p>
-<p>You can end reading this article here if needed, that alone should help quite a number of people. The next parts are a bit more need-specific and involve setting up Wake-On-LAN and installing Home Assistant.</p>
+<p>Total: $5918.64</p>
 </section>
+<section id="parts-explained" class="level2">
+<h2 class="anchored" data-anchor-id="parts-explained">Parts Explained</h2>
+<section id="the-gpus" class="level3">
+<h3 class="anchored" data-anchor-id="the-gpus">The GPUs</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://c1.neweggimages.com/productimage/nb640/14-137-759-34.png" class="img-fluid figure-img"></p>
+<figcaption>Picture of a Suprim Liquid X 4090 GPU</figcaption>
+</figure>
+</div>
+<p>The choice of these two <em>particular</em> 4090s was not by accident or a whim. While normal 4090’s are <em>gigantic</em>, these 4090’s take up the same 2-slot card width as older cards, <strong>and</strong> come with a free bonus of liquid cooling. And it <strong>works</strong>.</p>
+<p>Highest temps I could get it to for me was 63C under a heavy load (100% volidity) running for about 10-15 minutes or so during the stress test. <em>Remarkably</em> efficient to say the least.</p>
+<p>Now those radiators make it… <em>interesting</em> in picking a case, which I’ll dive into a bit later, however with the 2-slot card height you can still get away with a mid tower!</p>
 </section>
-<section id="wake-on-lan" class="level2">
-<h2 class="anchored" data-anchor-id="wake-on-lan">Wake-on-LAN</h2>
-<p>Wake-on-LAN and Wireless-Wake-on-LAN are two forms of waking up a computer remotely when it’s asleep. I wanted to do this to save on electricity, since it’s often I just want to run a small job on my local machines.</p>
-<p>This section is broken down into two parts:</p>
+<section id="the-cpu-cooler" class="level3">
+<h3 class="anchored" data-anchor-id="the-cpu-cooler">The CPU &amp; Cooler</h3>
+<p>For CPU I went for the AMD Ryzen 9 7900x. There’s a few reasons I went for this:</p>
 <ol type="1">
-<li>How to setup a linux computer to use Wake-on-LAN</li>
-<li>How to then do this remotely anywhere in the world</li>
+<li>I couldn’t do a threadripper, which would have been $1000+ vs ~400</li>
+<li>I knew I wanted to stay in AMD, their CPUs are good and outcompete the rest, even if other competitors have <em>many</em> more compatible boards</li>
 </ol>
-<section id="setting-up-wake-on-lan" class="level3">
-<h3 class="anchored" data-anchor-id="setting-up-wake-on-lan">Setting up Wake-on-LAN</h3>
-<p>First thing that we have to do is find your local MAC address for the computer you want to run remotely. After using a variety of tools, I wound up using the <code>arp</code> tool:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">arp</span> <span class="at">-a</span> MY.LOCAL.IP.ADDRESS</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If I had to do this again, I’d maybe do the Ryzen 9 7950x3d which you can find for ~$150-200 more right now.</p>
+<p>For the cooler, I just enjoy the RGB :P</p>
+<p>And since the GPUs are already liquid-cooled, it just made sense to make it as well.</p>
+</section>
+<section id="the-motherboard" class="level3">
+<h3 class="anchored" data-anchor-id="the-motherboard">The Motherboard</h3>
+<p>Here comes the… <em>fun</em> part of this build. Finding a compatible motherboard was <strong>not an entertaining adventure</strong>.</p>
+<p>I first went with a MSI MAG x670E Tomahawk ATX board, knowing that it had a single x16 lane and the rest were x4, meaning my build would be limited by that x4 lane. Simply because since we didn’t have Peer-to-Peer support, it was a tradeoff that could go well.</p>
+<p>Then, the weight of the 4090’s broke one of the lower brackets, and I had to get a GPU support bracket.</p>
+<p>Come to today, now we have a <a href="https://x.com/__tinygrad__/status/1778676746378002712">custom driver</a> which added P2P support, and my GPUs were looking hungry.</p>
+<p>The new motherboard of choice is a Asus ProArt X670E-Creator ATX motherboard.</p>
+<p>In my opinion, the ProArt boards are some of the best I’ve ever encountered. They’re designed to give you an 8x/8x split on PCIE lanes when running two GPUs, come fashioned with helpful design choices such as: * A button to release the top GPU from the PCIE, instead of pushing down the side which can break easily and is almost impossible to reach with multiple-GPUs * The peripherals come with a riser-accessory which clearly states what each pin goes to (e.g.&nbsp;power button, etc)</p>
+<p>One thing to note, if you look up online, you’ll see it supports only 128gb RAM, and you <strong>may</strong> see that the RAM I chose here is not compatible with the board!</p>
+<p>A latter BIOS update provided compatibility with 48gb RAM, allowing you to keep that DDR5 dual-RAM efficiency without needing to use 4 cards to hit that 2x GB RAM per 1x GB vRAM threshold.</p>
+<p>When putting everything together, I found I didn’t need to manually update the BIOS and it just worked “out of the box,” but milage may vary.</p>
+</section>
+<section id="the-ram" class="level3">
+<h3 class="anchored" data-anchor-id="the-ram">The RAM</h3>
+<p>For RAM, I knew I wanted to follow the <em>at least</em> 2x GB RAM per 1x GB vRAM as mentioned earlier, and since the MB could support that in two slots, I chose to do 2x 48GB. Technically it’s possible to upgrade it to 192 GB, however for now at least keeping it at 48.</p>
+<p>It’s DDR5 though, which is not cheap sadly.</p>
+</section>
+<section id="psu" class="level3">
+<h3 class="anchored" data-anchor-id="psu">PSU</h3>
+<p>I started out with a ThermalTake Toughpower TT Premium 1650 W, eventually when things got tough I found it had issues. When these 4090 beasts draw a ton of power, the system will just shut down and you’re SOL.</p>
+<p>So, scrapped that and went a Super Flower Leadex Platinum 1600W 80+ Platinum. Even though it’s 50 W less, it’s handled the 4090’s like a champ.</p>
+<p>My good friend Sanyam Bhutani’s wise words (paraphrased): &gt; Platinum or bust.</p>
+<p>The other <strong>super handy</strong> part of these PSU’s is they come with 600W power designed for the 4090’s! No need to risk a house fire trying to carefully bend the cables the right way, just use a single one directly from the PSU to the GPU!</p>
+</section>
+<section id="the-case" class="level3">
+<h3 class="anchored" data-anchor-id="the-case">The Case</h3>
+<p>Finally, <em>the case</em>.</p>
+<p>This was an interesting challenge, as we essentially had to account for: * 1x radiator coming from the CPU cooler * 2x radiators coming from the GPUs * Enough space to house the 4090’s (I’m not using riser cables)</p>
+<p>This landed on the Thermaltake Core P6 ATX Mid Tower, which in my opinion is a <em>beautiful</em> case.</p>
+<p>It houses every part with ease, and even has enough room to include some outtake fans under each GPU’s radiator:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://m.media-amazon.com/images/I/61oNKmhpZJL._AC_SL1148_.jpg" class="img-fluid figure-img"></p>
+<figcaption>ThermalTake Core P6 ATX Mid Tower</figcaption>
+</figure>
+</div>
+<p>One thing a bit annoying with this case is unless you move the cables <em>perfectly</em>, that bottom dust cover will keep coming down when you move stuff inside the PC. Annoying, but not the end of the world.</p>
+</section>
+</section>
+<section id="concluding-thoughts" class="level2">
+<h2 class="anchored" data-anchor-id="concluding-thoughts">Concluding thoughts</h2>
+<p>All-in-all this is a sub-$1000 dual-4090 Deep Learning rig. You can still make decent use of them, without having to blow your budget.</p>
+<p>It’s been quite a fun time tinkering with and learning about this build over the last 5 months, and overall I do think it’s worth it from that perspective.</p>
+<p><strong>However</strong>: <em>If</em> I had the choice to do it all over again, I would <em>not</em> go with 4090’s and instead get some Quadros (if you can find them). Lower power and equal (if not higher) performance.</p>
+<p>For example, while building Sanyam mentioned:</p>
 <blockquote class="blockquote">
-<p>Tip: <code>MY.LOCAL.IP.ADDRESS</code> should be the machine you want to <em>wake up</em></p>
+<p>Even if 1:1 they are the same memory footprint, a Quadro card with 7800 CUDA cores <em>will</em> outperform a gaming GPU with 11000 CUDA cores by easily 10-25%.</p>
 </blockquote>
-<p>What we’re aiming for is the MAC address (a 12 hexidecimal combination) that is unique to the particular machine.</p>
-<p>After you have found this you need to know what the receiving machine is using for LAN hardware (it’s device name). I used the <code>ip route get</code> command to do so:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ip</span> route get MY.LOCAL.IP.ADDRESS</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This should then get you the name of the hardware used. In my case this wound up being <code>wlan0</code> (and may be the case for many of you). I originally had a unique device name like <code>enp15s0</code>, but I found that wasn’t what was really handling it and <code>wlan0</code> was the true name for it. Confusing, right!</p>
-</section>
-<section id="ensuring-wake-on-lan-is-supported" class="level3">
-<h3 class="anchored" data-anchor-id="ensuring-wake-on-lan-is-supported">Ensuring Wake-on-LAN is supported</h3>
-<p>The next step is making sure your motherboard on the machine you want to boot actually allows Wake-on-LAN. This should be a bios setting (down in the power capabilities on how the computer can actually turn on). From there I also had to enable some settings in the bios. This was the command I had to run (note that this is not using <code>wlan0</code> but the <em>other</em> hardware name):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> nmcli connection modify enp15s0 802-3-ethernet.wake-on-lan magic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This will ensure that (until the next reboot) you can wake the machine up from sleep with a magic packet (what powers wake-on-lan).</p>
-</section>
-<section id="actually-performing-the-waking" class="level3">
-<h3 class="anchored" data-anchor-id="actually-performing-the-waking">Actually performing the waking</h3>
-<p>To actually do the waking, in the Pi I simply run the following:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> etherwake {DESTINATION_MAC_ADDRESS} <span class="at">-i</span> wlan0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Now, within a few moments, your computer will be SSH’able!</p>
-<p>To then make it go back to sleep when done, I pair it with:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl suspend</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="accessing-it-from-anywhere" class="level3">
-<h3 class="anchored" data-anchor-id="accessing-it-from-anywhere">Accessing it from anywhere</h3>
-<p>The last step I desired was being able to access these machines from anywhere in the world. This involved a piece of free software called <a href="https://tailscale.com/">tailscale</a>.</p>
-<p>Essentially this added a new layer of security by exposing my machines on a public IP that needed OAuth to sign-in and access. I can then (by machine) choose who can actually login and access each.</p>
-<p>After configuring tailscale on the pi and other machines, I simply ran <code>tailscale up</code>, logged in, and now from anywhere in the world I can boot up my system!</p>
-<p>In practice this looks like follows:</p>
-<p>SSH into pi -&gt; Send magic packet -&gt; Exit -&gt; SSH into newly booted machine -&gt; Send machine to sleep afterwards.</p>
-<p>I found it takes less than a second for the magic packet to wake the machine, so there isn’t a heavy delay of waiting ages for it boot (since we’re just waking from a suspended instance!)</p>
-</section>
-</section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>I hope this has helped you some, I tried to condence down all the steps and research I did here into a quick and easy-to-follow guide but allowed for you to do some more research in each area as needed. Thanks for reading!</p>
+<p>Not to mention, we now are losing capabilities like NVLink, and are relying on hacking into their CUDA drivers to even get Peer-to-Peer support going.</p>
+<p>For an example alternative, my local microcenter sells some older-gen (so doesn’t have FP8 support) PNY RTX A4500 20GB cards for $1,499.99. At about 1:1 the price, if you can withstand not having FP8 it could be a better option. (Or especially if you can find the <em>new gen</em> A4500’s, which do support FP8).</p>
+<p>Otherwise, I hope you were able to learn something out of my adventures detailed here. PC building is a fun (but sometimes difficult) hobby/thing to do, and most of the time it’s a 20:1 research-to-building-the-thing time. Good luck, and let me know if this inspires you to make any builds! (Or tweak your current ones)</p>
 
 
 </section>
