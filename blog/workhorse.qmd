@@ -97,10 +97,10 @@ split on PCIE lanes when running two GPUs, come fashioned with helpful design ch
 almost impossible to reach with multiple-GPUs
 * The peripherals come with a riser-accessory which clearly states what each pin goes to (e.g. power button, etc)
 
-One thing to note, if you look up online, you'll see it supports only 128gb RAM, and you **may** see that 
+One thing to note, if you look up online, you'll see it supports 192gb RAM, and you **may** see that 
 the RAM I chose here is not compatible with the board! 
 
-A latter BIOS update provided compatibility with 48gb RAM, allowing you to keep that DDR5 dual-RAM efficiency
+A latter BIOS update provided compatibility with more 48gb RAM chips, allowing you to keep that DDR5 dual-RAM efficiency
 without needing to use 4 cards to hit that 2x GB RAM per 1x GB vRAM threshold. 
 
 When putting everything together, I found I didn't need to manually update the BIOS and it just worked "out of the box,"
