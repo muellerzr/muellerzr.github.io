@@ -93,6 +93,7 @@ The new motherboard of choice is a Asus ProArt X670E-Creator ATX motherboard:
 
 In my opinion, the ProArt boards are some of the best I've ever encountered. They're designed to give you an 8x/8x
 split on PCIE lanes when running two GPUs, come fashioned with helpful design choices such as:
+
 * A button to release the top GPU from the PCIE, instead of pushing down the side which can break easily and is 
 almost impossible to reach with multiple-GPUs
 * The peripherals come with a riser-accessory which clearly states what each pin goes to (e.g. power button, etc)
