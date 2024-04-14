@@ -131,6 +131,7 @@ one directly from the PSU to the GPU!
 Finally, *the case*. 
 
 This was an interesting challenge, as we essentially had to account for:
+
 * 1x radiator coming from the CPU cooler
 * 2x radiators coming from the GPUs
 * Enough space to house the 4090's (I'm not using riser cables)
