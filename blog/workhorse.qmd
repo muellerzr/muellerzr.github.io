@@ -47,7 +47,7 @@ Total: $5918.64
 
 ### The GPUs 
 
-![Picture of a Suprim Liquid X 4090 GPU](https://c1.neweggimages.com/productimage/nb640/14-137-759-34.png)
+![Suprim Liquid X 4090 GPU](https://c1.neweggimages.com/productimage/nb640/14-137-759-34.png)
 
 The choice of these two *particular* 4090s was not by accident or a whim. 
 While normal 4090's are *gigantic*, these 4090's take up the same 2-slot card width as older cards, **and** come
