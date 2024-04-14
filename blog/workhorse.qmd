@@ -37,11 +37,11 @@ couldn't find it and am just listing the price bought at.
 * GPUs: 2x MSI SUPRIM LIQUID X 4090's ($3879.98)
 * Motherboard: Asus ProArt X670E-CREATOR ($459.99)
 * RAM: 96GB, 2x G.Skill Trident Z5 RGB 96 DDR5-6800 CL34 ($369.99)
-* PSU: Super Flower Leadex Platinum 1600W 80+ Platinum* ($278.72)
+* PSU: Toughpower GF3 650W Gold - TT Premium Edition ($269.99)
 * M.2: Samsung 990 Pro 2TB ($189.99) 
 * Case: Thermaltake Core P6 ATX Mid Tower ($189.99)
 
-Total: $5918.64
+Total: $5909.91
 
 ## Parts Explained
 
@@ -118,18 +118,13 @@ It's DDR5 though, which is not cheap sadly.
 
 ### PSU
 
-I started out with a ThermalTake Toughpower TT Premium 1650 W, eventually when things got tough I found it had issues. 
-When these 4090 beasts draw a ton of power, the system will just shut down and you're SOL. 
+I went with the Toughpower GF3 1650W Gold - TT Premium Edition for the PSU
 
-So, scrapped that and went a Super Flower Leadex Platinum 1600W 80+ Platinum. Even though it's 50 W less, 
-it's handled the 4090's like a champ. 
-
-My good friend Sanyam Bhutani's wise words (paraphrased):
-> Platinum or bust.
-
-The other **super handy** part of these PSU's is they come with 600W power designed for the 4090's!
+The **super handy** part about this PSU is they come with a power adapter for the 4090's!
 No need to risk a house fire trying to carefully bend the cables the right way, just use a single 
 one directly from the PSU to the GPU! 
+
+![Toughpower GF3 1650W](https://ttpremium.com/wp-content/uploads/2022/03/gf3/gf31650_en_02.jpg)
 
 ### The Case
 
