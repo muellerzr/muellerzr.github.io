@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-04-14">
+<meta name="dcterms.date" content="2024-06-02">
 
 <title>Zach Mueller - Building a dual 4090 rig under $6000</title>
 <style>
@@ -180,7 +180,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 14, 2024</p>
+      <p class="date">June 2, 2024</p>
     </div>
   </div>
   
@@ -245,7 +245,7 @@ Pricing
 <li>I couldn’t do a threadripper, which would have been $1000+ vs ~400</li>
 <li>I knew I wanted to stay in AMD, their CPUs are good and outcompete the rest, even if other competitors have <em>many</em> more compatible boards</li>
 </ol>
-<p>If I had to do this again, I’d maybe do the Ryzen 9 7950x3d which you can find for ~$150-200 more right now.</p>
+<p>If I had to do this again, I’d maybe do the Ryzen 9 7950x3d which you can find for ~$150-200 more right now as I could make full use of 192 GB of RAM.</p>
 <p>For the cooler, I just enjoy the RGB :P</p>
 <p>And since the GPUs are already liquid-cooled, it just made sense to make it as well.</p>
 </section>
@@ -279,8 +279,22 @@ Pricing
 <figcaption>G. SKILL Trident Z5 RGB DDR5 RAM</figcaption>
 </figure>
 </div>
-<p>For RAM, I knew I wanted to follow the <em>at least</em> 2x GB RAM per 1x GB vRAM as mentioned earlier, and since the MB could support that in two slots, I chose to do 2x 48GB. Technically it’s possible to upgrade it to 192 GB, however for now at least keeping it at 96.</p>
+<p>For RAM, I knew I wanted to follow the <em>at least</em> 2x GB RAM per 1x GB vRAM as mentioned earlier, and since the MB could support that in two slots, I chose to do 2x 48GB.</p>
 <p>It’s DDR5 though, which is not cheap sadly.</p>
+<p>I did eventually go with 4x GB ram per 1x GB vRAM, as I found I needed this to train Llama-3-8B while doing offloading.</p>
+<div class="callout callout-style-simple callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+RAM vs CPU
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>While the 192 GB of RAM in the 4 chips is great, the CPU only supports 128 GB of RAM. Eventually I <em>will</em> need to upgrade to the 7950x3d, however for now I’m okay with this “unusable” RAM with wiggle-room to increase in the future.</p>
+</div>
+</div>
 </section>
 <section id="psu" class="level3">
 <h3 class="anchored" data-anchor-id="psu">PSU</h3>
@@ -318,10 +332,7 @@ Pricing
 <p>All-in-all this is a sub-$1000 dual-4090 Deep Learning rig. You can still make decent use of them, without having to blow your budget.</p>
 <p>It’s been quite a fun time tinkering with and learning about this build over the last 5 months, and overall I do think it’s worth it from that perspective.</p>
 <p><strong>However</strong>: <em>If</em> I had the choice to do it all over again, I would <em>not</em> go with 4090’s and instead get some Quadros (if you can find them). Lower power and equal (if not higher) performance.</p>
-<p>For example, while building Sanyam mentioned:</p>
-<blockquote class="blockquote">
-<p>Even if 1:1 they are the same memory footprint, a Quadro card with 7800 CUDA cores <em>will</em> outperform a gaming GPU with 11000 CUDA cores by easily 10-25%.</p>
-</blockquote>
+<p>For example, it’s been said that Quadro cards with 7800 CUDA cores <em>will</em> outperform a gaming GPU with 11000 CUDA cores by easily 10-25%.</p>
 <p>Not to mention, we now are losing capabilities like NVLink, and are relying on hacking into their CUDA drivers to even get Peer-to-Peer support going.</p>
 <p>For an example alternative, my local microcenter sells some older-gen (so doesn’t have FP8 support) PNY RTX A4500 20GB cards for $1,499.99. At about 1:1 the price, if you can withstand not having FP8 it could be a better option. (Or especially if you can find the <em>new gen</em> A4500’s, which do support FP8).</p>
 <p>Otherwise, I hope you were able to learn something out of my adventures detailed here. PC building is a fun (but sometimes difficult) hobby/thing to do, and most of the time it’s a 20:1 research-to-building-the-thing time. Good luck, and let me know if this inspires you to make any builds! (Or tweak your current ones)</p>
