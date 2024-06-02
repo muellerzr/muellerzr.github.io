@@ -160,7 +160,7 @@ cover will keep coming down when you move stuff inside the PC. Annoying, but not
 
 ## Concluding thoughts 
 
-All-in-all this is a sub-$1000 dual-4090 Deep Learning rig. You can still make decent use 
+All-in-all this is a sub-$6000 dual-4090 Deep Learning rig. You can still make decent use 
 of them, without having to blow your budget.
 
 It's been quite a fun time tinkering with and learning about this build over the last 5 months,
