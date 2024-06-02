@@ -2,7 +2,7 @@
 title: "Building a dual 4090 rig under $6000"
 toc: true
 category: tech
-date: 2024-04-14
+date: 2024-06-02
 ---
 
 ![Picture of the Workhorse](media/images/workhorse.jpg)
@@ -159,9 +159,7 @@ and overall I do think it's worth it from that perspective.
 **However**: *If* I had the choice to do it all over again, I would *not* go with 4090's and instead 
 get some Quadros (if you can find them). Lower power and equal (if not higher) performance.
 
-For example, while building Sanyam mentioned:
-
-> Even if 1:1 they are the same memory footprint, a Quadro card with 7800 CUDA cores *will* outperform 
+For example, it's been said that Quadro cards with 7800 CUDA cores *will* outperform 
 a gaming GPU with 11000 CUDA cores by easily 10-25%. 
 
 Not to mention, we now are losing capabilities like NVLink, and are relying on hacking into their CUDA 
