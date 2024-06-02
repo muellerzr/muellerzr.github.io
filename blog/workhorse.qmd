@@ -67,7 +67,7 @@ For CPU I went for the AMD Ryzen 9 7900x. There's a few reasons I went for this:
 2. I knew I wanted to stay in AMD, their CPUs are good and outcompete the rest, even if other competitors have *many* more compatible boards
 
 If I had to do this again, I'd maybe do the Ryzen 9 7950x3d which you can find for ~$150-200 more
-right now.
+right now as I could make full use of 192 GB of RAM.
 
 For the cooler, I just enjoy the RGB :P
 
@@ -112,10 +112,20 @@ but milage may vary.
 ![G. SKILL Trident Z5 RGB DDR5 RAM](https://m.media-amazon.com/images/I/61UwHpj3J4L._AC_SL1280_.jpg)
 
 For RAM, I knew I wanted to follow the *at least* 2x GB RAM per 1x GB vRAM as mentioned earlier, and since the MB 
-could support that in two slots, I chose to do 2x 48GB. Technically it's possible to upgrade it to 192 GB, 
-however for now at least keeping it at 96.
+could support that in two slots, I chose to do 2x 48GB. 
 
 It's DDR5 though, which is not cheap sadly.
+
+I did eventually go with 4x GB ram per 1x GB vRAM, as I found I needed this to train Llama-3-8B while doing offloading.
+
+
+::: {.callout-important appearance="simple"}
+## RAM vs CPU
+
+While the 192 GB of RAM in the 4 chips is great, the CPU only supports 128 GB of RAM. Eventually I *will* need to upgrade to
+the 7950x3d, however for now I'm okay with this "unusable" RAM with wiggle-room to increase in the future. 
+:::
+
 
 ### PSU
 
