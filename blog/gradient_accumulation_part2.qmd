@@ -6,7 +6,7 @@ categories: [pytorch]
 
 # Introduction
 
-A few weeks ago the [Unsloth](https://unsloth.ai/blog/gradient) put out a pretty damning report showing that *most* training 
+A few weeks ago the [Unsloth](https://unsloth.ai/blog/gradient) team put out a pretty damning report showing that *most* training 
 frameworks have *critical* issues when it comes to applying gradient accumulation and training language models (specifically 
 in the use-case of generation). 
 
