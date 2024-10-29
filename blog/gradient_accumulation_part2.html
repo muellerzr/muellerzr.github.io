@@ -480,7 +480,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        losses_fixed_ga.append(actual_loss)</span>
 <span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        actual_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>And also rerun our baseline:</p>
-<div id="512814bd" class="cell" data-execution_count="1">
+<div id="7513a823" class="cell" data-execution_count="1">
 <details>
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>set_seed()</span>
@@ -553,7 +553,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </div>
 <p>The full solution is below, utilizing <code>accelerate</code> solely to handle DDP and splitting the data between each GPU, just make sure to run this via <code>torchrun</code> or <code>accelerate launch</code>.</p>
 <p>If you want to be 100% exact, I <strong>recommend you do this</strong>. However, without it we’re <em>extremely close</em> (much closer than before), so it’s up to you, your compute budget, and your time budget if you can waste an extra second or more on each step calling that <code>.gather()</code>.</p>
-<div id="486ac65a" class="cell" data-execution_count="2">
+<div id="f9ba65e4" class="cell" data-execution_count="2">
 <details>
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
