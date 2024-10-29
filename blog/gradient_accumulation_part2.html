@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2024-10-29">
 
-<title>Zach Mueller – gradient_accumulation_part2</title>
+<title>Zach Mueller - PyTorch, Gradient Accumulation, and the dreaded lack of reproducability</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -165,7 +166,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Introduction</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">PyTorch, Gradient Accumulation, and the dreaded lack of reproducability</li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -184,14 +185,23 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Introduction</h1>
-</div>
+<h1 class="title">PyTorch, Gradient Accumulation, and the dreaded lack of reproducability</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">pytorch</div>
+  </div>
+  </div>
 
 
 
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 29, 2024</p>
+    </div>
+  </div>
   
     
   </div>
@@ -201,6 +211,8 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </header>
 
 
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
 <p>A few weeks ago the <a href="https://unsloth.ai/blog/gradient">Unsloth</a> put out a pretty damning report showing that <em>most</em> training frameworks have <em>critical</em> issues when it comes to applying gradient accumulation and training language models (specifically in the use-case of generation).</p>
 <p>Essentially, when doing generation the models outputs are not all uniform, which makes a <em>drastic</em> difference in calculating the cross entropy loss.</p>
 <p>In this blog, I’ll be walking you through what myself and the rest of the <code>transformers</code> team (Marc Sun, Yoach Lacombe, myself, and many others) worked through to investigate this issue and break it down to its core parts in a reproducable case. I’ll also discuss how <strong>this fix is also needed for distributed training</strong>, something the Unsloth article did not report yet.</p>
@@ -468,7 +480,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        losses_fixed_ga.append(actual_loss)</span>
 <span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        actual_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>And also rerun our baseline:</p>
-<div id="7746e198" class="cell" data-execution_count="1">
+<div id="512814bd" class="cell" data-execution_count="1">
 <details>
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>set_seed()</span>
@@ -541,7 +553,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </div>
 <p>The full solution is below, utilizing <code>accelerate</code> solely to handle DDP and splitting the data between each GPU, just make sure to run this via <code>torchrun</code> or <code>accelerate launch</code>.</p>
 <p>If you want to be 100% exact, I <strong>recommend you do this</strong>. However, without it we’re <em>extremely close</em> (much closer than before), so it’s up to you, your compute budget, and your time budget if you can waste an extra second or more on each step calling that <code>.gather()</code>.</p>
-<div id="f9a14662" class="cell" data-execution_count="2">
+<div id="486ac65a" class="cell" data-execution_count="2">
 <details>
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -690,6 +702,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <p>I’d like to thank the Unsloth team who helped us figure out how to change the code in the Trainer, and Yoach and Marc for getting down in the weeds with me as we worked towards coming up with minimal reproducable examples to help educate all of us.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
