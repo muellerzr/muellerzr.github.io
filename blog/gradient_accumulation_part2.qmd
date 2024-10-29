@@ -55,13 +55,19 @@ on [the Hub](https://huggingface.co/datasets/Salesforce/wikitext).
 ## Core Code
 
 Below is the basic code for setting up:
+
 * Reproducability
 * The dataset
 * The model
 * The torch `DataLoaders`
 * Base training
 
-```python
+Let's start with some code that sets up our dataset/dataloaders, model, optimizer, and scheduler:
+
+```{python}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show the code"
 import random
 import torch
 import numpy as np
@@ -165,7 +171,36 @@ Now let's modify our training loop to perform basic gradient accumulation, and g
 
 (For this, the number of step is 2)
 
+I've highlighted the core change to the code below:
+
 ```python
+gradient_accumulation_steps = 2
+batch_size = 4
+...
+losses_grad_accum = []
+total_batched_samples = 0
+grad_accum_loss = 0
+for epoch in range(3):
+    ...
+    for i,batch in enumerate(train_dl):
+        ...
+        loss = ...
+        loss = loss / gradient_accumulation_steps
+        loss.backward()
+        grad_accum_loss += loss.cpu().detach().item()
+
+        if (i % gradient_accumulation_steps != 0) or (i == len(train_dl)-1):
+            optimizer.step()
+            scheduler.step()
+            optimizer.zero_grad()
+            losses_grad_accum.append(grad_accum_loss)
+            grad_accum_loss = 0
+```
+
+```{python}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show the full code"
 set_seed()
 gradient_accumulation_steps = 2
 batch_size = 4
@@ -267,6 +302,40 @@ The second fix is figuring out `num_items_in_batch`. We need to be careful about
 Let's rewrite our training loop to do just that:
 
 ```python
+num_update_steps_per_epoch = math.ceil(len(train_dl) / gradient_accumulation_steps)
+remainder = len(train_dl) % gradient_accumulation_steps
+if remainder == 0:
+    remainder = gradient_accumulation_steps
+
+losses_fixed_ga = []
+actual_loss = 0
+for epoch in range(3):
+    ...
+    iterator = iter(train_dl)
+    for update_step in range(num_update_steps_per_epoch):
+        batch_samples = []
+        num_batches = gradient_accumulation_steps if update_step != (num_update_steps_per_epoch - 1) else remainder
+        # Prefetch and calculate the number of non-padded items seen across one gradient accumulation "step"
+        for _ in range(num_batches):
+            batch_samples += [next(iterator)]
+        num_items_in_batch = sum([(batch["labels"].ne(-100)).sum() for batch in batch_samples])
+
+        for batch in batch_samples:
+            ...
+            loss = loss_fn(
+                out["logits"], batch["labels"], 
+                vocab_size=model.vocab_size, num_items_in_batch=num_items_in_batch
+            )
+            loss.backward()
+        optimizer.step()
+        scheduler.step()
+        optimizer.zero_grad()
+```
+
+```{python}
+#| eval: false
+#| code-fold: true
+#| code-summary: "Show the full code"
 import math
 
 set_seed()
