@@ -272,7 +272,7 @@ So what's the fix?
 
 ## The Fix: Loss
 
-The first fix is to rewrite our loss function to take into account the **total number of items seen across all gradient accumulation steps**. The Unsloth crew go into more detail on why that matters, below I've defined a new loss function which reflects this:
+The first fix is to rewrite our loss function to take into account the **total number of items seen across all gradient accumulation steps**. The [Unsloth crew](https://unsloth.ai/blog/gradient) go into more detail on why that matters, below I've defined a new loss function which reflects this:
 
 ```python
 def loss_fn(logits, labels, vocab_size, num_items_in_batch=None):
@@ -457,7 +457,7 @@ Below is an experiment I ran across 8 GPUs (with a much larger batch size) showc
 The full solution is below, utilizing `accelerate` solely to handle DDP and splitting the data between each GPU, just make sure to run this via `torchrun` or `accelerate launch`.
 
 If you want to be 100% exact, I **recommend you do this**. However, without it we're *extremely close* (much closer than before), so it's up to you,
-your compute budget, and your time budget if you can waste an extra second or more on each step calling that `.gather()`.
+your compute budget, and if you find the extra `.gather()` adds too much time. 
 
 ```{python}
 #| eval: false
