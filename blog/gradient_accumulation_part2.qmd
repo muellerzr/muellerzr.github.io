@@ -10,12 +10,13 @@ A few weeks ago the [Unsloth](https://unsloth.ai/blog/gradient) put out a pretty
 frameworks have *critical* issues when it comes to applying gradient accumulation and training language models (specifically 
 in the use-case of generation). 
 
-Essentially, when doing generation the models outputs are not all uniform, which makes a *drastic* difference in calculating
-the cross entropy loss. 
+When performing gradient accumulation, the underlying assumption is that training with a batch size of 8 and 4 gradient accumulation
+steps should be exactly equivalent to training with a batch size of 32 and no accumulation. *However*, what has been discovered
+is that when training language models for generation the resulting outputs are not all uniform (the same size), which makes a *drastic* difference in calculating the loss. 
 
 In this blog, I'll be walking you through what myself and the rest of the `transformers` team (Marc Sun, Yoach Lacombe, myself, and 
-many others) worked through to investigate this issue and break it down to its core parts in a reproducable case. I'll also discuss how 
-**this fix is also needed for distributed training**, something the Unsloth article did not report yet. 
+many others) worked through to investigate this issue and break it down to its core parts in a reproducible case. I'll also discuss how 
+**this fix is also needed for distributed training** , something the Unsloth team didn't talk about in their report. 
 
 
 ## Required Reading
@@ -447,7 +448,7 @@ That's great, but what about during distributed training?
 
 Since the data is split across `n` GPUs, each other GPU has no idea how many total items are seen across a step, leading to the *same issue*.
 
-The solution is to call a `gather()` across the inputs and use them to help calculate the loss. The **problem** here, is this involves a communication, which can get costly if we're doing so every gradient accumulation step (as rather than a single communication when we do `backward()`, we're now doubling it to two).
+The solution is to call a `gather()` across the inputs and use them to help calculate the loss. The **problem** here, is this involves a communication step between all of the GPUs, which can get costly if we're doing so every gradient accumulation step (as rather than a single communication when we do `backward()`, we're now doubling it to two).
 
 Below is an experiment I ran across 8 GPUs (with a much larger batch size) showcasing how these results change based on if we do `gather()` or not.
 
@@ -605,7 +606,7 @@ if __name__ == "__main__":
 ## Conclusion
 
 As we continue to see, gradient accumulation seems simple on the surface but *hard* to get right! Hopefully this article
-helps teach you how to stay reproducable as you scale training with gradient accumulation. 
+helps teach you how to stay reproducible as you scale training with gradient accumulation. 
 
 I'd like to thank the Unsloth team who helped us figure out how to change the code in the Trainer, and Yoach and Marc for
-getting down in the weeds with me as we worked towards coming up with minimal reproducable examples to help educate all of us.
+getting down in the weeds with me as we worked towards coming up with minimal reproducible examples to help educate all of us.
