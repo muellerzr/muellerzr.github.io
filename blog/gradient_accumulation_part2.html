@@ -214,8 +214,8 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p>A few weeks ago the <a href="https://unsloth.ai/blog/gradient">Unsloth</a> put out a pretty damning report showing that <em>most</em> training frameworks have <em>critical</em> issues when it comes to applying gradient accumulation and training language models (specifically in the use-case of generation).</p>
-<p>Essentially, when doing generation the models outputs are not all uniform, which makes a <em>drastic</em> difference in calculating the cross entropy loss.</p>
-<p>In this blog, I’ll be walking you through what myself and the rest of the <code>transformers</code> team (Marc Sun, Yoach Lacombe, myself, and many others) worked through to investigate this issue and break it down to its core parts in a reproducable case. I’ll also discuss how <strong>this fix is also needed for distributed training</strong>, something the Unsloth article did not report yet.</p>
+<p>When performing gradient accumulation, the underlying assumption is that training with a batch size of 8 and 4 gradient accumulation steps should be exactly equivalent to training with a batch size of 32 and no accumulation. <em>However</em>, what has been discovered is that when training language models for generation the resulting outputs are not all uniform (the same size), which makes a <em>drastic</em> difference in calculating the loss.</p>
+<p>In this blog, I’ll be walking you through what myself and the rest of the <code>transformers</code> team (Marc Sun, Yoach Lacombe, myself, and many others) worked through to investigate this issue and break it down to its core parts in a reproducible case. I’ll also discuss how <strong>this fix is also needed for distributed training</strong> , something the Unsloth team didn’t talk about in their report.</p>
 <section id="required-reading" class="level2">
 <h2 class="anchored" data-anchor-id="required-reading">Required Reading</h2>
 <p>Before reading this article, I recommend reading my prior article on <a href="https://muellerzr.github.io/blog/gradient_accumulation.html">gradient accumulation relative to multi-GPU training</a>, it will come into play later.</p>
@@ -259,7 +259,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <li>Base training</li>
 </ul>
 <p>Let’s start with some code that sets up our dataset/dataloaders, model, optimizer, and scheduler:</p>
-<div id="e3772f4a" class="cell" data-execution_count="1">
+<div id="627af7c1" class="cell" data-execution_count="1">
 <details>
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
@@ -386,7 +386,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            losses_grad_accum.append(grad_accum_loss)</span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            grad_accum_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="98b2a87e" class="cell" data-execution_count="2">
+<div id="50e65945" class="cell" data-execution_count="2">
 <details>
 <summary>Show the full code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>set_seed()</span>
@@ -503,7 +503,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        scheduler.step()</span>
 <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="11b2fd4d" class="cell" data-execution_count="3">
+<div id="b1e6846b" class="cell" data-execution_count="3">
 <details>
 <summary>Show the full code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
@@ -553,7 +553,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </details>
 </div>
 <p>And also rerun our baseline:</p>
-<div id="492a0a3f" class="cell" data-execution_count="4">
+<div id="b0967e77" class="cell" data-execution_count="4">
 <details>
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>set_seed()</span>
@@ -615,7 +615,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="problem-distributed-training">Problem: Distributed Training</h2>
 <p>That’s great, but what about during distributed training?</p>
 <p>Since the data is split across <code>n</code> GPUs, each other GPU has no idea how many total items are seen across a step, leading to the <em>same issue</em>.</p>
-<p>The solution is to call a <code>gather()</code> across the inputs and use them to help calculate the loss. The <strong>problem</strong> here, is this involves a communication, which can get costly if we’re doing so every gradient accumulation step (as rather than a single communication when we do <code>backward()</code>, we’re now doubling it to two).</p>
+<p>The solution is to call a <code>gather()</code> across the inputs and use them to help calculate the loss. The <strong>problem</strong> here, is this involves a communication step between all of the GPUs, which can get costly if we’re doing so every gradient accumulation step (as rather than a single communication when we do <code>backward()</code>, we’re now doubling it to two).</p>
 <p>Below is an experiment I ran across 8 GPUs (with a much larger batch size) showcasing how these results change based on if we do <code>gather()</code> or not.</p>
 <div id="fig-539a35d47e664c97a50115a146a7f1bd-4" class="quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -626,7 +626,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </div>
 <p>The full solution is below, utilizing <code>accelerate</code> solely to handle DDP and splitting the data between each GPU, just make sure to run this via <code>torchrun</code> or <code>accelerate launch</code>.</p>
 <p>If you want to be 100% exact, I <strong>recommend you do this</strong>. However, without it we’re <em>extremely close</em> (much closer than before), so it’s up to you, your compute budget, and your time budget if you can waste an extra second or more on each step calling that <code>.gather()</code>.</p>
-<div id="c2c4fa0d" class="cell" data-execution_count="5">
+<div id="15280eb4" class="cell" data-execution_count="5">
 <details>
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -771,8 +771,8 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>As we continue to see, gradient accumulation seems simple on the surface but <em>hard</em> to get right! Hopefully this article helps teach you how to stay reproducable as you scale training with gradient accumulation.</p>
-<p>I’d like to thank the Unsloth team who helped us figure out how to change the code in the Trainer, and Yoach and Marc for getting down in the weeds with me as we worked towards coming up with minimal reproducable examples to help educate all of us.</p>
+<p>As we continue to see, gradient accumulation seems simple on the surface but <em>hard</em> to get right! Hopefully this article helps teach you how to stay reproducible as you scale training with gradient accumulation.</p>
+<p>I’d like to thank the Unsloth team who helped us figure out how to change the code in the Trainer, and Yoach and Marc for getting down in the weeds with me as we worked towards coming up with minimal reproducible examples to help educate all of us.</p>
 
 
 </section>
