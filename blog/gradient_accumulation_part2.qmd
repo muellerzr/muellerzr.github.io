@@ -1,3 +1,8 @@
+---
+title: "PyTorch, Gradient Accumulation, and the dreaded lack of reproducability"
+date: "2024-10-29"
+categories: [pytorch]
+---
 
 # Introduction
 
