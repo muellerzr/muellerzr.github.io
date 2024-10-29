@@ -2,6 +2,7 @@
   {
     "listing": "/blog/index.html",
     "items": [
+      "/blog/gradient_accumulation_part2.html",
       "/blog/workhorse.html",
       "/blog/huggingface_docker.html",
       "/blog/diy-server.html",
