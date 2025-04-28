@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2022-10-22">
+<meta name="dcterms.date" content="2025-04-28">
 
-<title>Announcing Walk with fastai, the missing pieces for success – Zach Mueller</title>
+<title>Running HuggingChat fully locally with Docker – Zach Mueller</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -134,7 +169,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Announcing Walk with fastai, the missing pieces for success</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Running HuggingChat fully locally with Docker</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -153,8 +188,11 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Announcing Walk with fastai, the missing pieces for success</h1>
-</div>
+<h1 class="title">Running HuggingChat fully locally with Docker</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">tech</div>
+  </div>
+  </div>
 
 
 
@@ -164,7 +202,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 22, 2022</p>
+      <p class="date">April 28, 2025</p>
     </div>
   </div>
   
@@ -176,59 +214,117 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </header>
 
 
-<blockquote class="blockquote">
-<p>Details about my newest course, available at https://thezachmueller.gumroad.com/l/walkwithfastai</p>
-</blockquote>
-<section id="walk-with-fastai-the-missing-pieces-for-success" class="level1">
-<h1>Walk with fastai, the missing pieces for success</h1>
-<p><img src="media/blog/Walkwithfastai/01.png" class="img-fluid"></p>
-<p>You heard that right, three years after the hit course <a href="https://walkwithfastai.com">Walk with fastai</a> I’m coming back with an action-packed round two!</p>
-<p>This course has been in the making since the <em>day</em> version 1 finished, as I was never truly happy with how that one ended up. It was great, but there was much to be desired. This course is designed to help fill those gaps. Let’s dive in!</p>
-<section id="why-do-this-whats-different" class="level2">
-<h2 class="anchored" data-anchor-id="why-do-this-whats-different">Why do this? What’s different?</h2>
-<p>First let’s talk about what’s new. This course will <strong>still</strong> take you from someone who either has completed Jeremy Howards <a href="https://course.fast.ai">course</a> or who hasn’t even <strong>touched</strong> fastai at all and take you to a level above most practitioners. We still start at an understanding of some Python, and maybe some PyTorch and take you further beyond.</p>
-<p>However it’s been three years since the first came out and much has changed. New techiques have been released, changes to the framework have occured, and in these times concepts like <em>distributed computing</em> mean much more! As a result over <strong>50%</strong> of the course material is <em>completely new</em>.</p>
-<p>But wait, what about the old material?</p>
-<p>The old material is also completely redone and added verbose content thanks to the power of Quarto and nbdev. Just look at the before and after:</p>
-<section id="before" class="level3">
-<h3 class="anchored" data-anchor-id="before">Before:</h3>
-<p><img src="media/blog/Walkwithfastai/02.png" class="img-fluid"></p>
+<section id="motivation-for-writing-this" class="level2">
+<h2 class="anchored" data-anchor-id="motivation-for-writing-this">Motivation for writing this</h2>
+<p>I’ve been messing around with locally-deployed models over the last week or two (currently includes running Whisper.cpp on a raspberry pi and trying to shove in m.2 -&gt; PCIE adapters just to see what would happen).</p>
+<p>This then led me to “what could I do about chatgpt, on ~24-48GB of vRAM?” The answer was <code>Qwen/Qwen2.5-72B-Instruct-AWQ</code>, running locally with HuggingChat.</p>
+<p>What comes next is the steps it took me to go from idea -&gt; deployment, navigating (imo) some easily-overwhelming documentation, and the steps I took to remedy it.</p>
 </section>
-<section id="after" class="level3">
-<h3 class="anchored" data-anchor-id="after">After:</h3>
-<p><img src="media/blog/Walkwithfastai/03.png" class="img-fluid"></p>
-<p>No longer is this course just a passing resource, but instead it could be read entirely on its own without the accompaning lecture content and be infinitely more valuable than its predecessor.</p>
+<section id="what-is-huggingchat" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-huggingchat">What is HuggingChat?</h2>
+<p><a href="https://github.com/huggingface/chat-ui">HuggingChat (or ChatUI)</a> is an OSS by Hugging Face aimed to glue the pieces together of “I have this model, now how do I quickly make a chat app for it.”</p>
+<p>It operates on three parts:</p>
+<ul>
+<li>Front-end Chat UI</li>
+<li>Back-end mongo DB (for chat logs)</li>
+<li>The model itself (for my case, hosted via vLLM)</li>
+</ul>
 </section>
+<section id="getting-up-and-going" class="level2">
+<h2 class="anchored" data-anchor-id="getting-up-and-going">Getting up and going</h2>
+<p>I won’t go into the nitty gritty, I’m simply going to help you deploy <code>Qwen2.5-72B-Instruct-AWQ</code> locally, and <em>hopefully</em> in under an hour.</p>
+<p>(Note: most of these directions came from <a href="https://gist.github.com/devspotyt/aeb2293530da40b75351ae5c052275df">this gist</a>, as the official documentation in the README was either incorrect or overwhelming).</p>
+<p>Requirements:</p>
+<ol type="1">
+<li>Docker</li>
+<li>Some place to store your model</li>
+</ol>
 </section>
-<section id="what-about-the-original-course" class="level2">
-<h2 class="anchored" data-anchor-id="what-about-the-original-course">What about the original course?</h2>
-<p>The original course will always be free and a readily-available resource to all, however its content will not be updated for latest iterations of the framework and so forth. The YouTube videos will not be going anywhere, and the code repository wil still be publically available. Always.</p>
-<p>That being said, this new version of the course will go much futher beyond than the original did, and has enough material to have it stand out as its own and not just be a complete repeat of what was presented three years ago.</p>
+<section id="first-step-mongodb" class="level2">
+<h2 class="anchored" data-anchor-id="first-step-mongodb">First step: MongoDB</h2>
+<p>Mongo is used to keep your chat history fully local when running ChatUI (which is what I’ll refer to HuggingChat as from now on).</p>
+<p>For this, I used <code>docker-compose</code> running on my raspberry-pi to host the logs (since it’s not resource-intensive at all, and already runs low-level jobs like my <code>pi-hole</code> and <code>homeassistant</code>):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">mongo-chatui</span><span class="kw">:</span><span class="co"> # &lt;- What to name the service</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> mongo:latest</span><span class="co"> # &lt;- mongodb image to use</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> mongo</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"8097:27017"</span><span class="co"> # &lt;- 8097 is what *we* will use to send the data</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">MONGO_INITDB_ROOT_USERNAME</span><span class="kw">:</span><span class="at"> root</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">MONGO_INITDB_ROOT_PASSWORD</span><span class="kw">:</span><span class="at"> some_password</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mongo-data:/mnt/datasets/db</span><span class="co"> # &lt;- specify where you want data stored</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">volumes</span><span class="kw">:</span><span class="co"> # &lt;- specify that as a volume to use</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">mongo-data</span><span class="kw">:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then just do <code>docker compose up -d</code> and now your database is fully up and running. If you want to test, I used <code>mongosh</code>:</p>
+<pre><code>mongosh "mongodb://root:password@localhost:8097"  </code></pre>
 </section>
-<section id="not-convinced-heres-what-others-have-to-say-about-the-original-course" class="level2">
-<h2 class="anchored" data-anchor-id="not-convinced-heres-what-others-have-to-say-about-the-original-course">Not convinced? Here’s what others have to say about the original course:</h2>
-<blockquote class="blockquote">
-<p>Zach Mueller is probably the most active member of the fastai community. He is also very actively involved with fastai development. If there is one person who understands the fastai library through and through (apart from Jeremy Howard and Sylvain Gugger), that is certainly Zach! He went out of his way to create a fabulous learning resource for us, Walk With Fastai. Numerous notebooks explaining how to work with the library to achieve wonderful results. A must read! - Radek Osmulski, Senior Data Scientist at NVIDIA AI</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>Walk with Fastai is the best source available for utilizing fastai and goes above and beyond what is available in the documentation. Zach somehow extracted all of the knowledge I wanted to know about fastai and combined it into blog posts, videos, and source code that are easy to follow and build on. If you want to use fastai, this is a great resource to reference. I’ve had to go back and forth a couple of times between the best source (between it and fastbook) and I think I’ve gotten more out of Walk with fastai. - Kevin Bird</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>I really enjoyed the vision section Zach’s Walk with fastai series. His extension of the fastai keypoint example from a single point to multipoint was really great and importantly included covering the basics of doing ML well such as cleaning the data, ensuring the transforms make sense and so forth before starting any modelling - super critical to teaching deep learning. I loved that he then goes deeper and shows off how to customize a UNET for key point regression (because why not!) and really get the most out of the fastai API. Highly recommended as an accompaniment to the fastai course! - Morgan McGuire, Growth ML Engineer at Weights and Biases</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>Your addendum course videos in Walk with fastai is so super useful. I’ve learnt so much more about using fastai effectively in new problem spaces by combining Jeremy’s lessons with your own, and am still learning as I am still progressing through them. - Nissan Dookeran</p>
-</blockquote>
+<section id="getting-the-model-running" class="level2">
+<h2 class="anchored" data-anchor-id="getting-the-model-running">Getting the Model Running</h2>
+<p>Next up we need to actually download and run the model. Use whatever method you want to download the repo, I have my own small package called <a href="https://github.com/muellerzr/hf-model-downloader"><code>hf-model-downloader</code></a> to pull down the weights and everything.</p>
+<p>This now assumes you have all the required stuff to run <code>Qwen2.5-72B-Instruct-AWQ</code>. We will assume you saved them in a folder called <code>qwen_model</code> for the rest of this blog.</p>
+<p>For this part, I used vLLM and some help from <a href="https://www.reddit.com/r/LocalLLaMA/comments/1fnx59y/comment/lom9pu0/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button">Reddit</a> with some reasonable params to max out 48gb:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--name</span> my_vllm_container <span class="dt">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--gpus</span> <span class="st">'"device=0,1"'</span> <span class="dt">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-v</span> /my_path_to_models_folder:/root/models <span class="dt">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-p</span> 8000:8000 <span class="dt">\</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--ipc</span><span class="op">=</span>host <span class="dt">\</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  vllm/vllm-openai:latest <span class="dt">\</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--model</span> /root/models/qwen_model <span class="dt">\</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--served-model-name</span> Qwen/Qwen2.5-72B-Instruct-AWQ <span class="dt">\</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--pipeline-parallel-size</span> 2 <span class="dt">\</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--gpu-memory-utilization</span> 1 <span class="dt">\</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">--max-num-seqs</span> 2 <span class="dt">\</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">--max-model-len</span> 2292 <span class="dt">\</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">--block-size</span> 32 <span class="dt">\</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--max-num-batched-tokens</span> 2292</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This basically exposes a chat-gpt compatible API at the pi’s IP and port 8000.</p>
 </section>
-<section id="how-do-i-sign-up" class="level2">
-<h2 class="anchored" data-anchor-id="how-do-i-sign-up">How do I sign up?</h2>
-<p>Preorders are now live, which you can find <a href="https://thezachmueller.gumroad.com/l/walkwithfastai">here</a>.</p>
-<p>I value your trust in me as a teacher and a creator so if you preorder before the course begins you will be able to not only attend the lectures <strong>live</strong> and directly as me questions, but you will also get weekly updates from me detailing progress, teases, and overall how the course is coming along.</p>
-<p>If you do not preorder you will receive access to the material as a lesson finishes, within a day for the unedited lecture and within a week for the edited ones.</p>
-<p>Also starting today preorders are now 50% off, so be sure to get them while they’re available!</p>
+<section id="chatui" class="level2">
+<h2 class="anchored" data-anchor-id="chatui">ChatUI</h2>
+<p>Now for the final step, ChatUI.</p>
+<p>To make this easy, here is my <code>.env.local</code> file:</p>
+<pre><code># Use .env.local to change these variables
+# DO NOT EDIT THIS FILE WITH SENSITIVE DATA
+HF_TOKEN=hf_xxx
+
+### MongoDB ###
+MONGODB_URL=mongodb://root:password@xxx.xxx.xx.xx:8097
+MONGODB_DB_NAME=chat-ui
+MONGODB_DIRECT_CONNECTION=false
+
+MODEL_STORAGE_PATH=/mnt/models
+
+ALLOW_INSECURE_COOKIES=true
+ENABLE_ASSISTANTS=true 
+
+TEXT_EMBEDDING_MODELS=[{"name": "Xenova/gte-small","displayName": "Xenova/gte-small","description": "Local embedding model running on the server.","chunkCharLength": 512,"endpoints": [{ "type": "transformersjs" }]}]
+
+# 'name', 'userMessageToken', 'assistantMessageToken' are required
+MODELS=[{"name": "Qwen/Qwen2.5-72B-Instruct-AWQ","id": "Qwen/Qwen2.5-72B-Instruct-AWQ","endpoints": [{"type" : "openai","baseURL": "http://192.168.68.75:8000/v1",}],"preprompt": " ","chatPromptTemplate" : "{{#if messages.[0].role}}{{#ifSystem messages.[0]}}{{#if tools}}&lt;|im_start|&gt;system\n{{messages.[0].content}}\n\n# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within &lt;tools&gt;&lt;/tools&gt; XML tags:\n&lt;tools&gt;\n{{#each tools}}\n{{json this}}\n{{/each}}\n&lt;/tools&gt;\n\nFor each function call, return a json object with function name and arguments within &lt;tool_call&gt;&lt;/tool_call&gt; XML tags:\n&lt;tool_call&gt;\n{\"name\": &lt;function-name&gt;, \"arguments\": &lt;args-json-object&gt;}\n&lt;/tool_call&gt;&lt;|im_end|&gt;\n{{else}}&lt;|im_start|&gt;system\n{{messages.[0].content}}&lt;|im_end|&gt;\n{{/if}}{{else}}{{#if tools}}&lt;|im_start|&gt;system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.\n\n# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within &lt;tools&gt;&lt;/tools&gt; XML tags:\n&lt;tools&gt;\n{{#each tools}}\n{{json this}}\n{{/each}}\n&lt;/tools&gt;\n\nFor each function call, return a json object with function name and arguments within &lt;tool_call&gt;&lt;/tool_call&gt; XML tags:\n&lt;tool_call&gt;\n{\"name\": &lt;function-name&gt;, \"arguments\": &lt;args-json-object&gt;}\n&lt;/tool_call&gt;&lt;|im_end|&gt;\n{{else}}&lt;|im_start|&gt;system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.&lt;|im_end|&gt;\n{{/if}}{{/if}}{{/if}}{{#each messages}}{{#ifUser}}&lt;|im_start|&gt;user\n{{content}}&lt;|im_end|&gt;\n{{/ifUser}}{{#ifAssistant}}&lt;|im_start|&gt;assistant\n{{content}}{{#if tool_calls}}{{#each tool_calls}}{{#if function}}\n&lt;tool_call&gt;\n{\"name\": \"{{function.name}}\", \"arguments\": {{json function.arguments}}}\n&lt;/tool_call&gt;{{/if}}{{/each}}{{/if}}&lt;|im_end|&gt;\n{{/ifAssistant}}{{#ifTool}}{{#unless @last}}&lt;|im_start|&gt;user\n&lt;tool_response&gt;\n{{content}}\n&lt;/tool_response&gt;&lt;|im_end|&gt;\n{{/unless}}{{/ifTool}}{{/each}}","promptExamples": [{"title": "Write an email from bullet list","prompt": "As a restaurant owner, write a professional email to the supplier to get these products every week: \n\n- Wine (x10)\n- Eggs (x24)\n- Bread (x12)"}, {"title": "Code a snake game","prompt": "Code a basic snake game in python, give explanations for each step."}, {"title": "Assist in a task","prompt": "How do I make a delicious lemon cheesecake?"}],"parameters": {"temperature": 0.7,"top_p": 0.8,"repetition_penalty": 1.2,"top_k": 40,"truncate": 1000,"max_new_tokens": 1024,"stop" : ["&lt;/s&gt;", "&lt;/s&gt;&lt;s&gt;[INST]"]}}]
+
+### Feature Flags ###
+LLM_SUMMARIZATION=true # generate conversation titles with LLMs
+ENABLE_ASSISTANTS=false #set to true to enable assistants feature
+ENABLE_ASSISTANTS_RAG=false # /!\ This will let users specify arbitrary URLs that the server will then request. Make sure you have the proper firewall rules in place. 
+REQUIRE_FEATURED_ASSISTANTS=false # require featured assistants to show in the list
+COMMUNITY_TOOLS=false # set to true to enable community tools
+ALLOW_IFRAME=true # Allow the app to be embedded in an iframe
+USE_LOCAL_WEBSEARCH=true</code></pre>
+<p>To make this work for your own model, you need to modify the <code>MODELS</code> array with what you’d like. A few flags:</p>
+<ol type="1">
+<li>Docker will <strong>not like whitespace</strong> so I had to remove all whitespace from the example config they give us. Also I just went and found the chat template on Hugging Face, then told o3 to convert it from HF to the one based on their example (might not have been needed, but just documenting)</li>
+<li>I set <code>MONGODB_URL</code> to our earlier deployed mongo database</li>
+</ol>
+<p>From here, simply run it:</p>
+<pre><code>docker run -p 3000:3000 --env-file .env.local  ghcr.io/huggingface/chat-ui:latest</code></pre>
+<p>And now you should have a beautiful ChatUI instance going where you can speak to your own LLM!</p>
+<p><img src="media/blog/chatui.png" class="img-fluid"></p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

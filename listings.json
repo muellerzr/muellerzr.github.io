@@ -1,7 +1,19 @@
 [
   {
+    "listing": "/til/index.html",
+    "items": [
+      "/til/argparse.html",
+      "/til/free_memory.html",
+      "/til/sub_cli.html",
+      "/til/wraps.html",
+      "/til/testing.html",
+      "/til/code_review.html"
+    ]
+  },
+  {
     "listing": "/blog/index.html",
     "items": [
+      "/blog/huggingchat_local.html",
       "/blog/gradient_accumulation_part2.html",
       "/blog/workhorse.html",
       "/blog/huggingface_docker.html",
@@ -28,20 +40,9 @@
       "/blog/NLP-Capstone.html",
       "/blog/ClassConfusion.html",
       "/blog/FeatureImportance-TestSet.html",
-      "/blog/Suspecto.html",
       "/blog/Week-1.html",
+      "/blog/Suspecto.html",
       "/blog/Fastai-Curriculum.html"
-    ]
-  },
-  {
-    "listing": "/til/index.html",
-    "items": [
-      "/til/argparse.html",
-      "/til/free_memory.html",
-      "/til/sub_cli.html",
-      "/til/wraps.html",
-      "/til/testing.html",
-      "/til/code_review.html"
     ]
   }
 ]
