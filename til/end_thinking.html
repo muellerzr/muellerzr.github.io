@@ -253,55 +253,56 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| filename: thinking_budget_processor.py</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| language: python</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers.generate <span class="im">import</span> LogitsProcessor</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ThinkingTokenBudgetProcessor(LogitsProcessor):</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">    A processor where after a maximum number of tokens are generated,</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    a &lt;/think&gt; token is added at the end to stop the thinking generation,</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">    and then it will continue to generate the response.</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, tokenizer, max_thinking_tokens<span class="op">=</span><span class="va">None</span>):</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokenizer <span class="op">=</span> tokenizer</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.max_thinking_tokens <span class="op">=</span> max_thinking_tokens</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.think_end_token <span class="op">=</span> <span class="va">self</span>.tokenizer.encode(<span class="st">"&lt;/think&gt;"</span>, add_special_tokens<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>]</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.nl_token <span class="op">=</span> <span class="va">self</span>.tokenizer.encode(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>, add_special_tokens<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>]</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokens_generated <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.stopped_thinking <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.neg_inf <span class="op">=</span> <span class="bu">float</span>(<span class="st">'-inf'</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, input_ids: torch.LongTensor, scores: torch.FloatTensor) <span class="op">-&gt;</span> torch.FloatTensor:</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokens_generated <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.max_thinking_tokens <span class="op">==</span> <span class="dv">0</span> <span class="kw">and</span> <span class="kw">not</span> <span class="va">self</span>.stopped_thinking <span class="kw">and</span> <span class="va">self</span>.tokens_generated <span class="op">&gt;</span> <span class="dv">0</span>:</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>            scores[:] <span class="op">=</span> <span class="va">self</span>.neg_inf</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>            scores[<span class="dv">0</span>][<span class="va">self</span>.nl_token] <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.stopped_thinking <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> scores</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.max_thinking_tokens <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="kw">and</span> <span class="kw">not</span> <span class="va">self</span>.stopped_thinking:</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (<span class="va">self</span>.tokens_generated <span class="op">/</span> <span class="va">self</span>.max_thinking_tokens) <span class="op">&gt;</span> <span class="fl">.95</span>:</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>                scores[<span class="dv">0</span>][<span class="va">self</span>.nl_token] <span class="op">=</span> scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> (<span class="va">self</span>.tokens_generated <span class="op">/</span> <span class="va">self</span>.max_thinking_tokens))</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">=</span> (</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                    scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> (<span class="va">self</span>.tokens_generated <span class="op">/</span> <span class="va">self</span>.max_thinking_tokens))</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>                )</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="va">self</span>.tokens_generated <span class="op">&gt;=</span> (<span class="va">self</span>.max_thinking_tokens <span class="op">-</span> <span class="dv">1</span>):</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="va">self</span>.tokens_generated <span class="op">==</span> <span class="va">self</span>.max_thinking_tokens<span class="op">-</span><span class="dv">1</span>:</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>                    scores[:] <span class="op">=</span> <span class="va">self</span>.neg_inf</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>                    scores[<span class="dv">0</span>][<span class="va">self</span>.nl_token] <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>                    scores[:] <span class="op">=</span> <span class="va">self</span>.neg_inf</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>                    scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>                    <span class="va">self</span>.stopped_thinking <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> scores</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers.generate <span class="im">import</span> LogitsProcessor</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ThinkingTokenBudgetProcessor(LogitsProcessor):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    A processor where after a maximum number of tokens are generated,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">    a &lt;/think&gt; token is added at the end to stop the thinking generation,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">    and then it will continue to generate the response.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, tokenizer, max_thinking_tokens<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokenizer <span class="op">=</span> tokenizer</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.max_thinking_tokens <span class="op">=</span> max_thinking_tokens</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.think_end_token <span class="op">=</span> <span class="va">self</span>.tokenizer.encode(<span class="st">"&lt;/think&gt;"</span>, add_special_tokens<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>]</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.nl_token <span class="op">=</span> <span class="va">self</span>.tokenizer.encode(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>, add_special_tokens<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>]</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokens_generated <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.stopped_thinking <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.neg_inf <span class="op">=</span> <span class="bu">float</span>(<span class="st">'-inf'</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, input_ids: torch.LongTensor, scores: torch.FloatTensor) <span class="op">-&gt;</span> torch.FloatTensor:</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokens_generated <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.max_thinking_tokens <span class="op">==</span> <span class="dv">0</span> <span class="kw">and</span> <span class="kw">not</span> <span class="va">self</span>.stopped_thinking <span class="kw">and</span> <span class="va">self</span>.tokens_generated <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>            scores[:] <span class="op">=</span> <span class="va">self</span>.neg_inf</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            scores[<span class="dv">0</span>][<span class="va">self</span>.nl_token] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.stopped_thinking <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> scores</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.max_thinking_tokens <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="kw">and</span> <span class="kw">not</span> <span class="va">self</span>.stopped_thinking:</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (<span class="va">self</span>.tokens_generated <span class="op">/</span> <span class="va">self</span>.max_thinking_tokens) <span class="op">&gt;</span> <span class="fl">.95</span>:</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                scores[<span class="dv">0</span>][<span class="va">self</span>.nl_token] <span class="op">=</span> scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> (<span class="va">self</span>.tokens_generated <span class="op">/</span> <span class="va">self</span>.max_thinking_tokens))</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">=</span> (</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>                    scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> (<span class="va">self</span>.tokens_generated <span class="op">/</span> <span class="va">self</span>.max_thinking_tokens))</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="va">self</span>.tokens_generated <span class="op">&gt;=</span> (<span class="va">self</span>.max_thinking_tokens <span class="op">-</span> <span class="dv">1</span>):</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="va">self</span>.tokens_generated <span class="op">==</span> <span class="va">self</span>.max_thinking_tokens<span class="op">-</span><span class="dv">1</span>:</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>                    scores[:] <span class="op">=</span> <span class="va">self</span>.neg_inf</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>                    scores[<span class="dv">0</span>][<span class="va">self</span>.nl_token] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>                    scores[:] <span class="op">=</span> <span class="va">self</span>.neg_inf</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>                    scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>                    <span class="va">self</span>.stopped_thinking <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> scores</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| filename: thinking_budget_processor.py</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| language: python</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers.generate <span class="im">import</span> LogitsProcessor</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers.generate <span class="im">import</span> LogitsProcessor</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ThinkingTokenBudgetProcessor(LogitsProcessor):</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -386,39 +387,39 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pipe(messages)[<span class="dv">0</span>][<span class="st">"generated_text"</span>][<span class="op">-</span><span class="dv">1</span>][<span class="st">"content"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Note: <code>max_new_tokens</code> needs to be greater than the <code>max_thinking_tokens</code>, otherwise it will just think then end</strong></p>
 <p>With zero:</p>
-<pre><code>&lt;/think&gt;
-
-The square root of 2722 is approximately 52.18.</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>think<span class="op">&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>The square root of <span class="dv">2722</span> <span class="kw">is</span> approximately <span class="fl">52.18</span>.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>At 100 tokens: (Yes, after letting it think we did <em>worse</em> for awhile)</p>
-<pre><code>&lt;think&gt;
-Okay, so I need to find the square root of 2722. Hmm, let's think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.
-
-First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be
-&lt;/think&gt;
-
-2722</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>think<span class="op">&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>Okay, so I need to find the square root of <span class="fl">2722.</span> Hmm, let<span class="st">'s think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="er">First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>think<span class="op">&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="dv">2722</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>At 300:</p>
-<pre><code>&lt;think&gt;
-Okay, so I need to find the square root of 2722. Hmm, let's think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.
-
-First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be expressed as a product of two equal integers. For example, 16 is 4 squared because 4*4=16. But 2722... Let me think of some numbers near the square root of 2722.
-
-Wait, the square root of 2722. Let me approximate it. The square of 50 is 2500, and the square of 52 is 52*52 = 2704. Oh, right! 52 squared is 2704. Then 53 squared would be 53*53. Let me calculate that. 50*50=2500, 50*3=150, 3*50=150, and 3*3=9. So adding those up: 2500 + 150 + 150 + 9
-&lt;/think&gt;
-
-2722</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>think<span class="op">&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>Okay, so I need to find the square root of <span class="fl">2722.</span> Hmm, let<span class="st">'s think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="er">First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be expressed as a product of two equal integers. For example, 16 is 4 squared because 4*4=16. But 2722... Let me think of some numbers near the square root of 2722.</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>Wait, the square root of <span class="fl">2722.</span> Let me approximate it. The square of <span class="dv">50</span> <span class="kw">is</span> <span class="dv">2500</span>, <span class="kw">and</span> the square of <span class="dv">52</span> <span class="kw">is</span> <span class="dv">52</span><span class="op">*</span><span class="dv">52</span> <span class="op">=</span> <span class="fl">2704.</span> Oh, right<span class="op">!</span> <span class="dv">52</span> squared <span class="kw">is</span> <span class="fl">2704.</span> Then <span class="dv">53</span> squared would be <span class="dv">53</span><span class="op">*</span><span class="fl">53.</span> Let me calculate that. <span class="dv">50</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">2500</span>, <span class="dv">50</span><span class="op">*</span><span class="dv">3</span><span class="op">=</span><span class="dv">150</span>, <span class="dv">3</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">150</span>, <span class="kw">and</span> <span class="dv">3</span><span class="op">*</span><span class="dv">3</span><span class="op">=</span><span class="fl">9.</span> So adding those up: <span class="dv">2500</span> <span class="op">+</span> <span class="dv">150</span> <span class="op">+</span> <span class="dv">150</span> <span class="op">+</span> <span class="dv">9</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>think<span class="op">&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="dv">2722</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>At 600:</p>
-<pre><code>&lt;think&gt;
-Okay, so I need to find the square root of 2722. Hmm, let's think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.
-
-First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be expressed as a product of two equal integers. For example, 16 is 4 squared because 4*4=16. But 2722... Let me think of some numbers near the square root of 2722.
-
-Wait, the square root of 2722. Let me approximate it. The square of 50 is 2500, and the square of 52 is 52*52 = 2704. Oh, right! 52 squared is 2704. Then 53 squared would be 53*53. Let me calculate that. 50*50=2500, 50*3=150, 3*50=150, and 3*3=9. So adding those up: 2500 + 150 + 150 + 9 = 2709. Oh, so 53 squared is 2709. Then 54 squared would be 54*54. Let me calculate that. 50*50=2500, 50*4=200, 4*50=200, and 4*4=16. Adding those: 2500 + 200 + 200 + 16 = 2916. 
-
-So, 53 squared is 2709, and 54 squared is 2916. The original number is 2722. That's between 53 and 54. Let me check 53.5 squared. Maybe I can use a better approximation. Alternatively, since 53^2=2709 and 54^2=2916, the difference between 2722 and 2709 is 13. So, 2722 - 2709 = 13. So, approximately, the square root is 53 + (13)/(2*53) by linear approximation. Let me calculate that. 13 divided by 106 is approximately 0.122. So, approximately 53.122. But since we need
-&lt;/think&gt;
-
-53.122</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>think<span class="op">&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>Okay, so I need to find the square root of <span class="fl">2722.</span> Hmm, let<span class="st">'s think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="er">First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be expressed as a product of two equal integers. For example, 16 is 4 squared because 4*4=16. But 2722... Let me think of some numbers near the square root of 2722.</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>Wait, the square root of <span class="fl">2722.</span> Let me approximate it. The square of <span class="dv">50</span> <span class="kw">is</span> <span class="dv">2500</span>, <span class="kw">and</span> the square of <span class="dv">52</span> <span class="kw">is</span> <span class="dv">52</span><span class="op">*</span><span class="dv">52</span> <span class="op">=</span> <span class="fl">2704.</span> Oh, right<span class="op">!</span> <span class="dv">52</span> squared <span class="kw">is</span> <span class="fl">2704.</span> Then <span class="dv">53</span> squared would be <span class="dv">53</span><span class="op">*</span><span class="fl">53.</span> Let me calculate that. <span class="dv">50</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">2500</span>, <span class="dv">50</span><span class="op">*</span><span class="dv">3</span><span class="op">=</span><span class="dv">150</span>, <span class="dv">3</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">150</span>, <span class="kw">and</span> <span class="dv">3</span><span class="op">*</span><span class="dv">3</span><span class="op">=</span><span class="fl">9.</span> So adding those up: <span class="dv">2500</span> <span class="op">+</span> <span class="dv">150</span> <span class="op">+</span> <span class="dv">150</span> <span class="op">+</span> <span class="dv">9</span> <span class="op">=</span> <span class="fl">2709.</span> Oh, so <span class="dv">53</span> squared <span class="kw">is</span> <span class="fl">2709.</span> Then <span class="dv">54</span> squared would be <span class="dv">54</span><span class="op">*</span><span class="fl">54.</span> Let me calculate that. <span class="dv">50</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">2500</span>, <span class="dv">50</span><span class="op">*</span><span class="dv">4</span><span class="op">=</span><span class="dv">200</span>, <span class="dv">4</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">200</span>, <span class="kw">and</span> <span class="dv">4</span><span class="op">*</span><span class="dv">4</span><span class="op">=</span><span class="fl">16.</span> Adding those: <span class="dv">2500</span> <span class="op">+</span> <span class="dv">200</span> <span class="op">+</span> <span class="dv">200</span> <span class="op">+</span> <span class="dv">16</span> <span class="op">=</span> <span class="fl">2916.</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>So, <span class="dv">53</span> squared <span class="kw">is</span> <span class="dv">2709</span>, <span class="kw">and</span> <span class="dv">54</span> squared <span class="kw">is</span> <span class="fl">2916.</span> The original number <span class="kw">is</span> <span class="fl">2722.</span> That<span class="st">'s between 53 and 54. Let me check 53.5 squared. Maybe I can use a better approximation. Alternatively, since 53^2=2709 and 54^2=2916, the difference between 2722 and 2709 is 13. So, 2722 - 2709 = 13. So, approximately, the square root is 53 + (13)/(2*53) by linear approximation. Let me calculate that. 13 divided by 106 is approximately 0.122. So, approximately 53.122. But since we need</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="er">&lt;/think&gt;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fl">53.122</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>
