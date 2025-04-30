@@ -259,13 +259,13 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ThinkingTokenBudgetProcessor(LogitsProcessor):</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    A processor where after a maximum number of tokens are generated,</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">    a &lt;//think&gt; token is added at the end to stop the thinking generation,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">    a &lt;/think&gt; token is added at the end to stop the thinking generation,</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">    and then it will continue to generate the response.</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, tokenizer, max_thinking_tokens<span class="op">=</span><span class="va">None</span>):</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokenizer <span class="op">=</span> tokenizer</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.max_thinking_tokens <span class="op">=</span> max_thinking_tokens</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.think_end_token <span class="op">=</span> <span class="va">self</span>.tokenizer.encode(<span class="st">"&lt;//think&gt;"</span>, add_special_tokens<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.think_end_token <span class="op">=</span> <span class="va">self</span>.tokenizer.encode(<span class="st">"&lt;/think&gt;"</span>, add_special_tokens<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>]</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.nl_token <span class="op">=</span> <span class="va">self</span>.tokenizer.encode(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>, add_special_tokens<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>]</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokens_generated <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.stopped_thinking <span class="op">=</span> <span class="va">False</span></span>
@@ -307,13 +307,13 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ThinkingTokenBudgetProcessor(LogitsProcessor):</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">    A processor where after a maximum number of tokens are generated,</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">    a &lt;//think&gt; token is added at the end to stop the thinking generation,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">    a &lt;/think&gt; token is added at the end to stop the thinking generation,</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">    and then it will continue to generate the response.</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, tokenizer, max_thinking_tokens<span class="op">=</span><span class="va">None</span>):</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokenizer <span class="op">=</span> tokenizer</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.max_thinking_tokens <span class="op">=</span> max_thinking_tokens</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.think_end_token <span class="op">=</span> <span class="va">self</span>.tokenizer.encode(<span class="st">"&lt;//think&gt;"</span>, add_special_tokens<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>]</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.think_end_token <span class="op">=</span> <span class="va">self</span>.tokenizer.encode(<span class="st">"&lt;/think&gt;"</span>, add_special_tokens<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>]</span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.nl_token <span class="op">=</span> <span class="va">self</span>.tokenizer.encode(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>, add_special_tokens<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>]</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokens_generated <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.stopped_thinking <span class="op">=</span> <span class="va">False</span></span>
@@ -387,7 +387,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pipe(messages)[<span class="dv">0</span>][<span class="st">"generated_text"</span>][<span class="op">-</span><span class="dv">1</span>][<span class="st">"content"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Note: <code>max_new_tokens</code> needs to be greater than the <code>max_thinking_tokens</code>, otherwise it will just think then end</strong></p>
 <p>With zero:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;//</span>think<span class="op">&gt;</span></span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>think<span class="op">&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>The square root of <span class="dv">2722</span> <span class="kw">is</span> approximately <span class="fl">52.18</span>.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>At 100 tokens: (Yes, after letting it think we did <em>worse</em> for awhile)</p>
