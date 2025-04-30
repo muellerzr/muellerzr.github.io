@@ -42,6 +42,7 @@ I hit a few bumps along the road. First was learning that `llama-cpp` doesn't re
 ```python
 #| filename: thinking_budget_processor.py
 #| language: python
+
 from transformers.generate import LogitsProcessor
 
 class ThinkingTokenBudgetProcessor(LogitsProcessor):
@@ -88,11 +89,12 @@ class ThinkingTokenBudgetProcessor(LogitsProcessor):
 ```
 
 ## Code + Explanation
+
 ```python
 #| filename: thinking_budget_processor.py
 #| language: python
-from transformers.generate import LogitsProcessor
 
+from transformers.generate import LogitsProcessor
 
 class ThinkingTokenBudgetProcessor(LogitsProcessor):
     """
@@ -164,6 +166,8 @@ When in the last 5% of the thinking budget, push towards \n</think>, but not act
 
 ::: {style='padding-top: 0px;'}
 When we're at the end of our thinking budget, force the model to generate \n</think> (for a "true stop" to the model logic, it expects a \n followed by </think>, it can't be just </think> I found)
+:::
+
 :::
 
 ## How do I use it?

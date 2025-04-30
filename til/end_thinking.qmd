@@ -42,6 +42,7 @@ I hit a few bumps along the road. First was learning that `llama-cpp` doesn't re
 ```python
 #| filename: thinking_budget_processor.py
 #| language: python
+
 from transformers.generate import LogitsProcessor
 
 class ThinkingTokenBudgetProcessor(LogitsProcessor):
@@ -88,11 +89,12 @@ class ThinkingTokenBudgetProcessor(LogitsProcessor):
 ```
 
 ## Code + Explanation
+
 ```python
 #| filename: thinking_budget_processor.py
 #| language: python
-from transformers.generate import LogitsProcessor
 
+from transformers.generate import LogitsProcessor
 
 class ThinkingTokenBudgetProcessor(LogitsProcessor):
     """
