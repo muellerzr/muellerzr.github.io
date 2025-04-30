@@ -166,6 +166,8 @@ When in the last 5% of the thinking budget, push towards \n</think>, but not act
 When we're at the end of our thinking budget, force the model to generate \n</think> (for a "true stop" to the model logic, it expects a \n followed by </think>, it can't be just </think> I found)
 :::
 
+:::
+
 ## How do I use it?
 
 In my testing I just shoved it into `transformers`, however this should also work with vllm (or be easily convertible to vllm):

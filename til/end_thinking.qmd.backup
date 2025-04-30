@@ -221,5 +221,16 @@ Wait, the square root of 2722. Let me approximate it. The square of 50 is 2500, 
 
 At 600:
 ```
+<think>
+Okay, so I need to find the square root of 2722. Hmm, let's think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.
 
+First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be expressed as a product of two equal integers. For example, 16 is 4 squared because 4*4=16. But 2722... Let me think of some numbers near the square root of 2722.
+
+Wait, the square root of 2722. Let me approximate it. The square of 50 is 2500, and the square of 52 is 52*52 = 2704. Oh, right! 52 squared is 2704. Then 53 squared would be 53*53. Let me calculate that. 50*50=2500, 50*3=150, 3*50=150, and 3*3=9. So adding those up: 2500 + 150 + 150 + 9 = 2709. Oh, so 53 squared is 2709. Then 54 squared would be 54*54. Let me calculate that. 50*50=2500, 50*4=200, 4*50=200, and 4*4=16. Adding those: 2500 + 200 + 200 + 16 = 2916. 
+
+So, 53 squared is 2709, and 54 squared is 2916. The original number is 2722. That's between 53 and 54. Let me check 53.5 squared. Maybe I can use a better approximation. Alternatively, since 53^2=2709 and 54^2=2916, the difference between 2722 and 2709 is 13. So, 2722 - 2709 = 13. So, approximately, the square root is 53 + (13)/(2*53) by linear approximation. Let me calculate that. 13 divided by 106 is approximately 0.122. So, approximately 53.122. But since we need
+</think>
+
+53.122
 ```
+
