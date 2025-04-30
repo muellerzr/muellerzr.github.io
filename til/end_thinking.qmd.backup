@@ -1,0 +1,225 @@
+---
+categories:
+    - qwen
+date: '2025-04-30'
+date-format: short
+description: How to make Qwen3 think less
+title: Limiting Qwen 3's Thinking
+---
+
+## Motivation
+
+[Qwen 3](https://qwenlm.github.io/blog/qwen3/) is now out and myself and others are noticing that it likes to think... *for awhile*:
+
+![https://x.com/corbtt/status/1917364018483978417](media/end_thinking/tweet_corbtt.png)
+
+What's even more frustrating (in a good way) is the official [Qwen 3 Demo](https://huggingface.co/spaces/Qwen/Qwen3-Demo) *does this* by calling their own backend API which supports this capability:
+
+![](media/end_thinking/thinking_budget.png)
+
+So now the question everyone has been wondering is *how do we do this?*
+
+## What is the thing we want to do
+
+I dug around trying to find anyone who had limited thinking outputs in this way (like perhaps for R1) and didn't find too much. I did chat with a few colleagues to try and think of a few ways we could inject this, eventually landing on a token post-processor.
+
+So what exactly is it we want to do?
+
+> Given a prompt, allocate a budget of *N* tokens. After *N* tokens, a `\n` and `</think>` token should be added to the end, to turn "think" mode off and turn on answer mode. For ease of the model, I will also try to smoothen the approach to those two end tokens, as to not **just jump** to them when we're ready.
+
+## Journey
+
+I hit a few bumps along the road. First was learning that `llama-cpp` doesn't really support this well. I tried then going to the `llama-cpp-python` bindings, but I didn't trust that these would work 100% of the time (the last commit was a few months ago), and I was already in the zone so I migrated to the next tool: `transformers`.
+
+`transformers` has what's called a `LogitProcessor` class, which as it sounds like will perform some logic on the *logits* during `model.generate()`. This is *exactly* what we want. 
+
+## The Code
+
+::: {.panel-tabset}
+
+## Code
+
+```python
+#| filename: thinking_budget_processor.py
+#| language: python
+from transformers.generate import LogitsProcessor
+
+class ThinkingTokenBudgetProcessor(LogitsProcessor):
+    """
+    A processor where after a maximum number of tokens are generated,
+    a </think> token is added at the end to stop the thinking generation,
+    and then it will continue to generate the response.
+    """
+    def __init__(self, tokenizer, max_thinking_tokens=None):
+        self.tokenizer = tokenizer
+        self.max_thinking_tokens = max_thinking_tokens
+        self.think_end_token = self.tokenizer.encode("</think>", add_special_tokens=False)[0]
+        self.nl_token = self.tokenizer.encode("\n", add_special_tokens=False)[0]
+        self.tokens_generated = 0
+        self.stopped_thinking = False
+        self.neg_inf = float('-inf')
+
+    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+        self.tokens_generated += 1
+        if self.max_thinking_tokens == 0 and not self.stopped_thinking and self.tokens_generated > 0:
+            scores[:] = self.neg_inf
+            scores[0][self.nl_token] = 0
+            scores[0][self.think_end_token] = 0
+            self.stopped_thinking = True
+            return scores
+
+        if self.max_thinking_tokens is not None and not self.stopped_thinking:
+            if (self.tokens_generated / self.max_thinking_tokens) > .95:
+                scores[0][self.nl_token] = scores[0][self.think_end_token] * (1 + (self.tokens_generated / self.max_thinking_tokens))
+                scores[0][self.think_end_token] = (
+                    scores[0][self.think_end_token] * (1 + (self.tokens_generated / self.max_thinking_tokens))
+                )
+
+            if self.tokens_generated >= (self.max_thinking_tokens - 1):
+                if self.tokens_generated == self.max_thinking_tokens-1:
+                    scores[:] = self.neg_inf
+                    scores[0][self.nl_token] = 0
+                else:
+                    scores[:] = self.neg_inf
+                    scores[0][self.think_end_token] = 0
+                    self.stopped_thinking = True
+
+        return scores
+```
+
+## Code + Explanation
+```python
+#| filename: thinking_budget_processor.py
+#| language: python
+from transformers.generate import LogitsProcessor
+
+
+class ThinkingTokenBudgetProcessor(LogitsProcessor):
+    """
+    A processor where after a maximum number of tokens are generated,
+    a </think> token is added at the end to stop the thinking generation,
+    and then it will continue to generate the response.
+    """
+    def __init__(self, tokenizer, max_thinking_tokens=None):
+        self.tokenizer = tokenizer
+        self.max_thinking_tokens = max_thinking_tokens
+        self.think_end_token = self.tokenizer.encode("</think>", add_special_tokens=False)[0]
+        self.nl_token = self.tokenizer.encode("\n", add_special_tokens=False)[0]
+        self.tokens_generated = 0
+        self.stopped_thinking = False
+        self.neg_inf = float('-inf')
+
+    def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
+        self.tokens_generated += 1
+        if self.max_thinking_tokens == 0 and not self.stopped_thinking and self.tokens_generated > 0:
+            scores[:] = self.neg_inf
+            scores[0][self.nl_token] = 0
+            scores[0][self.think_end_token] = 0
+            self.stopped_thinking = True
+            return scores
+
+        if self.max_thinking_tokens is not None and not self.stopped_thinking:
+            if (self.tokens_generated / self.max_thinking_tokens) > .95:
+                scores[0][self.nl_token] = scores[0][self.think_end_token] * (1 + (self.tokens_generated / self.max_thinking_tokens))
+                scores[0][self.think_end_token] = (
+                    scores[0][self.think_end_token] * (1 + (self.tokens_generated / self.max_thinking_tokens))
+                )
+
+            if self.tokens_generated >= (self.max_thinking_tokens - 1):
+                if self.tokens_generated == self.max_thinking_tokens-1:
+                    scores[:] = self.neg_inf
+                    scores[0][self.nl_token] = 0
+                else:
+                    scores[:] = self.neg_inf
+                    scores[0][self.think_end_token] = 0
+                    self.stopped_thinking = True
+
+        return scores
+```
+
+***
+```python
+        if self.max_thinking_tokens is not None and not self.stopped_thinking:
+            if (self.tokens_generated / self.max_thinking_tokens) > .95:
+                scores[0][self.nl_token] = scores[0][self.think_end_token] * (1 + (self.tokens_generated / self.max_thinking_tokens))
+                scores[0][self.think_end_token] = (
+                    scores[0][self.think_end_token] * (1 + (self.tokens_generated / self.max_thinking_tokens))
+                )
+```
+::: {style='padding-top: 0px;'}
+When in the last 5% of the thinking budget, push towards \n</think>, but not actually do so
+:::
+
+***
+```python
+            if self.tokens_generated >= (self.max_thinking_tokens - 1):
+                if self.tokens_generated == self.max_thinking_tokens-1:
+                    scores[:] = self.neg_inf
+                    scores[0][self.nl_token] = 0
+                else:
+                    scores[:] = self.neg_inf
+                    scores[0][self.think_end_token] = 0
+                    self.stopped_thinking = True
+```
+
+::: {style='padding-top: 0px;'}
+When we're at the end of our thinking budget, force the model to generate \n</think> (for a "true stop" to the model logic, it expects a \n followed by </think>, it can't be just </think> I found)
+:::
+
+## How do I use it?
+
+In my testing I just shoved it into `transformers`, however this should also work with vllm (or be easily convertible to vllm):
+
+```python
+from transformers import AutoTokenizer, pipeline
+messages = [
+    {"role": "system", "content": "When answering questions, always only respond with only the correct answer, no explanation or other text is required."},
+    {"role": "user", "content": "What is the square root of 2722?"},
+]
+tokenizer = AutoTokenizer.from_pretrained("/mnt/models/Qwen3-0.6B")
+processor = ThinkingTokenBudgetProcessor(tokenizer, max_thinking_tokens=100)
+pipe = pipeline(
+    "text-generation", model="/mnt/models/Qwen3-0.6B", max_new_tokens=1500, logits_processor=[processor], device=0
+)
+print(pipe(messages)[0]["generated_text"][-1]["content"])
+```
+
+**Note: `max_new_tokens` needs to be greater than the `max_thinking_tokens`, otherwise it will just think then end**
+
+With zero:
+```
+</think>
+
+The square root of 2722 is approximately 52.18.
+```
+
+At 100 tokens:
+(Yes, after letting it think we did *worse* for awhile)
+
+```
+<think>
+Okay, so I need to find the square root of 2722. Hmm, let's think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.
+
+First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be
+</think>
+
+2722
+```
+
+At 300:
+```
+<think>
+Okay, so I need to find the square root of 2722. Hmm, let's think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.
+
+First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be expressed as a product of two equal integers. For example, 16 is 4 squared because 4*4=16. But 2722... Let me think of some numbers near the square root of 2722.
+
+Wait, the square root of 2722. Let me approximate it. The square of 50 is 2500, and the square of 52 is 52*52 = 2704. Oh, right! 52 squared is 2704. Then 53 squared would be 53*53. Let me calculate that. 50*50=2500, 50*3=150, 3*50=150, and 3*3=9. So adding those up: 2500 + 150 + 150 + 9
+</think>
+
+2722
+```
+
+At 600:
+```
+
+```
