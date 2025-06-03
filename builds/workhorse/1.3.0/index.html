@@ -230,7 +230,12 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <p>While I was on a trip to California I had a chance to catch up with a friend who sold me his 6000 ADA just “taking up space”. This was great because on paper it <em>should</em> be faster than both of my 2x 4090’s, but this led to an issue: how the heck do I even put this in my machine?</p>
 <p>I ended up ditching the big bulky case and running two <a href="https://www.amazon.com/dp/B0DFH48DPG">stackable computer cases I found</a>. Mounting the AIO’s wound up being the tricky part after getting everything put together as you can see below, but it works and its efficient.</p>
 <p>Also I replaced the water-cooled CPU cooler for fan, since space is <em>very limited</em></p>
-<p><a href="workhorse.jpg">workhorse</a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="workhorse.jpg" class="img-fluid figure-img"></p>
+<figcaption>workhorse</figcaption>
+</figure>
+</div>
 <p>I didn’t even need riser cables like I thought since the 3060’s on m.2 PCIe plus the AIO’s were long enough that they could be mounted on the top rack.</p>
 <p>What I <em>did</em> end up doing is mounting the GPUs such that:</p>
 <ul>
@@ -244,7 +249,12 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <p>To add insult to injury, the combined max pull from all of these GPUs and the PSUs is something like 2200 to 2500W being conservative. Also known as: a fire risk.</p>
 <p>To help mitigate that, I installed two new dedicated 20A breakers in the circuit room (where the PC lives anyways) to run each component off of (one plug goes to the external GPUs, one the main motherboard and internal components). I found some guys that did it fairly cheap (I think $200 or so) since the total distance was less than 10 feet.</p>
 <p>System works great now, with temperatures surprisingly not being a worry in an enclosed space (though it’s right by the AC which might help):</p>
-<p><a href="nvidia_smi.png">nvidia-smi</a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="nvidia_smi.png" class="img-fluid figure-img"></p>
+<figcaption>nvidia-smi</figcaption>
+</figure>
+</div>
 
 
 </section>
