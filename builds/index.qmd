@@ -1,9 +1,18 @@
 ---
-title: "All System Builds"
+title: "System Builds"
+format: html
 listing:
-  contents: .
-  sort: "date desc"
-  type: default
+  - id: workhorse
+    sort: "date desc"
 ---
 
-Explore builds for all systems.
+# Build Revisions
+
+Browse builds grouped by system. Each revision includes change notes, configs, and update history.
+
+---
+
+## 🖥️ Workhorse
+
+:::{#workhorse}
+:::

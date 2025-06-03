@@ -15,8 +15,7 @@ date: 2024-06-02
 
 ### Related blog:
 
-(blog)[https://muellerzr.github.io/blog/workhorse.html
-]
+[blog](https://muellerzr.github.io/blog/workhorse.html)
 
 ### Notes
 

@@ -27,7 +27,7 @@ efficient.
 
 Also I replaced the water-cooled CPU cooler for fan, since space is *very limited*
 
-[workhorse](workhorse.jpg)
+![workhorse](workhorse.jpg)
 
 I didn't even need riser cables like I thought since the 3060's on m.2 PCIe plus the AIO's were long enough that they could be mounted
 on the top rack. 
@@ -52,4 +52,4 @@ off of (one plug goes to the external GPUs, one the main motherboard and interna
 
 System works great now, with temperatures surprisingly not being a worry in an enclosed space (though it's right by the AC which might help):
 
-[nvidia-smi](nvidia_smi.png)
+![nvidia-smi](nvidia_smi.png)
