@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2023-06-05">
+<meta name="dcterms.date" content="2025-04-22">
 
-<title>Introducing nbquarto: A framework for Processing Jupyter Notebooks – Zach Mueller</title>
+<title>Workhorse - Revision 1.2.0 – Zach Mueller</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -59,23 +59,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -114,7 +114,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </script>
 
 
-<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../../../styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed fullcontent quarto-light">
@@ -124,7 +124,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Zach Mueller</span>
     </a>
   </div>
@@ -135,19 +135,19 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link" href="../../../index.html"> 
 <span class="menu-text">About Me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html"> 
+    <a class="nav-link" href="../../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../til/index.html"> 
+    <a class="nav-link" href="../../../til/index.html"> 
 <span class="menu-text">Today I Learned</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../builds/index.html"> 
+    <a class="nav-link" href="../../../builds/index.html"> 
 <span class="menu-text">PC Builds</span></a>
   </li>  
 </ul>
@@ -173,7 +173,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Introducing nbquarto: A framework for Processing Jupyter Notebooks</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Workhorse - Revision 1.2.0</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -192,13 +192,8 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Introducing nbquarto: A framework for Processing Jupyter Notebooks</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">tech</div>
-    <div class="quarto-category">quarto</div>
-    <div class="quarto-category">jupyter</div>
-  </div>
-  </div>
+<h1 class="title">Workhorse - Revision 1.2.0</h1>
+</div>
 
 
 
@@ -208,7 +203,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 5, 2023</p>
+      <p class="date">April 22, 2025</p>
     </div>
   </div>
   
@@ -220,103 +215,33 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </header>
 
 
-<section id="introducing-nbquarto-a-framework-for-processing-jupyter-notebooks-with-quarto" class="level1">
-<h1>Introducing nbquarto, a framework for processing Jupyter Notebooks with Quarto</h1>
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Let’s take a few steps back in time, to when I (Zach), was using tools like <code>nbdev</code> out of fastai. I wasn’t using it for its intended purpose (writing libraries in Jupyter Notebooks), I wasn’t a big fan of that after a while. Instead, I was trying to hack it in any way I could to help further the <strong>course websites</strong> I was writing. To help further the <em>documentation</em> I was generating.</p>
-<p>Then, <code>nbdev</code> 2.0.0 comes out, showing this integration to a wonderful rendering and processing framework: <a href="quarto.org/">Quarto</a>. Immediatly I could see the potential with this framework for teaching purposes:</p>
-<ul>
-<li>Quick and easy ways for me to create interactible documentation?</li>
-<li>A way for me use my Jupyter Notebooks but still have special syntax it uses to render specific items?</li>
-</ul>
-<p>And most of all:</p>
-<ul>
-<li><code>nbdev</code> 2.0.0 introduced the concept of a <code>Processor</code> class.</li>
-</ul>
-<p>Without diving into too much detail yet, it was a moduler way for me to interact with the cells in a Jupyter Notebook and do whatever I wanted with them.</p>
-<p>I know, I know. Might have not quite sold you on it yet, and that’s alright.</p>
-<p>This idea of post-processing these notebooks allowed me to create small “shortcut” commands for quarto to remove a <em>ton</em> of boilerplate code, and soon let me create one of my favorite pieces, Code Notes, a way to annotate code from within a single code cell and trailing markdown cells, to be rendered later side-by-side:</p>
-<p><img src="media/blog/nbquarto/part_1.png" class="img-fluid"> <img src="media/blog/nbquarto/part_2.png" class="img-fluid"></p>
-<p>For years as I was adventuring with <code>nbdev</code> I was creating custom forks, versions, and more to get something <em>remotely</em> close to this. And now thanks to this <code>Processor</code>, I could do it!</p>
-<p>But I also wasn’t satisfied there. <code>nbdev</code> has very <em>real</em> problems that need solving, which this article will address and explore how my new library, <a href="https://muellerzr.github.io/nbquarto"><code>nbquarto</code></a>, attempts to solve them.</p>
+<section id="changes" class="level3">
+<h3 class="anchored" data-anchor-id="changes">Changes:</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode diff code-with-copy"><code class="sourceCode diff"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="st">- GPUs: 2x MSI SUPRIM LIQUID X 4090's</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="va">+ GPUs: </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="va">+   2x MSI SUPRIM LIQUID X 4090's</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="va">+   2x RTX 3060's</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="va">+ Peripherals: </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="va">+   1x M.2L-PCIE90-300MM</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="va">+   1x M.2R-PCIE90-300MM</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="va">+   1x ADD2PSU 4 in 1 Power Supply Connector</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="st">- PSU: Toughpower GF3 1650W Gold - TT Premium Edition</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="va">+ PSUs:</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="va">+   Toughpower GF3 1650W Gold - TT Premium Edition</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="va">+   NZXT C1200 Gold ATX 3.1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="why-not-nbdev" class="level2">
-<h2 class="anchored" data-anchor-id="why-not-nbdev">Why not <code>nbdev</code>?</h2>
-<p>First let’s talk about the base framework of this idea: the <code>Processor</code>. <code>nbdev</code> designed this as a way to use special comment cells (<code>#| {name}</code>) that Quarto calls <em>directives</em> to export code to particular files that were defined in the cell block, or to interact with the documentation in particular ways as it was being auto-generated through their framework.</p>
-<p>For those familar with Quarto, this should sound exactly like how <a href="https://quarto.org/docs/extensions/creating.html">Quarto Extensions</a> are made in Lua, but built in Python!</p>
-<p>This was a great idea, but it had a few problems:</p>
-<ul>
-<li><code>nbdev</code> itself is a framework built upon extreme abstraction and is entirely unreadable for those who truly want to know what’s going on. It’s a liability more than a tool, which is not good.</li>
-<li>Also, <code>nbdev</code> is too many things at once, leading to the above. It tries to be a documentation wrapper framework, a tool that helps manage tests, and a tool that tries to export source code from notebooks to <code>.py</code> files.</li>
-<li>Finally, the way it was done is exceedingly “magical”. Errors are exceedingly hard to read and track, workflows would randomly break due to a random dependency upgrade that was <em>also</em> magical.</li>
-</ul>
-<p>As a result, I decided to see how I could write <code>nbdev</code> in such a way that can be:</p>
-<ul>
-<li>Readable</li>
-<li>Do exactly what it needs to do (process notebooks)</li>
-<li>Be functional enough without <em>much</em> change to the overall API, because at a high level it was still quite good!</li>
-</ul>
-</section>
-<section id="enter-nbquarto" class="level2">
-<h2 class="anchored" data-anchor-id="enter-nbquarto">Enter <code>nbquarto</code></h2>
-<p>This framework is built on the <strong>base</strong> of <code>nbdev</code>. Quite literally with source code <em>ripped</em> from the project, and then rewritten to follow basic readability practices. As a result, code is easier to dive into and understand.</p>
-<p>This framework has <em>zero</em> base dependencies for what it needs to do. As a result, any and all over-abstraction has been eliminated to make way for a framework that anyone can understand through a basic viewership of the code. In fact only <em>one</em> class from <code>fastcore</code> (the foundational library for <code>nbdev</code>) made it through: the <code>AttributeDictionary</code>, which basically makes a dictionary act as a namespace object by having its keys be accessible as attributes. The value of this class outweighted its “magicalness”, however it was still rewritten in a way that for a basic Python user, it’s clear as to what is happening:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AttributeDictionary(<span class="bu">dict</span>):</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">    `dict` subclass that also provides access to keys as attributes.</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">        ```python</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; d = AttrDict({'a': 1, 'b': 2})</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; d.a</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">        1</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; d.b</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">        2</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; d.c = 3</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; d['c']</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">        3</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">        ```</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__getattr__</span>(<span class="va">self</span>, k):</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> k <span class="kw">not</span> <span class="kw">in</span> <span class="va">self</span>:</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">AttributeError</span>(k)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>[k]</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__setattr__</span>(<span class="va">self</span>, k, v):</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        is_private <span class="op">=</span> k[<span class="dv">0</span>] <span class="op">==</span> <span class="st">"_"</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> is_private:</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            <span class="bu">super</span>().<span class="fu">__setattr__</span>(k, v)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>[k] <span class="op">=</span> v</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__dir__</span>(<span class="va">self</span>):</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        res <span class="op">=</span> [<span class="op">*</span><span class="va">self</span>.keys()]</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        res.extend(<span class="bu">super</span>().<span class="fu">__dir__</span>())</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Finally, this framework is designed to be modularized and flexible, so that even if you’re not processing for <em>Quarto specifically</em> you can still use this framework to process your notebooks in any way you want!</p>
-<p>I’ve used the base idea of this framework to create <a href="https://store.walkwithfastai.com">courses</a>, various <a href="https://muellerzr.github.io/til">blogs</a> and other materials for educational purposes.</p>
-<p>I truly believe that <code>nbquarto</code> is the right blend of utilizing exploratory programming practices with documentation to keep your code where it needs to go (and how the rest of the world expects it to go), while giving you the freedom to modify your documentation however you see fit.</p>
-<p>Just as an example, out-of-the-box with the current implementation of <code>nbquarto</code> you can do the following:</p>
-<ul>
-<li>Create auto-populated <a href="https://muellerzr.github.io/nbquarto/package_reference/processors.html#nbquarto.processors.autodoc.AutoDocProcessor">API documentation</a> built on the same tooling that <a href="https://github.com/huggingface/doc-builder">Hugging Face uses</a></li>
-<li>Create <a href="https://muellerzr.github.io/nbquarto/package_reference/processors.html#nbquarto.processors.codenote.CodeNoteProcessor">Code Notes</a> that allow you to annotate code from within a single code cell and trailing markdown cells, to be rendered later side-by-side as mentioned earlier.</li>
-</ul>
-<p>These two alone have improved my ability to write and create interactive documetation by <em>leagues</em> ahead of what it could before, and write it in a way that’s sensible and succinct.</p>
-<p>As a result, at it’s core this is a framework that:</p>
-<ul>
-<li>Has <em>minimal magic possible</em> while also:</li>
-<li>Being <em>extremely</em> hackable and flexible</li>
-<li>And is built on good software practices to ensure that this code will be stable and usable for years to come.</li>
-</ul>
-</section>
-<section id="learn-more" class="level2">
-<h2 class="anchored" data-anchor-id="learn-more">Learn more</h2>
-<p>If you’d like to learn more about <code>nbquarto</code>, I invite you to check out the <a href="https://muellerzr.github.io/nbquarto/getting_started.html">Getting Started</a> page which is a lenghty tutorial on how to use every aspect of <code>nbquarto</code> and how to get started with it. And of course feel free to peruse the source code, openly available <a href="https://github.com/muellerzr/nbquarto/tree/main">here</a>.</p>
+<section id="notes" class="level3">
+<h3 class="anchored" data-anchor-id="notes">Notes</h3>
+<p>On a chance trip to Micro Center one day, I found a <strong>used</strong> Intel Arc B580 for $210. I immediatly jumped at this and shoved my original gaming PC RTX 3060 into the Workhorse. However, considering just one didn’t feel right, I picked up a second one used from facebook marketplace for $160.</p>
+<p>This then had the challenge of how do I connect everything.</p>
+<p>The first solution was to use <a href="https://www.amazon.com/dp/B0D45NX6X3">two</a> <a href="https://www.amazon.com/dp/B0D45R9BTY">m.2</a> to PCIe adapters. Yes, they run the GPUs on x4 rather than x8, but <em>hey it works</em>. I had to take out one of the two m.2’s I had in the computer in order to do this however.</p>
+<p>I fit one in M.2_3 and M.2_4, leaving the true m.2 drive in M.2_1. I found that I couldn’t populate M.2_2 and boot safely hence only keeping one M.2 drive in the computer at one time. Not sure why, but once all four GPUs showed up I vowed to just leave it be and be content that it works.</p>
+<p>This now left me with 72GB of vRAM, 48 dedicated to training and 24 dedicated to model serving and hosting (think quant Qwen3, Whisper, etc)</p>
+<p>Also to act as a voltage regulator between the now peripheral GPU PSU and my regular one, I added in a <a href="https://www.amazon.com/dp/B09Q11WG4Z">Power Supply Connector</a> to make sure everything boots okay and doesn’t crash/hurt my GPUs under heavy load.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

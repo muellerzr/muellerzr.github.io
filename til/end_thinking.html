@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.29">
+<meta name="generator" content="quarto-1.7.31">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-c1497325418d7647c72a82bd6664f1b5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -145,6 +145,10 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
   <li class="nav-item">
     <a class="nav-link" href="../til/index.html"> 
 <span class="menu-text">Today I Learned</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../builds/index.html"> 
+<span class="menu-text">PC Builds</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -353,7 +357,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                    scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">*</span> (<span class="dv">1</span> <span class="op">+</span> (<span class="va">self</span>.tokens_generated <span class="op">/</span> <span class="va">self</span>.max_thinking_tokens))</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div style="padding-top: 0px;">
-<p>When in the last 5% of the thinking budget, push towards <code>\n</code> followed by <code>&lt;/think&gt;</code>, but not actually do so</p>
+<p>When in the last 5% of the thinking budget, push towards , but not actually do so</p>
 </div>
 <hr>
 <div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="va">self</span>.tokens_generated <span class="op">&gt;=</span> (<span class="va">self</span>.max_thinking_tokens <span class="op">-</span> <span class="dv">1</span>):</span>
@@ -365,7 +369,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                    scores[<span class="dv">0</span>][<span class="va">self</span>.think_end_token] <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                    <span class="va">self</span>.stopped_thinking <span class="op">=</span> <span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div style="padding-top: 0px;">
-<p>When we’re at the end of our thinking budget, force the model to generate <code>\n</code> and <code>&lt;/think&gt;</code> (for a “true stop” to the model logic, it expects a <code>\n</code> followed by <code>&lt;/think&gt;</code>, it can’t be just <code>&lt;/think&gt;</code> I found)</p>
+<p>When we’re at the end of our thinking budget, force the model to generate  (for a “true stop” to the model logic, it expects a followed by , it can’t be just  I found)</p>
 </div>
 </div>
 </div>
@@ -387,39 +391,39 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pipe(messages)[<span class="dv">0</span>][<span class="st">"generated_text"</span>][<span class="op">-</span><span class="dv">1</span>][<span class="st">"content"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Note: <code>max_new_tokens</code> needs to be greater than the <code>max_thinking_tokens</code>, otherwise it will just think then end</strong></p>
 <p>With zero:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>think<span class="op">&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>The square root of <span class="dv">2722</span> <span class="kw">is</span> approximately <span class="fl">52.18</span>.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>&lt;/think&gt;
+
+The square root of 2722 is approximately 52.18.</code></pre>
 <p>At 100 tokens: (Yes, after letting it think we did <em>worse</em> for awhile)</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>think<span class="op">&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>Okay, so I need to find the square root of <span class="fl">2722.</span> Hmm, let<span class="st">'s think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="er">First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>think<span class="op">&gt;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="dv">2722</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>&lt;think&gt;
+Okay, so I need to find the square root of 2722. Hmm, let's think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.
+
+First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be
+&lt;/think&gt;
+
+2722</code></pre>
 <p>At 300:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>think<span class="op">&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>Okay, so I need to find the square root of <span class="fl">2722.</span> Hmm, let<span class="st">'s think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="er">First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be expressed as a product of two equal integers. For example, 16 is 4 squared because 4*4=16. But 2722... Let me think of some numbers near the square root of 2722.</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>Wait, the square root of <span class="fl">2722.</span> Let me approximate it. The square of <span class="dv">50</span> <span class="kw">is</span> <span class="dv">2500</span>, <span class="kw">and</span> the square of <span class="dv">52</span> <span class="kw">is</span> <span class="dv">52</span><span class="op">*</span><span class="dv">52</span> <span class="op">=</span> <span class="fl">2704.</span> Oh, right<span class="op">!</span> <span class="dv">52</span> squared <span class="kw">is</span> <span class="fl">2704.</span> Then <span class="dv">53</span> squared would be <span class="dv">53</span><span class="op">*</span><span class="fl">53.</span> Let me calculate that. <span class="dv">50</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">2500</span>, <span class="dv">50</span><span class="op">*</span><span class="dv">3</span><span class="op">=</span><span class="dv">150</span>, <span class="dv">3</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">150</span>, <span class="kw">and</span> <span class="dv">3</span><span class="op">*</span><span class="dv">3</span><span class="op">=</span><span class="fl">9.</span> So adding those up: <span class="dv">2500</span> <span class="op">+</span> <span class="dv">150</span> <span class="op">+</span> <span class="dv">150</span> <span class="op">+</span> <span class="dv">9</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>think<span class="op">&gt;</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="dv">2722</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>&lt;think&gt;
+Okay, so I need to find the square root of 2722. Hmm, let's think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.
+
+First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be expressed as a product of two equal integers. For example, 16 is 4 squared because 4*4=16. But 2722... Let me think of some numbers near the square root of 2722.
+
+Wait, the square root of 2722. Let me approximate it. The square of 50 is 2500, and the square of 52 is 52*52 = 2704. Oh, right! 52 squared is 2704. Then 53 squared would be 53*53. Let me calculate that. 50*50=2500, 50*3=150, 3*50=150, and 3*3=9. So adding those up: 2500 + 150 + 150 + 9
+&lt;/think&gt;
+
+2722</code></pre>
 <p>At 600:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>think<span class="op">&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>Okay, so I need to find the square root of <span class="fl">2722.</span> Hmm, let<span class="st">'s think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="er">First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be expressed as a product of two equal integers. For example, 16 is 4 squared because 4*4=16. But 2722... Let me think of some numbers near the square root of 2722.</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>Wait, the square root of <span class="fl">2722.</span> Let me approximate it. The square of <span class="dv">50</span> <span class="kw">is</span> <span class="dv">2500</span>, <span class="kw">and</span> the square of <span class="dv">52</span> <span class="kw">is</span> <span class="dv">52</span><span class="op">*</span><span class="dv">52</span> <span class="op">=</span> <span class="fl">2704.</span> Oh, right<span class="op">!</span> <span class="dv">52</span> squared <span class="kw">is</span> <span class="fl">2704.</span> Then <span class="dv">53</span> squared would be <span class="dv">53</span><span class="op">*</span><span class="fl">53.</span> Let me calculate that. <span class="dv">50</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">2500</span>, <span class="dv">50</span><span class="op">*</span><span class="dv">3</span><span class="op">=</span><span class="dv">150</span>, <span class="dv">3</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">150</span>, <span class="kw">and</span> <span class="dv">3</span><span class="op">*</span><span class="dv">3</span><span class="op">=</span><span class="fl">9.</span> So adding those up: <span class="dv">2500</span> <span class="op">+</span> <span class="dv">150</span> <span class="op">+</span> <span class="dv">150</span> <span class="op">+</span> <span class="dv">9</span> <span class="op">=</span> <span class="fl">2709.</span> Oh, so <span class="dv">53</span> squared <span class="kw">is</span> <span class="fl">2709.</span> Then <span class="dv">54</span> squared would be <span class="dv">54</span><span class="op">*</span><span class="fl">54.</span> Let me calculate that. <span class="dv">50</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">2500</span>, <span class="dv">50</span><span class="op">*</span><span class="dv">4</span><span class="op">=</span><span class="dv">200</span>, <span class="dv">4</span><span class="op">*</span><span class="dv">50</span><span class="op">=</span><span class="dv">200</span>, <span class="kw">and</span> <span class="dv">4</span><span class="op">*</span><span class="dv">4</span><span class="op">=</span><span class="fl">16.</span> Adding those: <span class="dv">2500</span> <span class="op">+</span> <span class="dv">200</span> <span class="op">+</span> <span class="dv">200</span> <span class="op">+</span> <span class="dv">16</span> <span class="op">=</span> <span class="fl">2916.</span> </span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>So, <span class="dv">53</span> squared <span class="kw">is</span> <span class="dv">2709</span>, <span class="kw">and</span> <span class="dv">54</span> squared <span class="kw">is</span> <span class="fl">2916.</span> The original number <span class="kw">is</span> <span class="fl">2722.</span> That<span class="st">'s between 53 and 54. Let me check 53.5 squared. Maybe I can use a better approximation. Alternatively, since 53^2=2709 and 54^2=2916, the difference between 2722 and 2709 is 13. So, 2722 - 2709 = 13. So, approximately, the square root is 53 + (13)/(2*53) by linear approximation. Let me calculate that. 13 divided by 106 is approximately 0.122. So, approximately 53.122. But since we need</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="er">&lt;/think&gt;</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fl">53.122</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>&lt;think&gt;
+Okay, so I need to find the square root of 2722. Hmm, let's think. I remember that the square root of a number is a value that, when multiplied by itself, gives the original number. So, I need to find a number that, when multiplied by itself, equals 2722.
+
+First, maybe I should check if 2722 is a perfect square. I know that perfect squares are numbers that can be expressed as a product of two equal integers. For example, 16 is 4 squared because 4*4=16. But 2722... Let me think of some numbers near the square root of 2722.
+
+Wait, the square root of 2722. Let me approximate it. The square of 50 is 2500, and the square of 52 is 52*52 = 2704. Oh, right! 52 squared is 2704. Then 53 squared would be 53*53. Let me calculate that. 50*50=2500, 50*3=150, 3*50=150, and 3*3=9. So adding those up: 2500 + 150 + 150 + 9 = 2709. Oh, so 53 squared is 2709. Then 54 squared would be 54*54. Let me calculate that. 50*50=2500, 50*4=200, 4*50=200, and 4*4=16. Adding those: 2500 + 200 + 200 + 16 = 2916. 
+
+So, 53 squared is 2709, and 54 squared is 2916. The original number is 2722. That's between 53 and 54. Let me check 53.5 squared. Maybe I can use a better approximation. Alternatively, since 53^2=2709 and 54^2=2916, the difference between 2722 and 2709 is 13. So, 2722 - 2709 = 13. So, approximately, the square root is 53 + (13)/(2*53) by linear approximation. Let me calculate that. 13 divided by 106 is approximately 0.122. So, approximately 53.122. But since we need
+&lt;/think&gt;
+
+53.122</code></pre>
 
 
 </section>
