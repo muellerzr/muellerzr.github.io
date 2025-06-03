@@ -1,0 +1,22 @@
+---
+title: "Workhorse - Revision 1.1.0"
+date: 2024-07-01
+---
+
+### Changes:
+
+```diff
+- CPU: AMD Ryzen 9 7900x
++ CPU: AMD Ryzen 9 7950x
+- RAM: 96GB, 2x G.Skill Trident Z5 RGB 96 DDR5-6800 CL34
++ RAM: 192GB, 4x G.Skill Trident Z5 RGB 96 DDR5-6800 CL34
+```
+
+### Notes
+
+I was finding that for some of my work I just needed more RAM to do what I needed to do. 
+On *paper* the motherboard states it only supports a maximum of 128GB of RAM, however during
+research I found that silently the motherboard would support 4x 48GB RAM sticks, just at a lower speed.
+
+E.g. now I'm running the 4 RAM slots at 3600 MT/s rather than their max speed of 5600 MT/s, 
+however this lets me get much more RAM for my projects which has been needed as of late.

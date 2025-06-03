@@ -1,0 +1,55 @@
+---
+title: "Workhorse - Revision 1.3.0"
+date: 2025-06-01
+---
+
+### Changes:
+
+```diff
+ GPUs: 
+    2x MSI SUPRIM LIQUID X 4090's
+    2x RTX 3060's
++   1x RTX 6000 ADA
+
+- Case: Thermaltake Core P6 ATX Mid Tower
++ Case: 2x DIY Computer Case PC Frame Desktop Chassis
+```
+
+### Notes
+
+While I was on a trip to California I had a chance to catch up with a friend who sold me his 6000 ADA just "taking up space".
+This was great because on paper it *should* be faster than both of my 2x 4090's, but this led to an issue: how the heck do I even 
+put this in my machine?
+
+I ended up ditching the big bulky case and running two [stackable computer cases I found](https://www.amazon.com/dp/B0DFH48DPG). 
+Mounting the AIO's wound up being the tricky part after getting everything put together as you can see below, but it works and its 
+efficient. 
+
+Also I replaced the water-cooled CPU cooler for fan, since space is *very limited*
+
+[workhorse](workhorse.jpg)
+
+I didn't even need riser cables like I thought since the 3060's on m.2 PCIe plus the AIO's were long enough that they could be mounted
+on the top rack. 
+
+What I *did* end up doing is mounting the GPUs such that:
+
+- PCIEX16_1: RTX 4090
+- PCIEX16_2: RTX 6000 ADA
+- PCIEX16_3: RTX 4090
+- M.2_3: RTX 3060
+- M.2_4: RTX 3060
+
+If I *didn't* have this open-air based case, I would not have been able to pull this off I think just considering how much
+space was needed to get all the wiring working. It took me **three days** to solve one of the hardest jenga puzzles.
+
+To add insult to injury, the combined max pull from all of these GPUs and the PSUs is something like 2200 to 2500W being conservative.
+Also known as: a fire risk.
+
+To help mitigate that, I installed two new dedicated 20A breakers in the circuit room (where the PC lives anyways) to run each component
+off of (one plug goes to the external GPUs, one the main motherboard and internal components). I found some guys that did it fairly cheap
+(I think $200 or so) since the total distance was less than 10 feet. 
+
+System works great now, with temperatures surprisingly not being a worry in an enclosed space (though it's right by the AC which might help):
+
+[nvidia-smi](nvidia_smi.png)

@@ -1,0 +1,44 @@
+---
+title: "Workhorse - Revision 1.2.0"
+date: 2025-04-22
+---
+
+### Changes:
+
+```diff
+- GPUs: 2x MSI SUPRIM LIQUID X 4090's
++ GPUs: 
++   2x MSI SUPRIM LIQUID X 4090's
++   2x RTX 3060's
+
++ Peripherals: 
++   1x M.2L-PCIE90-300MM
++   1x M.2R-PCIE90-300MM
++   1x ADD2PSU 4 in 1 Power Supply Connector
+
+- PSU: Toughpower GF3 1650W Gold - TT Premium Edition
++ PSUs:
++   Toughpower GF3 1650W Gold - TT Premium Edition
++   NZXT C1200 Gold ATX 3.1
+```
+
+### Notes
+
+On a chance trip to Micro Center one day, I found a **used** Intel Arc B580 for $210. I immediatly jumped
+at this and shoved my original gaming PC RTX 3060 into the Workhorse. However, considering just one didn't feel right,
+I picked up a second one used from facebook marketplace for $160.
+
+This then had the challenge of how do I connect everything. 
+
+The first solution was to use [two](https://www.amazon.com/dp/B0D45NX6X3) [m.2](https://www.amazon.com/dp/B0D45R9BTY) to PCIe adapters.
+Yes, they run the GPUs on x4 rather than x8, but *hey it works*. I had to take out one of the two m.2's I had in the computer in order to 
+do this however. 
+
+I fit one in M.2_3 and M.2_4, leaving the true m.2 drive in M.2_1. I found that I couldn't populate M.2_2 and boot safely hence only keeping
+one M.2 drive in the computer at one time. Not sure why, but once all four GPUs showed up I vowed to just leave it be and be 
+content that it works. 
+
+This now left me with 72GB of vRAM, 48 dedicated to training and 24 dedicated to model serving and hosting (think quant Qwen3, Whisper, etc)
+
+Also to act as a voltage regulator between the now peripheral GPU PSU and my regular one, I added in a [Power Supply Connector](https://www.amazon.com/dp/B09Q11WG4Z) to make sure
+everything boots okay and doesn't crash/hurt my GPUs under heavy load.

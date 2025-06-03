@@ -1,0 +1,23 @@
+---
+title: "Workhorse - Revision 1.0.0"
+date: 2024-06-02
+---
+
+### Initial build specs:
+* CPU: AMD Ryzen 9 7900x
+* Cooler: Lian Li Galahad II Trinity 360mm
+* GPUs: 2x MSI SUPRIM LIQUID X 4090's
+* Motherboard: Asus ProArt X670E-CREATOR
+* RAM: 96GB, 2x G.Skill Trident Z5 RGB 96 DDR5-6800 CL34
+* PSU: Toughpower GF3 1650W Gold - TT Premium Edition
+* M.2: Samsung 990 Pro 2TB
+* Case: Thermaltake Core P6 ATX Mid Tower
+
+### Related blog:
+
+(blog)[https://muellerzr.github.io/blog/workhorse.html
+]
+
+### Notes
+
+Initial build of the system, originally designed to help me work with NVIDIA's TransformerEngine library locally

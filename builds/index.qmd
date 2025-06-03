@@ -1,0 +1,9 @@
+---
+title: "All System Builds"
+listing:
+  contents: .
+  sort: "date desc"
+  type: default
+---
+
+Explore builds for all systems.

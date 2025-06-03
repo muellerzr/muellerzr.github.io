@@ -17,6 +17,8 @@ website:
         file: blog/index.qmd
       - text: "Today I Learned"
         file: til/index.qmd
+      - text: "PC Builds"
+        file: builds/index.qmd
     background: primary
     search: true
   sidebar: 
