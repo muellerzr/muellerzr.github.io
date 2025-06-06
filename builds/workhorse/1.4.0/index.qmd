@@ -1,6 +1,6 @@
 ---
-title: "Workhorse - Revision 1.3.0"
-date: 2025-06-01
+title: "Workhorse - Revision 1.4.0"
+date: 2025-06-05
 ---
 
 ### Changes:
