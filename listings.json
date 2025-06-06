@@ -1,26 +1,5 @@
 [
   {
-    "listing": "/builds/index.html",
-    "items": [
-      "/builds/workhorse/1.3.0/index.html",
-      "/builds/workhorse/1.2.0/index.html",
-      "/builds/workhorse/1.1.0/index.html",
-      "/builds/workhorse/1.0.0/index.html"
-    ]
-  },
-  {
-    "listing": "/til/index.html",
-    "items": [
-      "/til/end_thinking.html",
-      "/til/argparse.html",
-      "/til/free_memory.html",
-      "/til/sub_cli.html",
-      "/til/wraps.html",
-      "/til/testing.html",
-      "/til/code_review.html"
-    ]
-  },
-  {
     "listing": "/blog/index.html",
     "items": [
       "/blog/huggingchat_local.html",
@@ -53,6 +32,28 @@
       "/blog/Suspecto.html",
       "/blog/Week-1.html",
       "/blog/Fastai-Curriculum.html"
+    ]
+  },
+  {
+    "listing": "/til/index.html",
+    "items": [
+      "/til/end_thinking.html",
+      "/til/argparse.html",
+      "/til/free_memory.html",
+      "/til/sub_cli.html",
+      "/til/wraps.html",
+      "/til/testing.html",
+      "/til/code_review.html"
+    ]
+  },
+  {
+    "listing": "/builds/index.html",
+    "items": [
+      "/builds/workhorse/1.4.0/index.html",
+      "/builds/workhorse/1.3.0/index.html",
+      "/builds/workhorse/1.2.0/index.html",
+      "/builds/workhorse/1.1.0/index.html",
+      "/builds/workhorse/1.0.0/index.html"
     ]
   }
 ]
