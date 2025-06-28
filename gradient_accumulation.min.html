@@ -2,52 +2,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyTorch Gradient Accumulation Guide: Optimizing Multi-GPU Training Performance</title>
-
-    <!-- Preload critical fonts -->
-    <link rel="preload" href="../site_libs/bootstrap/bootstrap-icons.woff" as="font" type="font/woff" crossorigin>
-    
-    <!-- Critical CSS inline -->
-    <style>
-        /* Minimal critical CSS */
-        body {margin: 0; font-family: system-ui, -apple-system, sans-serif; line-height: 1.5;}
-        .navbar {padding: 1rem; background: #343a40;}
-        .content {max-width: 960px; margin: 0 auto; padding: 1rem;}
-        code {font-family: monospace;}
-        pre {overflow-x: auto;}
-        .skip-link {position: absolute; left: -9999px; z-index: 999; padding: 1em; background-color: black; color: white;}
-        .skip-link:focus {left: 50%; transform: translateX(-50%);}
-    </style>
-
-    <!-- Async CSS loading -->
-    <link rel="preload" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../site_libs/bootstrap/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css">
-        <link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-icons.css">
-        <link rel="stylesheet" href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css">
-    </noscript>
-
-    <!-- Meta tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="description" content="Learn how to optimize PyTorch gradient accumulation for distributed training. Discover techniques to prevent slowdowns and improve performance in multi-GPU setups.">
     <meta name="author" content="Zach Mueller">
     <meta name="keywords" content="PyTorch, gradient accumulation, distributed training, GPU optimization, machine learning, deep learning">
     <meta name="dcterms.date" content="2023-03-03">
+    <meta name="generator" content="quarto-1.7.31">
+    <meta name="quarto:offset" content="../">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://muellerzr.github.io/gradient_accumulation.html">
 
-    <!-- Social media tags -->
-    <meta property="og:title" content="PyTorch Gradient Accumulation Guide">
-    <meta property="og:description" content="Learn how to optimize PyTorch gradient accumulation for distributed training. Discover techniques to prevent slowdowns and improve performance in multi-GPU setups.">
-    <meta property="og:type" content="article">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@TheZachMueller">
+    <title>PyTorch Gradient Accumulation Guide: Optimizing Multi-GPU Training Performance</title>
 
-    <!-- Deferred JavaScript loading -->
-    <script defer src="../site_libs/quarto-nav/headroom.min.js"></script>
-    <script defer src="../site_libs/quarto-nav/quarto-nav.js"></script>
+    <!-- Preload critical assets -->
+    <link rel="preload" href="../site_libs/bootstrap/bootstrap-icons.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" as="style">
+
+    <!-- Critical CSS -->
+    <link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css">
+    <link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-icons.css">
+    <link rel="stylesheet" href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css">
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Quarto and Bootstrap core -->
+    <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+    <script src="../site_libs/quarto-nav/headroom.min.js"></script>
+    <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+
+    <!-- Deferred JavaScript -->
     <script defer src="../site_libs/clipboard/clipboard.min.js"></script>
     <script defer src="../site_libs/quarto-search/autocomplete.umd.js"></script>
     <script defer src="../site_libs/quarto-search/fuse.min.js"></script>
@@ -56,9 +38,8 @@
     <script defer src="../site_libs/quarto-html/popper.min.js"></script>
     <script defer src="../site_libs/quarto-html/tippy.umd.min.js"></script>
     <script defer src="../site_libs/quarto-html/anchor.min.js"></script>
-    <script defer src="../site_libs/bootstrap/bootstrap.min.js"></script>
 
-    <!-- Analytics with minimal impact -->
+    <!-- Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -74,17 +55,41 @@
         "@type": "TechArticle",
         "headline": "PyTorch Gradient Accumulation Guide: Optimizing Multi-GPU Training Performance",
         "datePublished": "2023-03-03",
-        "author": {"@type": "Person", "name": "Zach Mueller"},
+        "author": {
+            "@type": "Person",
+            "name": "Zach Mueller",
+            "url": "https://muellerzr.github.io"
+        },
         "description": "Learn how to optimize PyTorch gradient accumulation for distributed training. Discover techniques to prevent slowdowns and improve performance in multi-GPU setups."
     }
     </script>
+
+    <!-- Quarto search options -->
+    <script id="quarto-search-options" type="application/json">{
+      "location": "navbar",
+      "copy-button": false,
+      "collapse-after": 3,
+      "panel-placement": "end",
+      "type": "overlay",
+      "limit": 50,
+      "language": {
+        "search-no-results-text": "No results",
+        "search-matching-documents-text": "matching documents",
+        "search-copy-link-title": "Copy link to search",
+        "search-hide-matches-text": "Hide additional matches",
+        "search-more-match-text": "more match in this document",
+        "search-more-matches-text": "more matches in this document",
+        "search-clear-button-title": "Clear",
+        "search-detached-cancel-button-title": "Cancel",
+        "search-submit-button-title": "Submit",
+        "search-label": "Search"
+      }
+    }</script>
 </head>
 
 <body class="nav-sidebar floating nav-fixed fullcontent quarto-light">
-    <a href="#quarto-document-content" class="skip-link">Skip to main content</a>
-
-    <!-- Search Results -->
-    <div id="quarto-search-results"></div>
+    <a href="#quarto-document-content" class="skip-link" tabindex="0">Skip to main content</a>
+    <div id="quarto-search-results" role="region" aria-label="Search results"></div>
 
     <!-- Primary Navigation -->
     <header id="quarto-header" class="headroom fixed-top" role="banner">
@@ -554,6 +559,26 @@
                 }
             });
         });
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+        const icon = "";
+        const anchorJS = new window.AnchorJS();
+        anchorJS.options = {
+            placement: 'right',
+            icon: icon
+        };
+        anchorJS.add('.anchored');
+
+        // Handle external links
+        document.querySelectorAll('a[href^="http"]').forEach(link => {
+            if (link.hostname !== window.location.hostname) {
+                link.setAttribute('rel', 'noopener');
+                link.setAttribute('target', '_blank');
+            }
+        });
+    });
     </script>
 </body>
 </html>
