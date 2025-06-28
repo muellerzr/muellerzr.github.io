@@ -3,121 +3,121 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <meta name="description" content="An article about PyTorch gradient accumulation and performance optimization">
+    <meta name="description" content="Learn how to optimize PyTorch gradient accumulation for distributed training. Discover techniques to prevent slowdowns and improve performance in multi-GPU setups.">
     <meta name="author" content="Zach Mueller">
+    <meta name="keywords" content="PyTorch, gradient accumulation, distributed training, GPU optimization, machine learning, deep learning">
     <meta name="dcterms.date" content="2023-03-03">
     <meta name="generator" content="quarto-1.7.31">
+    <meta name="robots" content="index, follow">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@TheZachMueller">
+    <meta name="twitter:title" content="PyTorch Gradient Accumulation Guide">
+    <meta name="twitter:description" content="Learn how to optimize PyTorch gradient accumulation for distributed training. Discover techniques to prevent slowdowns and improve performance in multi-GPU setups.">
+    <meta property="og:title" content="PyTorch Gradient Accumulation Guide">
+    <meta property="og:description" content="Learn how to optimize PyTorch gradient accumulation for distributed training. Discover techniques to prevent slowdowns and improve performance in multi-GPU setups.">
+    <meta property="og:type" content="article">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="canonical" href="https://muellerzr.github.io/gradient_accumulation.html">
     <meta name="quarto:offset" content="../">
 
-    <title>PyTorch, Gradient Accumulation, and the dreaded drop in speed – Zach Mueller</title>
+    <title>PyTorch Gradient Accumulation Guide: Optimizing Multi-GPU Training Performance</title>
 
+    <!-- Preload critical assets -->
+    <link rel="preload" href="../site_libs/bootstrap/bootstrap-icons.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" as="style">
+    <link rel="preload" href="../site_libs/bootstrap/bootstrap.min.js" as="script">
+
+    <!-- Defer non-critical CSS -->
+    <link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-icons.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css">
+        <link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-icons.css">
+    </noscript>
+
+    <!-- Critical CSS inline -->
     <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
-      vertical-align: middle;
-    }
-    /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-      }
-    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-    div.sourceCode
-      {   }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
+        /* Critical rendering path CSS */
+        body { 
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.loaded {
+            opacity: 1;
+        }
+        .navbar {
+            padding: 1rem;
+            background: #343a40;
+        }
+        .content {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
     </style>
 
-    <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-    <script src="../site_libs/quarto-nav/headroom.min.js"></script>
-    <script src="../site_libs/clipboard/clipboard.min.js"></script>
-    <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-    <script src="../site_libs/quarto-search/fuse.min.js"></script>
-    <script src="../site_libs/quarto-search/quarto-search.js"></script>
-    <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-    <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-    <script src="../site_libs/quarto-html/popper.min.js"></script>
-    <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-    <script src="../site_libs/quarto-html/anchor.min.js"></script>
-    <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-    <link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-    <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-    <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-    <link href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-    <script id="quarto-search-options" type="application/json">{
-      "location": "navbar",
-      "copy-button": false,
-      "collapse-after": 3,
-      "panel-placement": "end",
-      "type": "overlay",
-      "limit": 50,
-      "keyboard-shortcut": [
-        "f",
-        "/",
-        "s"
-      ],
-      "show-item-context": false,
-      "language": {
-        "search-no-results-text": "No results",
-        "search-matching-documents-text": "matching documents",
-        "search-copy-link-title": "Copy link to search",
-        "search-hide-matches-text": "Hide additional matches",
-        "search-more-match-text": "more match in this document",
-        "search-more-matches-text": "more matches in this document",
-        "search-clear-button-title": "Clear",
-        "search-text-placeholder": "",
-        "search-detached-cancel-button-title": "Cancel",
-        "search-submit-button-title": "Submit",
-        "search-label": "Search"
-      }
-    }</script>
-    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
+    <!-- Defer non-critical JavaScript -->
+    <script defer src="../site_libs/quarto-nav/quarto-nav.js"></script>
+    <script defer src="../site_libs/quarto-nav/headroom.min.js"></script>
+    <script defer src="../site_libs/clipboard/clipboard.min.js"></script>
+    <script defer src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+    <script defer src="../site_libs/quarto-search/fuse.min.js"></script>
+    <script defer src="../site_libs/quarto-search/quarto-search.js"></script>
+    <script defer src="../site_libs/quarto-html/quarto.js" type="module"></script>
+    <script defer src="../site_libs/quarto-html/popper.min.js"></script>
+    <script defer src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+    <script defer src="../site_libs/quarto-html/anchor.min.js"></script>
+    <script defer src="../site_libs/bootstrap/bootstrap.min.js"></script>
 
-    <script type="text/javascript">
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
+    <!-- Inline critical JavaScript -->
+    <script>
+        // Add loaded class to body when content is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('loaded');
+        });
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
     </script>
 
-    <link rel="stylesheet" href="../styles.css">
+    <!-- Analytics (load async) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-99XP3R051T', { 
+            'anonymize_ip': true,
+            'page_path': window.location.pathname
+        });
+    </script>
 </head>
 
 <body class="nav-sidebar floating nav-fixed fullcontent quarto-light">
+    <!-- Skip to main content link for accessibility -->
+    <a href="#quarto-document-content" class="skip-link" tabindex="0">Skip to main content</a>
+
     <!-- Search Results Container -->
-    <div id="quarto-search-results" role="region" aria-label="Search results"></div>
+    <div id="quarto-search-results" role="region" aria-label="Search results" aria-live="polite"></div>
 
     <!-- Primary Navigation -->
     <header id="quarto-header" class="headroom fixed-top" role="banner">
@@ -193,7 +193,7 @@
                 </button>
                 <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item">PyTorch, Gradient Accumulation, and the dreaded drop in speed</li>
+                        <li class="breadcrumb-item">PyTorch Gradient Accumulation Guide: Optimizing Multi-GPU Training Performance</li>
                     </ol>
                 </nav>
             </div>
@@ -213,7 +213,7 @@
                 <!-- Article Header -->
                 <header id="title-block-header" class="quarto-title-block default">
                     <div class="quarto-title">
-                        <h1 class="title">PyTorch, Gradient Accumulation, and the dreaded drop in speed</h1>
+                        <h1 class="title">PyTorch Gradient Accumulation Guide: Optimizing Multi-GPU Training Performance</h1>
                         <div class="quarto-categories">
                             <div class="quarto-category">pytorch</div>
                         </div>
@@ -524,119 +524,47 @@
         </main>
     </div>
 
-    <script id="quarto-html-after-body" type="application/javascript">
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-        const icon = "";
-        const anchorJS = new window.AnchorJS();
-        anchorJS.options = {
-            placement: 'right',
-            icon: icon
-        };
-        anchorJS.add('.anchored');
-        const isCodeAnnotation = (el) => {
-            for (const clz of el.classList) {
-                if (clz.startsWith('code-annotation-')) {                     
-                    return true;
-                }
-            }
-            return false;
+    <!-- Performance optimizations -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "PyTorch Gradient Accumulation Guide: Optimizing Multi-GPU Training Performance",
+        "datePublished": "2023-03-03",
+        "author": {
+            "@type": "Person",
+            "name": "Zach Mueller",
+            "url": "https://muellerzr.github.io"
+        },
+        "description": "Learn how to optimize PyTorch gradient accumulation for distributed training. Discover techniques to prevent slowdowns and improve performance in multi-GPU setups.",
+        "keywords": "PyTorch, gradient accumulation, distributed training, GPU optimization",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Zach Mueller's Blog",
+            "url": "https://muellerzr.github.io"
         }
-        const onCopySuccess = function(e) {
-            // button target
-            const button = e.trigger;
-            // don't keep focus
-            button.blur();
-            // flash "checked"
-            button.classList.add('code-copy-button-checked');
-            var currentTitle = button.getAttribute("title");
-            button.setAttribute("title", "Copied!");
-            let tooltip;
-            if (window.bootstrap) {
-                button.setAttribute("data-bs-toggle", "tooltip");
-                button.setAttribute("data-bs-placement", "left");
-                button.setAttribute("data-bs-title", "Copied!");
-                tooltip = new bootstrap.Tooltip(button, 
-                    { trigger: "manual", 
-                        customClass: "code-copy-button-tooltip",
-                        offset: [0, -8]});
-                tooltip.show();    
-            }
-            setTimeout(function() {
-                if (tooltip) {
-                    tooltip.hide();
-                    button.removeAttribute("data-bs-title");
-                    button.removeAttribute("data-bs-toggle");
-                    button.removeAttribute("data-bs-placement");
-                }
-                button.setAttribute("title", currentTitle);
-                button.classList.remove('code-copy-button-checked');
-            }, 1000);
-            // clear code selection
-            e.clearSelection();
-        }
-        const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-                if (isCodeAnnotation(childEl)) {
-                    childEl.remove();
-                }
-            }
-            return codeEl.innerText;
-        }
-        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-            text: getTextToCopy
-        });
-        clipboard.on('success', onCopySuccess);
-        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-            const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-                text: getTextToCopy,
-                container: window.document.getElementById('quarto-embedded-source-code-modal')
+    }
+    </script>
+
+    <!-- Intersection Observer for lazy loading -->
+    <script>
+        if ('IntersectionObserver' in window) {
+            const images = document.querySelectorAll('img[loading="lazy"]');
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                });
             });
-            clipboardModal.on('success', onCopySuccess);
+            images.forEach(img => imageObserver.observe(img));
         }
-        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-        var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/muellerzr\.github\.io\/");
-        var isInternal = (href) => {
-            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-        }
-        // Inspect non-navigation links and adorn them if external
-        var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-        for (var i=0; i<links.length; i++) {
-            const link = links[i];
-            if (!isInternal(link.href)) {
-                // undo the damage that might have been done by quarto-nav.js in the case of
-                // links that we want to consider external
-                if (link.dataset.originalHref !== undefined) {
-                    link.href = link.dataset.originalHref;
-                }
-            }
-        }
-        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-            const config = {
-                allowHTML: true,
-                maxWidth: 500,
-                delay: 100,
-                arrow: false,
-                appendTo: function(el) {
-                    return el.parentElement;
-                },
-                interactive: true,
-                interactiveBorder: 10,
-                theme: 'quarto',
-                placement: 'bottom-start',
-            };
-            if (contentFn) {
-                config.content = contentFn;
-            }
-            if (onTriggerFn) {
-                config.onTrigger = onTriggerFn;
-            }
-            if (onUntriggerFn) {
-                config.onUntrigger = onUntriggerFn;
-            }
-            window.tippy(el, config); 
-        }
+    </script>
+</body>
+</html>
         const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
         for (var i=0; i<noterefs.length; i++) {
             const ref = noterefs[i];
