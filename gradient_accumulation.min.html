@@ -22,28 +22,18 @@
 
     <!-- Critical inline styles for immediate rendering -->
     <style>
-        /* Font loading optimization */
-        @font-face {
-            font-family: 'bootstrap-icons';
-            src: url('../site_libs/bootstrap/bootstrap-icons.woff') format('woff');
-            font-display: swap;
-        }
-        
         /* Critical rendering path optimization */
         body { margin: 0; }
         .navbar { background-color: #343a40; }
     </style>
 
-    <!-- Preload critical assets -->
-    <link rel="preload" href="../site_libs/bootstrap/bootstrap-icons.woff" as="font" type="font/woff" crossorigin>
+
 
     <!-- Critical CSS - minimal custom styles -->
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css">
     
-    <!-- Load Bootstrap icons asynchronously for icons only -->
-    <link rel="preload" href="../site_libs/bootstrap/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-icons.css"></noscript>
+
 
     <!-- Resource hints for better loading -->
     <link rel="dns-prefetch" href="//www.googletagmanager.com">
@@ -262,7 +252,7 @@
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> net.no_sync():</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    pred <span class="op">=</span> net(<span class="bu">input</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> loss_func(pred)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    pred.backward()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    pred.backward()</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
 <p>To synchronize again, remove the <code>no_sync</code> wrapper for a batch and processes will synchronize again.</p>
 <p>Translated, this is what gradient accumulation looks like properly in native PyTorch:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step, (x,y) <span class="kw">in</span> <span class="bu">enumerate</span>(dataloader):</span>
@@ -279,7 +269,7 @@
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        accelerator.backward(loss)</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        lr_scheduler.step()</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
 <p>But just how important is this?</p>
 <p>Can I just wrap around <code>.backward()</code> with the <code>no_sync</code>?</p>
 <p>I ran a few experiments to figure <em>exactly that out</em>.</p>
@@ -299,7 +289,7 @@
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> step <span class="op">%</span> gradient_accumulation_steps <span class="op">==</span> <span class="dv">0</span>:</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        lr_scheduler.step()</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
 <p>The <code>Accelerator</code> here is simply used to handle the standard DDP processes, and nothing more.</p>
 <p>This baseline finished at:</p>
 <blockquote class="blockquote">
@@ -355,7 +345,7 @@
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            accelerator.backward(loss)</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            optimizer.step()</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            lr_scheduler.step()</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
 <blockquote class="blockquote">
 <p>Note: Times are in Seconds per Batch</p>
 </blockquote>
@@ -410,7 +400,7 @@
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        accelerator.backward(loss)</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        lr_scheduler.step()</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
 <blockquote class="blockquote">
 <p>Note: Times are in Seconds per Batch</p>
 </blockquote>
@@ -459,7 +449,7 @@
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        accelerator.backward(loss)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        lr_scheduler.step()</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
 <p>Timings:</p>
 <blockquote class="blockquote">
 <p>Note: Times are in Seconds per Batch</p>
@@ -535,90 +525,52 @@
         }
     </script>
 
-    <!-- Optimized Intersection Observer for lazy loading -->
+    <!-- Simple lazy loading -->
     <script>
         if ('IntersectionObserver' in window) {
             const images = document.querySelectorAll('img[loading="lazy"]');
-            if (images.length > 0) {
-                const imageObserver = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const img = entry.target;
-                            if (img.dataset.src) {
-                                img.src = img.dataset.src;
-                                img.removeAttribute('data-src');
-                            }
-                            observer.unobserve(img);
-                        }
-                    });
-                }, {
-                    rootMargin: '50px 0px',
-                    threshold: 0.01
-                });
-                images.forEach(img => imageObserver.observe(img));
-            }
-        }
-    </script>
-
-    <!-- Optimized JavaScript initialization -->
-    <script>
-        // Use passive event listeners for better performance
-        document.addEventListener('DOMContentLoaded', function() {
-            // Batch DOM operations for better performance
-            requestAnimationFrame(function() {
-                // Initialize copy buttons
-                if (window.ClipboardJS) {
-                    new ClipboardJS('.code-copy-button');
-                }
-                
-                // Initialize anchors
-                if (window.AnchorJS) {
-                    const anchors = new window.AnchorJS();
-                    anchors.options = {placement: 'right'};
-                    anchors.add('.anchored');
-                }
-
-                // Handle external links with better performance
-                const externalLinks = document.querySelectorAll('a[href^="http"]');
-                externalLinks.forEach(link => {
-                    if (link.hostname !== window.location.hostname) {
-                        link.setAttribute('rel', 'noopener nofollow');
-                        link.setAttribute('target', '_blank');
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
                     }
                 });
             });
-        }, {passive: true});
+            images.forEach(img => imageObserver.observe(img));
+        }
+    </script>
+
+    <!-- Simple JavaScript initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize copy buttons
+            if (window.ClipboardJS) {
+                new ClipboardJS('.code-copy-button');
+            }
+            
+            // Initialize anchors
+            if (window.AnchorJS) {
+                const anchors = new window.AnchorJS();
+                anchors.options = {placement: 'right'};
+                anchors.add('.anchored');
+            }
+        });
     </script>
 
     <script id="quarto-html-after-body" type="application/javascript">
-    // Optimize with passive listeners and requestAnimationFrame
     window.document.addEventListener("DOMContentLoaded", function (event) {
-        requestAnimationFrame(function() {
-            // Initialize AnchorJS only if available
-            if (window.AnchorJS) {
-                const anchorJS = new window.AnchorJS();
-                anchorJS.options = {
-                    placement: 'right',
-                    icon: ""
-                };
-                const anchored = document.querySelectorAll('.anchored');
-                if (anchored.length > 0) {
-                    anchorJS.add('.anchored');
-                }
-            }
-
-            // Handle external links with batched DOM operations
-            const externalLinks = document.querySelectorAll('a[href^="http"]');
-            if (externalLinks.length > 0) {
-                externalLinks.forEach(link => {
-                    if (link.hostname !== window.location.hostname) {
-                        link.setAttribute('rel', 'noopener nofollow');
-                        link.setAttribute('target', '_blank');
-                    }
-                });
-            }
-        });
-    }, {passive: true});
+        if (window.AnchorJS) {
+            const anchorJS = new window.AnchorJS();
+            anchorJS.options = {
+                placement: 'right',
+                icon: ""
+            };
+            anchorJS.add('.anchored');
+        }
+    });
     </script>
 </body>
 </html>
