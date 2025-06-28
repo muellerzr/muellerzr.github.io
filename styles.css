@@ -124,10 +124,36 @@ code, pre {
 .sourceCode {
     background-color: #f8f9fa;
     border: 1px solid #ddd;
-    padding: 1rem;
     margin: 1rem 0;
     overflow-x: auto;
     position: relative;
+    display: block;
+    clear: both;
+}
+
+div.sourceCode {
+    position: relative;
+}
+
+pre.sourceCode {
+    margin: 0;
+    padding: 1rem;
+    background-color: transparent;
+    overflow-x: auto;
+    display: block;
+    white-space: pre;
+    line-height: 1.5;
+}
+
+.sourceCode code {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    display: block;
+}
+
+.sourceCode span {
+    display: inline;
 }
 
 /* Simple copy button */
@@ -140,6 +166,7 @@ code, pre {
     padding: 0.25rem 0.5rem;
     cursor: pointer;
     font-size: 0.75rem;
+    z-index: 10;
 }
 
 .code-copy-button:hover {
@@ -242,7 +269,7 @@ th {
     h3 { font-size: 1.5rem; }
     
     /* Simple mobile code styling */
-    .sourceCode {
+    pre.sourceCode {
         padding: 0.75rem;
         font-size: 0.85rem;
     }
@@ -280,16 +307,3 @@ th {
     top: 6px;
 }
 
-/* Minimal button styles for copy buttons */
-.code-copy-button {
-    background: none;
-    border: 1px solid #dee2e6;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    font-size: 0.875rem;
-}
-
-.code-copy-button:hover {
-    background-color: #f8f9fa;
-}
