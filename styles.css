@@ -152,7 +152,19 @@ pre.sourceCode {
     display: block;
 }
 
-.sourceCode span {
+/* Make each line display as a block for proper line breaks */
+.sourceCode code > span {
+    display: block;
+    line-height: 1.5;
+}
+
+/* Hide line number anchor links visually but keep them for functionality */
+.sourceCode code > span > a {
+    display: none;
+}
+
+/* Ensure inline syntax highlighting elements stay inline */
+.sourceCode code > span > span {
     display: inline;
 }
 
