@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <!-- Performance and SEO meta tags -->
     <meta name="description" content="Learn how to optimize PyTorch gradient accumulation for distributed training. Discover techniques to prevent slowdowns and improve performance in multi-GPU setups.">
     <meta name="author" content="Zach Mueller">
     <meta name="keywords" content="PyTorch, gradient accumulation, distributed training, GPU optimization, machine learning, deep learning">
@@ -11,6 +12,11 @@
     <meta name="quarto:offset" content="../">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://muellerzr.github.io/gradient_accumulation.html">
+    
+    <!-- Performance optimizations -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#343a40">
 
     <title>PyTorch Gradient Accumulation Guide: Optimizing Multi-GPU Training Performance</title>
 
@@ -28,40 +34,95 @@
         code, pre {
             font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
+        
+        /* Critical above-the-fold styles */
+        .navbar {
+            background-color: #343a40 !important;
+            padding: 0.5rem 1rem;
+        }
+        .navbar-brand {
+            color: #fff !important;
+            font-weight: 600;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.85) !important;
+        }
+        .container-fluid {
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        /* Ensure content is visible before CSS loads */
+        main {
+            min-height: 50vh;
+            padding: 1rem;
+        }
+        h1, h2, h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        /* Font loading optimization */
+        @font-face {
+            font-family: 'bootstrap-icons';
+            src: url('../site_libs/bootstrap/bootstrap-icons.woff') format('woff');
+            font-display: swap;
+        }
     </style>
 
     <!-- Preload critical assets -->
     <link rel="preload" href="../site_libs/bootstrap/bootstrap-icons.woff" as="font" type="font/woff" crossorigin>
     <link rel="preload" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" as="style">
 
-    <!-- Critical CSS -->
-    <link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css">
-    <link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-icons.css">
+    <!-- Critical CSS - load synchronously -->
     <link rel="stylesheet" href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css">
-    <link rel="stylesheet" href="../styles.css">
+    
+    <!-- Non-critical CSS - load asynchronously -->
+    <link rel="preload" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css"></noscript>
+    
+    <link rel="preload" href="../site_libs/bootstrap/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="../site_libs/bootstrap/bootstrap-icons.css"></noscript>
+    
+    <link rel="preload" href="../styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="../styles.css"></noscript>
 
-    <!-- Quarto and Bootstrap core -->
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+    <!-- Resource hints for better loading -->
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
 
-    <!-- Deferred JavaScript -->
-    <script defer src="../site_libs/clipboard/clipboard.min.js"></script>
-    <script defer src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-    <script defer src="../site_libs/quarto-search/fuse.min.js"></script>
-    <script defer src="../site_libs/quarto-search/quarto-search.js"></script>
-    <script defer src="../site_libs/quarto-html/quarto.js" type="module"></script>
+    <!-- Critical JavaScript - load early but non-blocking -->
+    <script defer src="../site_libs/bootstrap/bootstrap.min.js"></script>
+    <script defer src="../site_libs/quarto-nav/headroom.min.js"></script>
+    <script defer src="../site_libs/quarto-nav/quarto-nav.js"></script>
+
+    <!-- Non-critical JavaScript - load with lower priority -->
     <script defer src="../site_libs/quarto-html/popper.min.js"></script>
+    <script defer src="../site_libs/clipboard/clipboard.min.js"></script>
+    <script defer src="../site_libs/quarto-search/fuse.min.js"></script>
+    <script defer src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+    <script defer src="../site_libs/quarto-search/quarto-search.js"></script>
     <script defer src="../site_libs/quarto-html/tippy.umd.min.js"></script>
     <script defer src="../site_libs/quarto-html/anchor.min.js"></script>
+    <script defer src="../site_libs/quarto-html/quarto.js" type="module"></script>
 
-    <!-- Analytics -->
+    <!-- Analytics - optimized loading -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-99XP3R051T', {'anonymize_ip': true});
+        gtag('config', 'G-99XP3R051T', {
+            'anonymize_ip': true,
+            'transport_type': 'beacon',
+            'allow_google_signals': false,
+            'allow_ad_personalization_signals': false
+        });
     </script>
 
     <!-- Schema.org metadata -->
@@ -534,67 +595,90 @@
         }
     </script>
 
-    <!-- Intersection Observer for lazy loading -->
+    <!-- Optimized Intersection Observer for lazy loading -->
     <script>
         if ('IntersectionObserver' in window) {
             const images = document.querySelectorAll('img[loading="lazy"]');
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        observer.unobserve(img);
+            if (images.length > 0) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            if (img.dataset.src) {
+                                img.src = img.dataset.src;
+                                img.removeAttribute('data-src');
+                            }
+                            observer.unobserve(img);
+                        }
+                    });
+                }, {
+                    rootMargin: '50px 0px',
+                    threshold: 0.01
+                });
+                images.forEach(img => imageObserver.observe(img));
+            }
+        }
+    </script>
+
+    <!-- Optimized JavaScript initialization -->
+    <script>
+        // Use passive event listeners for better performance
+        document.addEventListener('DOMContentLoaded', function() {
+            // Batch DOM operations for better performance
+            requestAnimationFrame(function() {
+                // Initialize copy buttons
+                if (window.ClipboardJS) {
+                    new ClipboardJS('.code-copy-button');
+                }
+                
+                // Initialize anchors
+                if (window.AnchorJS) {
+                    const anchors = new window.AnchorJS();
+                    anchors.options = {placement: 'right'};
+                    anchors.add('.anchored');
+                }
+
+                // Handle external links with better performance
+                const externalLinks = document.querySelectorAll('a[href^="http"]');
+                externalLinks.forEach(link => {
+                    if (link.hostname !== window.location.hostname) {
+                        link.setAttribute('rel', 'noopener nofollow');
+                        link.setAttribute('target', '_blank');
                     }
                 });
             });
-            images.forEach(img => imageObserver.observe(img));
-          }
-    </script>
-
-    <!-- Minimal JavaScript initialization -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize copy buttons
-            if (window.ClipboardJS) {
-                new ClipboardJS('.code-copy-button');
-            }
-            
-            // Initialize anchors
-            if (window.AnchorJS) {
-                const anchors = new window.AnchorJS();
-                anchors.options = {placement: 'right'};
-                anchors.add('.anchored');
-        }
-
-            // Handle external links
-            document.querySelectorAll('a[href^="http"]').forEach(link => {
-                if (link.hostname !== window.location.hostname) {
-                    link.setAttribute('rel', 'noopener');
-                    link.setAttribute('target', '_blank');
-              }
-            });
-        });
+        }, {passive: true});
     </script>
 
     <script id="quarto-html-after-body" type="application/javascript">
+    // Optimize with passive listeners and requestAnimationFrame
     window.document.addEventListener("DOMContentLoaded", function (event) {
-        const icon = "";
-        const anchorJS = new window.AnchorJS();
-        anchorJS.options = {
-            placement: 'right',
-            icon: icon
-        };
-        anchorJS.add('.anchored');
+        requestAnimationFrame(function() {
+            // Initialize AnchorJS only if available
+            if (window.AnchorJS) {
+                const anchorJS = new window.AnchorJS();
+                anchorJS.options = {
+                    placement: 'right',
+                    icon: ""
+                };
+                const anchored = document.querySelectorAll('.anchored');
+                if (anchored.length > 0) {
+                    anchorJS.add('.anchored');
+                }
+            }
 
-        // Handle external links
-        document.querySelectorAll('a[href^="http"]').forEach(link => {
-            if (link.hostname !== window.location.hostname) {
-                link.setAttribute('rel', 'noopener');
-                link.setAttribute('target', '_blank');
+            // Handle external links with batched DOM operations
+            const externalLinks = document.querySelectorAll('a[href^="http"]');
+            if (externalLinks.length > 0) {
+                externalLinks.forEach(link => {
+                    if (link.hostname !== window.location.hostname) {
+                        link.setAttribute('rel', 'noopener nofollow');
+                        link.setAttribute('target', '_blank');
+                    }
+                });
             }
         });
-  });
-  </script>
+    }, {passive: true});
+    </script>
 </body>
 </html>
