@@ -97,6 +97,12 @@ class SEOEnhancer:
             default=existing.get('description', '')
         )
         
+        # Meta Description
+        data['meta_description'] = click.prompt(
+            'Meta description (leave empty to use article description)',
+            default=data['description']
+        )
+        
         # Keywords
         data['keywords'] = click.prompt(
             'Keywords (comma-separated)',
@@ -213,7 +219,7 @@ class SEOEnhancer:
         
         # Meta tags to add/update
         meta_tags = [
-            ('description', data['description']),
+            ('description', data.get('meta_description', data['description'])),
             ('author', data['author_name']),
             ('keywords', data['keywords']),
             ('robots', 'index, follow'),
@@ -238,7 +244,7 @@ class SEOEnhancer:
         # Open Graph tags
         og_tags = [
             ('og:title', data['headline']),
-            ('og:description', data['description']),
+            ('og:description', data.get('meta_description', data['description'])),
             ('og:type', 'article'),
             ('og:url', data['publisher_url']),
         ]
@@ -263,7 +269,7 @@ class SEOEnhancer:
         twitter_tags = [
             ('twitter:card', 'summary_large_image'),
             ('twitter:title', data['headline']),
-            ('twitter:description', data['description']),
+            ('twitter:description', data.get('meta_description', data['description'])),
         ]
         
         if 'image_url' in data:
@@ -352,7 +358,7 @@ def main():
         click.echo(json_ld)
         click.echo("\n📝 Meta tags that would be added/updated:")
         for key, value in data.items():
-            if key in ['description', 'author_name', 'keywords']:
+            if key in ['description', 'meta_description', 'author_name', 'keywords']:
                 click.echo(f"  - {key}: {value}")
     else:
         enhancer.enhance(args.output)
