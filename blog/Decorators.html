@@ -1,13 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.31">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-<meta name="dcterms.date" content="2022-07-06">
-
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta charset="utf-8"/>
+<meta content="quarto-1.7.31" name="generator"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="2022-07-06" name="dcterms.date"/>
 <title>Decorators – Zach Mueller</title>
 <style>
 code{white-space: pre-wrap;}
@@ -57,25 +53,23 @@ div.sourceCode
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
-
-
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
+<meta content="../" name="quarto:offset"/>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet"/>
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"/>
+<link append-hash="true" data-mode="light" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" id="quarto-bootstrap" rel="stylesheet"/>
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -104,7 +98,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
-
 <script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
@@ -112,284 +105,296 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </script>
-
-
-<link rel="stylesheet" href="../styles.css">
-</head>
-
+<link href="../styles.css" rel="stylesheet"/>
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Decorators: How they work from the ground up",
+  "description": "Showcasing why decorators are useful in Python and machine learning",
+  "author": {
+    "@type": "Person",
+    "name": "Zach Mueller",
+    "url": "https://muellerzr.github.io"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Zach Mueller's Blog",
+    "url": "https://muellerzr.github.io"
+  },
+  "datePublished": "2022-07-06",
+  "keywords": "decorator,pytorch,python,deep-learning,machine-learning,cuda,cudaoutofmemory,cudaoom"
+}</script>
+    <!-- Performance and SEO meta tags -->
+    <meta content="Showcasing why decorators are useful in Python and machine learning" name="description"/>
+    <meta content="Zach Mueller" name="author"/>
+    <meta content="decorator,pytorch,python,deep-learning,machine-learning,cuda,cudaoutofmemory,cudaoom" name="keywords"/>
+    <meta content="index, follow" name="robots"/>
+    <meta content="Decorators: How they work from the ground up" property="og:title"/>
+    <meta content="Showcasing why decorators are useful in Python and machine learning" property="og:description"/>
+    <meta content="article" property="og:type"/>
+    <meta content="https://muellerzr.github.io" property="og:url"/>
+    <meta content="summary_large_image" name="twitter:card"/>
+    <meta content="Decorators: How they work from the ground up" name="twitter:title"/>
+    <meta content="Showcasing why decorators are useful in Python and machine learning" name="twitter:description"/>
+    </head>
 <body class="nav-sidebar floating nav-fixed fullcontent quarto-light">
-
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
-      <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">Zach Mueller</span>
-    </a>
-  </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
-<span class="menu-text">About Me</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html"> 
-<span class="menu-text">Blog</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../til/index.html"> 
-<span class="menu-text">Today I Learned</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../builds/index.html"> 
-<span class="menu-text">PC Builds</span></a>
-  </li>  
-</ul>
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/muellerzr"> <i class="bi bi-github" role="img">
-</i> 
-<span class="menu-text"></span></a>
-  </li>  
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/TheZachMueller"> <i class="bi bi-twitter" role="img">
-</i> 
-<span class="menu-text"></span></a>
-  </li>  
-</ul>
-          </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools">
+<header class="headroom fixed-top" id="quarto-header">
+<nav class="navbar navbar-expand-lg" data-bs-theme="dark">
+<div class="navbar-container container-fluid">
+<div class="navbar-brand-container mx-auto">
+<a class="navbar-brand" href="../index.html">
+<span class="navbar-title">Zach Mueller</span>
+</a>
 </div>
-      </div> <!-- /container-fluid -->
-    </nav>
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Decorators</li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-    </div>
-  </nav>
+<div class="" id="quarto-search" title="Search"></div>
+<button aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarCollapse" data-bs-toggle="collapse" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }" role="menu" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarCollapse">
+<ul class="navbar-nav navbar-nav-scroll me-auto">
+<li class="nav-item">
+<a class="nav-link" href="../index.html">
+<span class="menu-text">About Me</span></a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../blog/index.html">
+<span class="menu-text">Blog</span></a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../til/index.html">
+<span class="menu-text">Today I Learned</span></a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../builds/index.html">
+<span class="menu-text">PC Builds</span></a>
+</li>
+</ul>
+<ul class="navbar-nav navbar-nav-scroll ms-auto">
+<li class="nav-item compact">
+<a class="nav-link" href="https://github.com/muellerzr"> <i class="bi bi-github" role="img">
+</i>
+<span class="menu-text"></span></a>
+</li>
+<li class="nav-item compact">
+<a class="nav-link" href="https://twitter.com/TheZachMueller"> <i class="bi bi-twitter" role="img">
+</i>
+<span class="menu-text"></span></a>
+</li>
+</ul>
+</div> <!-- /navcollapse -->
+<div class="quarto-navbar-tools">
+</div>
+</div> <!-- /container-fluid -->
+</nav>
+<nav class="quarto-secondary-nav">
+<div class="container-fluid d-flex">
+<button aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" class="quarto-btn-toggle btn" data-bs-target=".quarto-sidebar-collapse-item" data-bs-toggle="collapse" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }" role="button" type="button">
+<i class="bi bi-layout-text-sidebar-reverse"></i>
+</button>
+<nav aria-label="breadcrumb" class="quarto-page-breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item">Decorators</li></ol></nav>
+<a aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" class="flex-grow-1" data-bs-target=".quarto-sidebar-collapse-item" data-bs-toggle="collapse" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }" role="navigation">
+</a>
+</div>
+</nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div class="quarto-container page-columns page-rows-contents page-layout-article page-navbar" id="quarto-content">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+<nav class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" id="quarto-sidebar">
 </nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<div class="quarto-sidebar-collapse-item" data-bs-target=".quarto-sidebar-collapse-item" data-bs-toggle="collapse" id="quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
-    
 <!-- main -->
 <main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
+<header class="quarto-title-block default" id="title-block-header">
 <div class="quarto-title">
 <h1 class="title">Decorators</h1>
 </div>
-
-
-
 <div class="quarto-title-meta">
-
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">July 6, 2022</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
-
-
+<div>
+<div class="quarto-title-meta-heading">Published</div>
+<div class="quarto-title-meta-contents">
+<p class="date">July 6, 2022</p>
+</div>
+</div>
+</div>
 </header>
-
-
 <blockquote class="blockquote">
 <p>An introduction to decorators including when they can be useful and how they’re written</p>
 </blockquote>
-<section id="tldr" class="level2">
+<section class="level2" id="tldr">
 <h2 class="anchored" data-anchor-id="tldr">TL;DR</h2>
 <p>Here’s the basic decorator written in this article (though I recommend still reading and going through it so it makes sense!)</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> partial</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> addition_decorator(function:<span class="bu">callable</span> <span class="op">=</span> <span class="va">None</span>, verbose:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>):</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"A simple decorator that will ensure `function` is only called with `function(1,1)`"</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> function <span class="kw">is</span> <span class="va">None</span>:</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> partial(addition_decorator, verbose<span class="op">=</span>verbose)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decorator(<span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="va">True</span>:</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span>:</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> function(<span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                is_a <span class="op">=</span> <span class="st">"`a`"</span> <span class="kw">in</span> e.args[<span class="dv">0</span>]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                a,b <span class="op">=</span> args</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                args <span class="op">=</span> (a<span class="op">-</span><span class="dv">1</span>, b) <span class="cf">if</span> is_a <span class="cf">else</span> (a, b<span class="op">-</span><span class="dv">1</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> verbose: </span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">print</span>(<span class="ss">f'Args are now </span><span class="sc">{</span>args<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> decorator</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="at">@addition_decorator</span>(verbose<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> addition(a,b):</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Adds `a` and `b` together"</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> a <span class="op">&gt;</span> <span class="dv">1</span>: </span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`a` is greater than 1"</span>)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> b <span class="op">&gt;</span> <span class="dv">1</span>: </span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`b` is greater than 1"</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">+</span>b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> partial</span>
+<span id="cb1-2"><a aria-hidden="true" href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a aria-hidden="true" href="#cb1-3" tabindex="-1"></a><span class="kw">def</span> addition_decorator(function:<span class="bu">callable</span> <span class="op">=</span> <span class="va">None</span>, verbose:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb1-4"><a aria-hidden="true" href="#cb1-4" tabindex="-1"></a>    <span class="co">"A simple decorator that will ensure `function` is only called with `function(1,1)`"</span></span>
+<span id="cb1-5"><a aria-hidden="true" href="#cb1-5" tabindex="-1"></a>    <span class="cf">if</span> function <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb1-6"><a aria-hidden="true" href="#cb1-6" tabindex="-1"></a>        <span class="cf">return</span> partial(addition_decorator, verbose<span class="op">=</span>verbose)</span>
+<span id="cb1-7"><a aria-hidden="true" href="#cb1-7" tabindex="-1"></a>    <span class="kw">def</span> decorator(<span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
+<span id="cb1-8"><a aria-hidden="true" href="#cb1-8" tabindex="-1"></a>        <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb1-9"><a aria-hidden="true" href="#cb1-9" tabindex="-1"></a>            <span class="cf">try</span>:</span>
+<span id="cb1-10"><a aria-hidden="true" href="#cb1-10" tabindex="-1"></a>                <span class="cf">return</span> function(<span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
+<span id="cb1-11"><a aria-hidden="true" href="#cb1-11" tabindex="-1"></a>            <span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
+<span id="cb1-12"><a aria-hidden="true" href="#cb1-12" tabindex="-1"></a>                is_a <span class="op">=</span> <span class="st">"`a`"</span> <span class="kw">in</span> e.args[<span class="dv">0</span>]</span>
+<span id="cb1-13"><a aria-hidden="true" href="#cb1-13" tabindex="-1"></a>                a,b <span class="op">=</span> args</span>
+<span id="cb1-14"><a aria-hidden="true" href="#cb1-14" tabindex="-1"></a>                args <span class="op">=</span> (a<span class="op">-</span><span class="dv">1</span>, b) <span class="cf">if</span> is_a <span class="cf">else</span> (a, b<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb1-15"><a aria-hidden="true" href="#cb1-15" tabindex="-1"></a>                <span class="cf">if</span> verbose: </span>
+<span id="cb1-16"><a aria-hidden="true" href="#cb1-16" tabindex="-1"></a>                    <span class="bu">print</span>(<span class="ss">f'Args are now </span><span class="sc">{</span>args<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-17"><a aria-hidden="true" href="#cb1-17" tabindex="-1"></a>    <span class="cf">return</span> decorator</span>
+<span id="cb1-18"><a aria-hidden="true" href="#cb1-18" tabindex="-1"></a></span>
+<span id="cb1-19"><a aria-hidden="true" href="#cb1-19" tabindex="-1"></a><span class="at">@addition_decorator</span>(verbose<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-20"><a aria-hidden="true" href="#cb1-20" tabindex="-1"></a><span class="kw">def</span> addition(a,b):</span>
+<span id="cb1-21"><a aria-hidden="true" href="#cb1-21" tabindex="-1"></a>    <span class="co">"Adds `a` and `b` together"</span></span>
+<span id="cb1-22"><a aria-hidden="true" href="#cb1-22" tabindex="-1"></a>    <span class="cf">if</span> a <span class="op">&gt;</span> <span class="dv">1</span>: </span>
+<span id="cb1-23"><a aria-hidden="true" href="#cb1-23" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`a` is greater than 1"</span>)</span>
+<span id="cb1-24"><a aria-hidden="true" href="#cb1-24" tabindex="-1"></a>    <span class="cf">if</span> b <span class="op">&gt;</span> <span class="dv">1</span>: </span>
+<span id="cb1-25"><a aria-hidden="true" href="#cb1-25" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`b` is greater than 1"</span>)</span>
+<span id="cb1-26"><a aria-hidden="true" href="#cb1-26" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">+</span>b</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 </section>
-<section id="what-is-a-decorator" class="level2">
+<section class="level2" id="what-is-a-decorator">
 <h2 class="anchored" data-anchor-id="what-is-a-decorator">What is a decorator?</h2>
 <p>What is a decorator, and why is it useful?</p>
 <p>A decorator can be thought of as code that “wraps” around other code. It encapsulates it, kind of like a blanket! They’re extremely helpful for setting up a particular configuration for the “decorated” (a function that has a decorator) function, or to do some particular behavior when something occurs in the code its wrapped around.</p>
 <p>In python these are generally denoted with an <code>@</code> symbol followed by the decorator function name, and these are placed above an actual function.</p>
 </section>
-<section id="what-is-this-article-going-to-show" class="level2">
+<section class="level2" id="what-is-this-article-going-to-show">
 <h2 class="anchored" data-anchor-id="what-is-this-article-going-to-show">What is this article going to show?</h2>
 <p>I’m not going to dive into “how to make your own decorators from scratch” and so forth. There’s a <a href="https://www.geeksforgeeks.org/decorators-in-python/">W3</a> article on this.</p>
 <p>Instead, we’re going to focus on writing a decorator given what you’d find everyone else using, a few applications of them, and how to understand just what a decorator is doing and how it’s written. What I’m hoping you will take out of this is patterns when writing decorators so you can understand them easier both from a reading and writing perspective, as well as when debugging functions to see what outside behaviour is being performed</p>
 </section>
-<section id="example-case-a-retry-decorator" class="level2">
+<section class="level2" id="example-case-a-retry-decorator">
 <h2 class="anchored" data-anchor-id="example-case-a-retry-decorator">Example case: a Retry Decorator</h2>
 <p>The decorator we’ll focus on is a “retry” loop. Say I have a function and I want to be able to catch if a particular call gets raised while it’s run.</p>
 <p>From a Deep Learning perspective this could be something like a CUDA Out-of-Memory for instance.</p>
 <p>If this <code>Exception</code> has been raised, I want to be able to run the code again slightly modifying one aspect of it to potentially avoid the error being raised.</p>
 <p>For this example I’ll make a simplistic <code>addition</code> function that will only be ran if 1+1 is being done as its inputs.</p>
 <p>(Does this make sense in the real world? Probably not. But you can get the simple idea!)</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> addition(a,b):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Adds `a` and `b` together"</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> a <span class="op">&gt;</span> <span class="dv">1</span>: </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`a` is greater than 1"</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> b <span class="op">&gt;</span> <span class="dv">1</span>: </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`b` is greater than 1"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">+</span>b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a aria-hidden="true" href="#cb2-1" tabindex="-1"></a><span class="kw">def</span> addition(a,b):</span>
+<span id="cb2-2"><a aria-hidden="true" href="#cb2-2" tabindex="-1"></a>    <span class="co">"Adds `a` and `b` together"</span></span>
+<span id="cb2-3"><a aria-hidden="true" href="#cb2-3" tabindex="-1"></a>    <span class="cf">if</span> a <span class="op">&gt;</span> <span class="dv">1</span>: </span>
+<span id="cb2-4"><a aria-hidden="true" href="#cb2-4" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`a` is greater than 1"</span>)</span>
+<span id="cb2-5"><a aria-hidden="true" href="#cb2-5" tabindex="-1"></a>    <span class="cf">if</span> b <span class="op">&gt;</span> <span class="dv">1</span>: </span>
+<span id="cb2-6"><a aria-hidden="true" href="#cb2-6" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`b` is greater than 1"</span>)</span>
+<span id="cb2-7"><a aria-hidden="true" href="#cb2-7" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">+</span>b</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>Now logically let’s think of how we’d want to catch this. We raise the same error type, but how do we know what input to change?</p>
 <p>We can read <code>Exception.args</code> to get the actual message being sent, and use it to see which argument we should adjust.</p>
 <p>Generally decorators are written as a function with an <code>inner</code> function. This inner function is what is then called when truly calling the function. Meanwhile the decorator takes the function in as the first parameter:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> addition_decorator(function: <span class="bu">callable</span>, verbose:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>):</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    A simple decorator that will ensure `function` is only called with `function(1,1)`</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decorator(<span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># This contains the args and kwargs for our `function`</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># We then do a `while` loop:</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="va">True</span>:</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span>:</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> function(<span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                <span class="co"># We can then see if we need to adjust `a` or `b`</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                is_a <span class="op">=</span> <span class="st">"`a`"</span> <span class="kw">in</span> e.args[<span class="dv">0</span>]</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                <span class="co"># and then we adjust the current `args` based on this result:</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                a,b <span class="op">=</span> args</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                <span class="co"># We can also print our attempt here:</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> verbose:</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">print</span>(<span class="ss">f'Tried to do </span><span class="sc">{</span>a<span class="sc">}</span><span class="ss"> + </span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">, but at least one argument is greater than 1!'</span>)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> is_a:</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> verbose:</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">print</span>(<span class="ss">f'Reducing `a` by 1: </span><span class="sc">{</span>a<span class="op">-</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>                    args <span class="op">=</span> (a<span class="op">-</span><span class="dv">1</span>, b)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> verbose:</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">print</span>(<span class="ss">f'Reducing `b` by 1: </span><span class="sc">{</span>b<span class="op">-</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>                    args <span class="op">=</span> (a, b<span class="op">-</span><span class="dv">1</span>)</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Finally we return the inner function! *Very* important!</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> decorator</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a aria-hidden="true" href="#cb3-1" tabindex="-1"></a><span class="kw">def</span> addition_decorator(function: <span class="bu">callable</span>, verbose:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb3-2"><a aria-hidden="true" href="#cb3-2" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb3-3"><a aria-hidden="true" href="#cb3-3" tabindex="-1"></a><span class="co">    A simple decorator that will ensure `function` is only called with `function(1,1)`</span></span>
+<span id="cb3-4"><a aria-hidden="true" href="#cb3-4" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-5"><a aria-hidden="true" href="#cb3-5" tabindex="-1"></a>    <span class="kw">def</span> decorator(<span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
+<span id="cb3-6"><a aria-hidden="true" href="#cb3-6" tabindex="-1"></a>        <span class="co"># This contains the args and kwargs for our `function`</span></span>
+<span id="cb3-7"><a aria-hidden="true" href="#cb3-7" tabindex="-1"></a>        <span class="co"># We then do a `while` loop:</span></span>
+<span id="cb3-8"><a aria-hidden="true" href="#cb3-8" tabindex="-1"></a>        <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb3-9"><a aria-hidden="true" href="#cb3-9" tabindex="-1"></a>            <span class="cf">try</span>:</span>
+<span id="cb3-10"><a aria-hidden="true" href="#cb3-10" tabindex="-1"></a>                <span class="cf">return</span> function(<span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
+<span id="cb3-11"><a aria-hidden="true" href="#cb3-11" tabindex="-1"></a>            <span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
+<span id="cb3-12"><a aria-hidden="true" href="#cb3-12" tabindex="-1"></a>                <span class="co"># We can then see if we need to adjust `a` or `b`</span></span>
+<span id="cb3-13"><a aria-hidden="true" href="#cb3-13" tabindex="-1"></a>                is_a <span class="op">=</span> <span class="st">"`a`"</span> <span class="kw">in</span> e.args[<span class="dv">0</span>]</span>
+<span id="cb3-14"><a aria-hidden="true" href="#cb3-14" tabindex="-1"></a>                <span class="co"># and then we adjust the current `args` based on this result:</span></span>
+<span id="cb3-15"><a aria-hidden="true" href="#cb3-15" tabindex="-1"></a>                a,b <span class="op">=</span> args</span>
+<span id="cb3-16"><a aria-hidden="true" href="#cb3-16" tabindex="-1"></a>                <span class="co"># We can also print our attempt here:</span></span>
+<span id="cb3-17"><a aria-hidden="true" href="#cb3-17" tabindex="-1"></a>                <span class="cf">if</span> verbose:</span>
+<span id="cb3-18"><a aria-hidden="true" href="#cb3-18" tabindex="-1"></a>                    <span class="bu">print</span>(<span class="ss">f'Tried to do </span><span class="sc">{</span>a<span class="sc">}</span><span class="ss"> + </span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">, but at least one argument is greater than 1!'</span>)</span>
+<span id="cb3-19"><a aria-hidden="true" href="#cb3-19" tabindex="-1"></a>                <span class="cf">if</span> is_a:</span>
+<span id="cb3-20"><a aria-hidden="true" href="#cb3-20" tabindex="-1"></a>                    <span class="cf">if</span> verbose:</span>
+<span id="cb3-21"><a aria-hidden="true" href="#cb3-21" tabindex="-1"></a>                        <span class="bu">print</span>(<span class="ss">f'Reducing `a` by 1: </span><span class="sc">{</span>a<span class="op">-</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-22"><a aria-hidden="true" href="#cb3-22" tabindex="-1"></a>                    args <span class="op">=</span> (a<span class="op">-</span><span class="dv">1</span>, b)</span>
+<span id="cb3-23"><a aria-hidden="true" href="#cb3-23" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb3-24"><a aria-hidden="true" href="#cb3-24" tabindex="-1"></a>                    <span class="cf">if</span> verbose:</span>
+<span id="cb3-25"><a aria-hidden="true" href="#cb3-25" tabindex="-1"></a>                        <span class="bu">print</span>(<span class="ss">f'Reducing `b` by 1: </span><span class="sc">{</span>b<span class="op">-</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-26"><a aria-hidden="true" href="#cb3-26" tabindex="-1"></a>                    args <span class="op">=</span> (a, b<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb3-27"><a aria-hidden="true" href="#cb3-27" tabindex="-1"></a>    <span class="co"># Finally we return the inner function! *Very* important!</span></span>
+<span id="cb3-28"><a aria-hidden="true" href="#cb3-28" tabindex="-1"></a>    <span class="cf">return</span> decorator</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>With this simple decorator, we will continuously loop over and try calling <code>function</code> until both <code>a</code> and <code>b</code> are equal to 1.</p>
 <p>Now how do we actually apply this decorator?</p>
 <p>We can do this one of two ways. We can “wrap” around the function and call it as a normal function. For example:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>func <span class="op">=</span> addition_decorator(addition)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>func(<span class="dv">2</span>,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a aria-hidden="true" href="#cb4-1" tabindex="-1"></a>func <span class="op">=</span> addition_decorator(addition)</span>
+<span id="cb4-2"><a aria-hidden="true" href="#cb4-2" tabindex="-1"></a>func(<span class="dv">2</span>,<span class="dv">2</span>)</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>Now let’s pass in <code>verbose=True</code> to see just how it was really called:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>func <span class="op">=</span> addition_decorator(addition, verbose<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>func(<span class="dv">2</span>,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a aria-hidden="true" href="#cb5-1" tabindex="-1"></a>func <span class="op">=</span> addition_decorator(addition, verbose<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-2"><a aria-hidden="true" href="#cb5-2" tabindex="-1"></a>func(<span class="dv">2</span>,<span class="dv">2</span>)</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>You can see that we continuously reduced an input we passed in and passed it to the function before finally getting the value we want!</p>
 <p>Now how do I write this in such a way that doesn’t require me to build this new function <code>func</code> and call it? How can I just call <code>addition</code> and still have <code>addition_decorator</code>?</p>
 <p>First we would declare <code>addition_decorator</code>, and then add <code>@addition_decorator</code> to the top of our <code>addition</code> function like below:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@addition_decorator</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> addition(a,b):</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Adds `a` and `b` together"</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> a <span class="op">&gt;</span> <span class="dv">1</span>: </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`a` is greater than 1"</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> b <span class="op">&gt;</span> <span class="dv">1</span>: </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`b` is greater than 1"</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">+</span>b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a aria-hidden="true" href="#cb6-1" tabindex="-1"></a><span class="at">@addition_decorator</span></span>
+<span id="cb6-2"><a aria-hidden="true" href="#cb6-2" tabindex="-1"></a><span class="kw">def</span> addition(a,b):</span>
+<span id="cb6-3"><a aria-hidden="true" href="#cb6-3" tabindex="-1"></a>    <span class="co">"Adds `a` and `b` together"</span></span>
+<span id="cb6-4"><a aria-hidden="true" href="#cb6-4" tabindex="-1"></a>    <span class="cf">if</span> a <span class="op">&gt;</span> <span class="dv">1</span>: </span>
+<span id="cb6-5"><a aria-hidden="true" href="#cb6-5" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`a` is greater than 1"</span>)</span>
+<span id="cb6-6"><a aria-hidden="true" href="#cb6-6" tabindex="-1"></a>    <span class="cf">if</span> b <span class="op">&gt;</span> <span class="dv">1</span>: </span>
+<span id="cb6-7"><a aria-hidden="true" href="#cb6-7" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`b` is greater than 1"</span>)</span>
+<span id="cb6-8"><a aria-hidden="true" href="#cb6-8" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">+</span>b</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>Now when we see how <code>addition</code> is declared we can see it points to the decorator:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>addition</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a aria-hidden="true" href="#cb7-1" tabindex="-1"></a>addition</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>And when we call <code>addition</code> it will have the same effect:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>addition(<span class="dv">2</span>,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a aria-hidden="true" href="#cb8-1" tabindex="-1"></a>addition(<span class="dv">2</span>,<span class="dv">2</span>)</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>So how is it doing this?</p>
 <p>By wrapping our function it uses that function to fill in the first parameter in our decorator by itself! This leaves the rest of them to their default values however.</p>
 </section>
-<section id="making-it-a-bit-more-complex-passing-in-arguments" class="level2">
+<section class="level2" id="making-it-a-bit-more-complex-passing-in-arguments">
 <h2 class="anchored" data-anchor-id="making-it-a-bit-more-complex-passing-in-arguments">Making it a bit more complex, passing in arguments</h2>
 <p>So how could we configure that <code>verbose</code> argument then?</p>
 <p>Here’s where a bit of magic comes in through <em>partial</em> functions.</p>
 <p>Partial’s allow us to create a <em>loaded</em> function with some values already filled in for us by default. This makes use of the <code>functools</code> library. First we’ll write a small function to test our point:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> subtraction(a,b): </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Subtract two numbers"</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">-</span>b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a aria-hidden="true" href="#cb9-1" tabindex="-1"></a><span class="kw">def</span> subtraction(a,b): </span>
+<span id="cb9-2"><a aria-hidden="true" href="#cb9-2" tabindex="-1"></a>    <span class="co">"Subtract two numbers"</span></span>
+<span id="cb9-3"><a aria-hidden="true" href="#cb9-3" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">-</span>b</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>Next we’ll import <code>partial</code> and create our partial version of <code>subtraction</code>. For any values you wish to fill you should pass them as keyword arguments:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> partial</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>partial_subtraction <span class="op">=</span> partial(subtraction, a<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a aria-hidden="true" href="#cb10-1" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> partial</span>
+<span id="cb10-2"><a aria-hidden="true" href="#cb10-2" tabindex="-1"></a>partial_subtraction <span class="op">=</span> partial(subtraction, a<span class="op">=</span><span class="dv">2</span>)</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>Now if I call <code>partial_subtraction</code>, I can just pass in <code>b</code> and it will work:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>partial_subtraction(b<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>We can perform a similar idea <span class="cf">for</span> our decorator, where we <span class="cf">return</span> a partial function first filling <span class="kw">in</span> our values that we want <span class="cf">if</span> `function` <span class="kw">is</span> `None`.</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>The reason <span class="cf">for</span> this <span class="kw">is</span> the decorator gets applied <span class="op">*</span>before<span class="op">*</span> the function <span class="kw">is</span> called within it, so we setup the parameters we want first. I<span class="st">'ll print out when this occurs in our decorator as well so you can see this behavior, and I'</span>ve also simplified it to show the point I<span class="st">'m trying to visualize for you:</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="er">&gt; Note: Since everything can now be passed in as kwargs, each value in the function parameters **must** contain a default of some sort. Usually this would be `None`, which I've done here</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>```python</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> addition_decorator(function:<span class="bu">callable</span> <span class="op">=</span> <span class="va">None</span>, verbose:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>):</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">"A simple decorator that will ensure `function` is only called with `function(1,1)`"</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> function <span class="kw">is</span> <span class="va">None</span>:</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># We return our original function with the `verbose` param</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Creating a new `addition_decorator` function with verbose=</span><span class="sc">{</span>verbose<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> partial(addition_decorator, verbose<span class="op">=</span>verbose)</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decorator(<span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="va">True</span>:</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span>:</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> function(<span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>                is_a <span class="op">=</span> <span class="st">"`a`"</span> <span class="kw">in</span> e.args[<span class="dv">0</span>]</span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>                a,b <span class="op">=</span> args</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> is_a:</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> verbose:</span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">print</span>(<span class="ss">f'Reducing `a` by 1: </span><span class="sc">{</span>a<span class="op">-</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>                    args <span class="op">=</span> (a<span class="op">-</span><span class="dv">1</span>, b)</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> verbose:</span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">print</span>(<span class="ss">f'Reducing `b` by 1: </span><span class="sc">{</span>b<span class="op">-</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>                    args <span class="op">=</span> (a, b<span class="op">-</span><span class="dv">1</span>)</span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Finally we return the inner function! *Very* important!</span></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> decorator</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a aria-hidden="true" href="#cb11-1" tabindex="-1"></a>partial_subtraction(b<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb11-2"><a aria-hidden="true" href="#cb11-2" tabindex="-1"></a></span>
+<span id="cb11-3"><a aria-hidden="true" href="#cb11-3" tabindex="-1"></a></span>
+<span id="cb11-4"><a aria-hidden="true" href="#cb11-4" tabindex="-1"></a>We can perform a similar idea <span class="cf">for</span> our decorator, where we <span class="cf">return</span> a partial function first filling <span class="kw">in</span> our values that we want <span class="cf">if</span> `function` <span class="kw">is</span> `None`.</span>
+<span id="cb11-5"><a aria-hidden="true" href="#cb11-5" tabindex="-1"></a></span>
+<span id="cb11-6"><a aria-hidden="true" href="#cb11-6" tabindex="-1"></a>The reason <span class="cf">for</span> this <span class="kw">is</span> the decorator gets applied <span class="op">*</span>before<span class="op">*</span> the function <span class="kw">is</span> called within it, so we setup the parameters we want first. I<span class="st">'ll print out when this occurs in our decorator as well so you can see this behavior, and I'</span>ve also simplified it to show the point I<span class="st">'m trying to visualize for you:</span></span>
+<span id="cb11-7"><a aria-hidden="true" href="#cb11-7" tabindex="-1"></a></span>
+<span id="cb11-8"><a aria-hidden="true" href="#cb11-8" tabindex="-1"></a><span class="er">&gt; Note: Since everything can now be passed in as kwargs, each value in the function parameters **must** contain a default of some sort. Usually this would be `None`, which I've done here</span></span>
+<span id="cb11-9"><a aria-hidden="true" href="#cb11-9" tabindex="-1"></a></span>
+<span id="cb11-10"><a aria-hidden="true" href="#cb11-10" tabindex="-1"></a>```python</span>
+<span id="cb11-11"><a aria-hidden="true" href="#cb11-11" tabindex="-1"></a><span class="kw">def</span> addition_decorator(function:<span class="bu">callable</span> <span class="op">=</span> <span class="va">None</span>, verbose:<span class="bu">bool</span><span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb11-12"><a aria-hidden="true" href="#cb11-12" tabindex="-1"></a>    <span class="co">"A simple decorator that will ensure `function` is only called with `function(1,1)`"</span></span>
+<span id="cb11-13"><a aria-hidden="true" href="#cb11-13" tabindex="-1"></a>    <span class="cf">if</span> function <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb11-14"><a aria-hidden="true" href="#cb11-14" tabindex="-1"></a>        <span class="co"># We return our original function with the `verbose` param</span></span>
+<span id="cb11-15"><a aria-hidden="true" href="#cb11-15" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Creating a new `addition_decorator` function with verbose=</span><span class="sc">{</span>verbose<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb11-16"><a aria-hidden="true" href="#cb11-16" tabindex="-1"></a>        <span class="cf">return</span> partial(addition_decorator, verbose<span class="op">=</span>verbose)</span>
+<span id="cb11-17"><a aria-hidden="true" href="#cb11-17" tabindex="-1"></a>    <span class="kw">def</span> decorator(<span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
+<span id="cb11-18"><a aria-hidden="true" href="#cb11-18" tabindex="-1"></a>        <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb11-19"><a aria-hidden="true" href="#cb11-19" tabindex="-1"></a>            <span class="cf">try</span>:</span>
+<span id="cb11-20"><a aria-hidden="true" href="#cb11-20" tabindex="-1"></a>                <span class="cf">return</span> function(<span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
+<span id="cb11-21"><a aria-hidden="true" href="#cb11-21" tabindex="-1"></a>            <span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
+<span id="cb11-22"><a aria-hidden="true" href="#cb11-22" tabindex="-1"></a>                is_a <span class="op">=</span> <span class="st">"`a`"</span> <span class="kw">in</span> e.args[<span class="dv">0</span>]</span>
+<span id="cb11-23"><a aria-hidden="true" href="#cb11-23" tabindex="-1"></a>                a,b <span class="op">=</span> args</span>
+<span id="cb11-24"><a aria-hidden="true" href="#cb11-24" tabindex="-1"></a>                <span class="cf">if</span> is_a:</span>
+<span id="cb11-25"><a aria-hidden="true" href="#cb11-25" tabindex="-1"></a>                    <span class="cf">if</span> verbose:</span>
+<span id="cb11-26"><a aria-hidden="true" href="#cb11-26" tabindex="-1"></a>                        <span class="bu">print</span>(<span class="ss">f'Reducing `a` by 1: </span><span class="sc">{</span>a<span class="op">-</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb11-27"><a aria-hidden="true" href="#cb11-27" tabindex="-1"></a>                    args <span class="op">=</span> (a<span class="op">-</span><span class="dv">1</span>, b)</span>
+<span id="cb11-28"><a aria-hidden="true" href="#cb11-28" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb11-29"><a aria-hidden="true" href="#cb11-29" tabindex="-1"></a>                    <span class="cf">if</span> verbose:</span>
+<span id="cb11-30"><a aria-hidden="true" href="#cb11-30" tabindex="-1"></a>                        <span class="bu">print</span>(<span class="ss">f'Reducing `b` by 1: </span><span class="sc">{</span>b<span class="op">-</span><span class="dv">1</span><span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb11-31"><a aria-hidden="true" href="#cb11-31" tabindex="-1"></a>                    args <span class="op">=</span> (a, b<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb11-32"><a aria-hidden="true" href="#cb11-32" tabindex="-1"></a>    <span class="co"># Finally we return the inner function! *Very* important!</span></span>
+<span id="cb11-33"><a aria-hidden="true" href="#cb11-33" tabindex="-1"></a>    <span class="cf">return</span> decorator</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>To add this parameter, we pass it into the <code>@</code> function itself. Once we’ve declared our <code>addition</code> function, we should see a print statement immediatly:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@addition_decorator</span>(verbose<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> addition(a,b):</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Adds `a` and `b` together"</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> a <span class="op">&gt;</span> <span class="dv">1</span>: </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`a` is greater than 1"</span>)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> b <span class="op">&gt;</span> <span class="dv">1</span>: </span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`b` is greater than 1"</span>)</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">+</span>b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a aria-hidden="true" href="#cb12-1" tabindex="-1"></a><span class="at">@addition_decorator</span>(verbose<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-2"><a aria-hidden="true" href="#cb12-2" tabindex="-1"></a><span class="kw">def</span> addition(a,b):</span>
+<span id="cb12-3"><a aria-hidden="true" href="#cb12-3" tabindex="-1"></a>    <span class="co">"Adds `a` and `b` together"</span></span>
+<span id="cb12-4"><a aria-hidden="true" href="#cb12-4" tabindex="-1"></a>    <span class="cf">if</span> a <span class="op">&gt;</span> <span class="dv">1</span>: </span>
+<span id="cb12-5"><a aria-hidden="true" href="#cb12-5" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`a` is greater than 1"</span>)</span>
+<span id="cb12-6"><a aria-hidden="true" href="#cb12-6" tabindex="-1"></a>    <span class="cf">if</span> b <span class="op">&gt;</span> <span class="dv">1</span>: </span>
+<span id="cb12-7"><a aria-hidden="true" href="#cb12-7" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"`b` is greater than 1"</span>)</span>
+<span id="cb12-8"><a aria-hidden="true" href="#cb12-8" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">+</span>b</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>And now if we call <code>addition</code>:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>addition(<span class="dv">2</span>,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a aria-hidden="true" href="#cb13-1" tabindex="-1"></a>addition(<span class="dv">2</span>,<span class="dv">2</span>)</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>We can see that it prints out the same information we had earlier!</p>
 <p>You now know <em>almost</em> enough to be on your way with decorators</p>
 </section>
-<section id="the-most-extreme-example-with-nonlocal." class="level2">
+<section class="level2" id="the-most-extreme-example-with-nonlocal.">
 <h2 class="anchored" data-anchor-id="the-most-extreme-example-with-nonlocal.">The most extreme example with <code>nonlocal</code>.</h2>
 <p>I’m going to provide a real example of what using <code>nonlocal</code> can actually provide for you and perform (that weird python thing no one really does?)</p>
 <p>The choice to explain it like this is simply because coming up with a similar situation is something I can’t quite think of well, and this serves as a good example.</p>
@@ -401,52 +406,49 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <li>Have it continuously try and run, and if cuda OOM is hit, retry the loop by reducing the batch size in half.</li>
 </ol>
 <p>Let’s see how this is implemented: &gt; Note: this will be a simplified version of the official decorator for teaching purposes</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gc, torch</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> find_executable_batch_size(function:<span class="bu">callable</span> <span class="op">=</span> <span class="va">None</span>, starting_batch_size:<span class="bu">int</span> <span class="op">=</span> <span class="dv">128</span>):</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Decorator that will attempt to execute `function` with `starting_batch_size`.</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">    If CUDA Out-of-Memory is reached, the batch size is reduced in half and tried again.</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">    `function` must take in `batch_size` as its first parameter</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> function <span class="kw">is</span> <span class="va">None</span>:</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> partial(find_executable_batch_size, starting_batch_size<span class="op">=</span>starting_batch_size)</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Keep a `batch_size` variable that gets updated and modified</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    batch_size <span class="op">=</span> starting_batch_size</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decorator(<span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Bring it into context</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">nonlocal</span> batch_size</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>        gc.collect()</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>        torch.cuda.empty_cache()</span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="va">True</span>:</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> batch_size <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>                <span class="cf">raise</span> <span class="pp">RuntimeError</span>(<span class="st">"No executable batch size found"</span>)</span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span>:</span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> function(batch_size, <span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">except</span> <span class="pp">RuntimeError</span> <span class="im">as</span> e:</span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="st">"CUDA out of memory"</span> <span class="kw">in</span> e.args[<span class="dv">0</span>]:</span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># We reduce the batch size and clear the memory</span></span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>                    gc.collect()</span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>                    torch.cuda.empty_cache()</span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>                    batch_size <span class="op">//=</span> <span class="dv">2</span></span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Otherwise raise the original error</span></span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">raise</span></span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> decorator</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a aria-hidden="true" href="#cb14-1" tabindex="-1"></a><span class="im">import</span> gc, torch</span>
+<span id="cb14-2"><a aria-hidden="true" href="#cb14-2" tabindex="-1"></a></span>
+<span id="cb14-3"><a aria-hidden="true" href="#cb14-3" tabindex="-1"></a><span class="kw">def</span> find_executable_batch_size(function:<span class="bu">callable</span> <span class="op">=</span> <span class="va">None</span>, starting_batch_size:<span class="bu">int</span> <span class="op">=</span> <span class="dv">128</span>):</span>
+<span id="cb14-4"><a aria-hidden="true" href="#cb14-4" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb14-5"><a aria-hidden="true" href="#cb14-5" tabindex="-1"></a><span class="co">    Decorator that will attempt to execute `function` with `starting_batch_size`.</span></span>
+<span id="cb14-6"><a aria-hidden="true" href="#cb14-6" tabindex="-1"></a><span class="co">    If CUDA Out-of-Memory is reached, the batch size is reduced in half and tried again.</span></span>
+<span id="cb14-7"><a aria-hidden="true" href="#cb14-7" tabindex="-1"></a></span>
+<span id="cb14-8"><a aria-hidden="true" href="#cb14-8" tabindex="-1"></a><span class="co">    `function` must take in `batch_size` as its first parameter</span></span>
+<span id="cb14-9"><a aria-hidden="true" href="#cb14-9" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb14-10"><a aria-hidden="true" href="#cb14-10" tabindex="-1"></a>    <span class="cf">if</span> function <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb14-11"><a aria-hidden="true" href="#cb14-11" tabindex="-1"></a>        <span class="cf">return</span> partial(find_executable_batch_size, starting_batch_size<span class="op">=</span>starting_batch_size)</span>
+<span id="cb14-12"><a aria-hidden="true" href="#cb14-12" tabindex="-1"></a>    </span>
+<span id="cb14-13"><a aria-hidden="true" href="#cb14-13" tabindex="-1"></a>    <span class="co"># Keep a `batch_size` variable that gets updated and modified</span></span>
+<span id="cb14-14"><a aria-hidden="true" href="#cb14-14" tabindex="-1"></a>    batch_size <span class="op">=</span> starting_batch_size</span>
+<span id="cb14-15"><a aria-hidden="true" href="#cb14-15" tabindex="-1"></a></span>
+<span id="cb14-16"><a aria-hidden="true" href="#cb14-16" tabindex="-1"></a>    <span class="kw">def</span> decorator(<span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
+<span id="cb14-17"><a aria-hidden="true" href="#cb14-17" tabindex="-1"></a>        <span class="co"># Bring it into context</span></span>
+<span id="cb14-18"><a aria-hidden="true" href="#cb14-18" tabindex="-1"></a>        <span class="kw">nonlocal</span> batch_size</span>
+<span id="cb14-19"><a aria-hidden="true" href="#cb14-19" tabindex="-1"></a>        gc.collect()</span>
+<span id="cb14-20"><a aria-hidden="true" href="#cb14-20" tabindex="-1"></a>        torch.cuda.empty_cache()</span>
+<span id="cb14-21"><a aria-hidden="true" href="#cb14-21" tabindex="-1"></a></span>
+<span id="cb14-22"><a aria-hidden="true" href="#cb14-22" tabindex="-1"></a>        <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb14-23"><a aria-hidden="true" href="#cb14-23" tabindex="-1"></a>            <span class="cf">if</span> batch_size <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb14-24"><a aria-hidden="true" href="#cb14-24" tabindex="-1"></a>                <span class="cf">raise</span> <span class="pp">RuntimeError</span>(<span class="st">"No executable batch size found"</span>)</span>
+<span id="cb14-25"><a aria-hidden="true" href="#cb14-25" tabindex="-1"></a>            <span class="cf">try</span>:</span>
+<span id="cb14-26"><a aria-hidden="true" href="#cb14-26" tabindex="-1"></a>                <span class="cf">return</span> function(batch_size, <span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
+<span id="cb14-27"><a aria-hidden="true" href="#cb14-27" tabindex="-1"></a>            <span class="cf">except</span> <span class="pp">RuntimeError</span> <span class="im">as</span> e:</span>
+<span id="cb14-28"><a aria-hidden="true" href="#cb14-28" tabindex="-1"></a>                <span class="cf">if</span> <span class="st">"CUDA out of memory"</span> <span class="kw">in</span> e.args[<span class="dv">0</span>]:</span>
+<span id="cb14-29"><a aria-hidden="true" href="#cb14-29" tabindex="-1"></a>                    <span class="co"># We reduce the batch size and clear the memory</span></span>
+<span id="cb14-30"><a aria-hidden="true" href="#cb14-30" tabindex="-1"></a>                    gc.collect()</span>
+<span id="cb14-31"><a aria-hidden="true" href="#cb14-31" tabindex="-1"></a>                    torch.cuda.empty_cache()</span>
+<span id="cb14-32"><a aria-hidden="true" href="#cb14-32" tabindex="-1"></a>                    batch_size <span class="op">//=</span> <span class="dv">2</span></span>
+<span id="cb14-33"><a aria-hidden="true" href="#cb14-33" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb14-34"><a aria-hidden="true" href="#cb14-34" tabindex="-1"></a>                    <span class="co"># Otherwise raise the original error</span></span>
+<span id="cb14-35"><a aria-hidden="true" href="#cb14-35" tabindex="-1"></a>                    <span class="cf">raise</span></span>
+<span id="cb14-36"><a aria-hidden="true" href="#cb14-36" tabindex="-1"></a></span>
+<span id="cb14-37"><a aria-hidden="true" href="#cb14-37" tabindex="-1"></a>    <span class="cf">return</span> decorator</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>Here we make use of our <code>starting_batch_size</code> and use it as a parameter that constantly changes and adapts based on what happened in our <code>try/except</code> loop below.</p>
 </section>
-<section id="conclusion" class="level2">
+<section class="level2" id="conclusion">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>Hopefully this gave you a better insight into decorators some! My next article will be discussing context managers and when you should do one vs the other. Thanks for reading!</p>
-
-
 </section>
-
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -848,8 +850,4 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
   });
   </script>
 </div> <!-- /content -->
-
-
-
-
 </body></html>

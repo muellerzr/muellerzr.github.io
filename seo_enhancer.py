@@ -211,10 +211,9 @@ class SEOEnhancer:
             click.echo("⚠️  No <head> tag found!", err=True)
             return
         
-        # Add comment for organization - FIX: Use proper HTML comment
-        comment = self.soup.new_comment(
-            " Performance and SEO meta tags "
-        )
+        # Add comment for organization - FIX: Use proper BeautifulSoup comment creation
+        from bs4 import Comment
+        comment = Comment(" Performance and SEO meta tags ")
         head.append('\n    ')
         head.append(comment)
         head.append('\n    ')
