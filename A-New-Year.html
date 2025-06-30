@@ -1,14 +1,45 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Redirect</title>
-  <script type="text/javascript">
+<title>Redirect</title>
+<script type="text/javascript">
     var redirects = {"":"blog/A-New-Year.html"};
     var hash = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
     var redirect = redirects[hash] || redirects[""] || "/";
     window.document.title = 'Redirect to  ' +  redirect;
     window.location.replace(redirect);
   </script>
-</head>
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "New Year New Adventures",
+  "description": "Zach's goals for 2020 and a review of how 2019 went",
+  "author": {
+    "@type": "Person",
+    "name": "Zach Mueller",
+    "url": "https://muellerzr.github.io"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Zach Mueller's Blog",
+    "url": "https://muellerzr.github.io"
+  },
+  "datePublished": "2020-01-21",
+  "keywords": "review,self-reflection,2020"
+}</script>
+    &lt;!-- Performance and SEO meta tags --&gt;
+    <meta content="Zach's goals for 2020 and a review of how 2019 went" name="description"/>
+    <meta content="Zach Mueller" name="author"/>
+    <meta content="review,self-reflection,2020" name="keywords"/>
+    <meta content="index, follow" name="robots"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="New Year New Adventures" property="og:title"/>
+    <meta content="Zach's goals for 2020 and a review of how 2019 went" property="og:description"/>
+    <meta content="article" property="og:type"/>
+    <meta content="https://muellerzr.github.io" property="og:url"/>
+    <meta content="summary_large_image" name="twitter:card"/>
+    <meta content="New Year New Adventures" name="twitter:title"/>
+    <meta content="Zach's goals for 2020 and a review of how 2019 went" name="twitter:description"/>
+    </head>
 <body>
 </body>
 </html>
