@@ -211,11 +211,13 @@ class SEOEnhancer:
             click.echo("⚠️  No <head> tag found!", err=True)
             return
         
-        # Add comment for organization
-        comment = self.soup.new_string(
-            "\n    <!-- Performance and SEO meta tags -->\n    "
+        # Add comment for organization - FIX: Use proper HTML comment
+        comment = self.soup.new_comment(
+            " Performance and SEO meta tags "
         )
+        head.append('\n    ')
         head.append(comment)
+        head.append('\n    ')
         
         # Meta tags to add/update
         meta_tags = [
@@ -235,6 +237,7 @@ class SEOEnhancer:
                     click.echo(f"✅ Updated meta {name}")
                 else:
                     meta_tag = self.soup.new_tag('meta')
+                    # FIX: Ensure proper attribute order (name first, then content)
                     meta_tag['name'] = name
                     meta_tag['content'] = content
                     head.append(meta_tag)
