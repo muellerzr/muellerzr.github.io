@@ -1,13 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.31">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-<meta name="dcterms.date" content="2025-04-28">
-
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta charset="utf-8"/>
+<meta content="quarto-1.7.31" name="generator"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="2025-04-28" name="dcterms.date"/>
 <title>Running HuggingChat fully locally with Docker – Zach Mueller</title>
 <style>
 code{white-space: pre-wrap;}
@@ -57,25 +53,23 @@ div.sourceCode
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
-
-
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
+<meta content="../" name="quarto:offset"/>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet"/>
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" id="quarto-text-highlighting-styles" rel="stylesheet"/>
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"/>
+<link append-hash="true" data-mode="light" href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" id="quarto-bootstrap" rel="stylesheet"/>
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -104,7 +98,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
-
 <script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
@@ -112,119 +105,131 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </script>
-
-
-<link rel="stylesheet" href="../styles.css">
-</head>
-
+<link href="../styles.css" rel="stylesheet"/>
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Running HuggingChat fully locally with Docker \u2013 Zach Mueller",
+  "description": "Running a local-first ChatGPT application using Hugging Face HuggingChat",
+  "author": {
+    "@type": "Person",
+    "name": "Zach Mueller",
+    "url": "https://muellerzr.github.io"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Zach Mueller's Blog",
+    "url": "https://muellerzr.github.io"
+  },
+  "datePublished": "2025-04-28",
+  "keywords": "huggingchat,huggingface,llama,llama.cpp,localllm,local-llm,local-first"
+}</script>
+    &lt;!-- Performance and SEO meta tags --&gt;
+    <meta content="Running a local-first ChatGPT application using Hugging Face HuggingChat" name="description"/>
+    <meta content="Zach Mueller" name="author"/>
+    <meta content="huggingchat,huggingface,llama,llama.cpp,localllm,local-llm,local-first" name="keywords"/>
+    <meta content="index, follow" name="robots"/>
+    <meta content="Running HuggingChat fully locally with Docker – Zach Mueller" property="og:title"/>
+    <meta content="Running a local-first ChatGPT application using Hugging Face HuggingChat" property="og:description"/>
+    <meta content="article" property="og:type"/>
+    <meta content="https://muellerzr.github.io" property="og:url"/>
+    <meta content="summary_large_image" name="twitter:card"/>
+    <meta content="Running HuggingChat fully locally with Docker – Zach Mueller" name="twitter:title"/>
+    <meta content="Running a local-first ChatGPT application using Hugging Face HuggingChat" name="twitter:description"/>
+    </head>
 <body class="nav-sidebar floating nav-fixed fullcontent quarto-light">
-
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
-      <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">Zach Mueller</span>
-    </a>
-  </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
-<span class="menu-text">About Me</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html"> 
-<span class="menu-text">Blog</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../til/index.html"> 
-<span class="menu-text">Today I Learned</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../builds/index.html"> 
-<span class="menu-text">PC Builds</span></a>
-  </li>  
-</ul>
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/muellerzr"> <i class="bi bi-github" role="img">
-</i> 
-<span class="menu-text"></span></a>
-  </li>  
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/TheZachMueller"> <i class="bi bi-twitter" role="img">
-</i> 
-<span class="menu-text"></span></a>
-  </li>  
-</ul>
-          </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools">
+<header class="headroom fixed-top" id="quarto-header">
+<nav class="navbar navbar-expand-lg" data-bs-theme="dark">
+<div class="navbar-container container-fluid">
+<div class="navbar-brand-container mx-auto">
+<a class="navbar-brand" href="../index.html">
+<span class="navbar-title">Zach Mueller</span>
+</a>
 </div>
-      </div> <!-- /container-fluid -->
-    </nav>
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Running HuggingChat fully locally with Docker</li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-    </div>
-  </nav>
+<div class="" id="quarto-search" title="Search"></div>
+<button aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarCollapse" data-bs-toggle="collapse" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }" role="menu" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarCollapse">
+<ul class="navbar-nav navbar-nav-scroll me-auto">
+<li class="nav-item">
+<a class="nav-link" href="../index.html">
+<span class="menu-text">About Me</span></a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../blog/index.html">
+<span class="menu-text">Blog</span></a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../til/index.html">
+<span class="menu-text">Today I Learned</span></a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../builds/index.html">
+<span class="menu-text">PC Builds</span></a>
+</li>
+</ul>
+<ul class="navbar-nav navbar-nav-scroll ms-auto">
+<li class="nav-item compact">
+<a class="nav-link" href="https://github.com/muellerzr"> <i class="bi bi-github" role="img">
+</i>
+<span class="menu-text"></span></a>
+</li>
+<li class="nav-item compact">
+<a class="nav-link" href="https://twitter.com/TheZachMueller"> <i class="bi bi-twitter" role="img">
+</i>
+<span class="menu-text"></span></a>
+</li>
+</ul>
+</div> <!-- /navcollapse -->
+<div class="quarto-navbar-tools">
+</div>
+</div> <!-- /container-fluid -->
+</nav>
+<nav class="quarto-secondary-nav">
+<div class="container-fluid d-flex">
+<button aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" class="quarto-btn-toggle btn" data-bs-target=".quarto-sidebar-collapse-item" data-bs-toggle="collapse" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }" role="button" type="button">
+<i class="bi bi-layout-text-sidebar-reverse"></i>
+</button>
+<nav aria-label="breadcrumb" class="quarto-page-breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item">Running HuggingChat fully locally with Docker</li></ol></nav>
+<a aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" class="flex-grow-1" data-bs-target=".quarto-sidebar-collapse-item" data-bs-toggle="collapse" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }" role="navigation">
+</a>
+</div>
+</nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div class="quarto-container page-columns page-rows-contents page-layout-article page-navbar" id="quarto-content">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+<nav class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" id="quarto-sidebar">
 </nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<div class="quarto-sidebar-collapse-item" data-bs-target=".quarto-sidebar-collapse-item" data-bs-toggle="collapse" id="quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
-    
 <!-- main -->
 <main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
+<header class="quarto-title-block default" id="title-block-header">
 <div class="quarto-title">
 <h1 class="title">Running HuggingChat fully locally with Docker</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">tech</div>
-  </div>
-  </div>
-
-
-
+<div class="quarto-categories">
+<div class="quarto-category">tech</div>
+</div>
+</div>
 <div class="quarto-title-meta">
-
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">April 28, 2025</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
-
-
+<div>
+<div class="quarto-title-meta-heading">Published</div>
+<div class="quarto-title-meta-contents">
+<p class="date">April 28, 2025</p>
+</div>
+</div>
+</div>
 </header>
-
-
-<section id="motivation-for-writing-this" class="level2">
+<section class="level2" id="motivation-for-writing-this">
 <h2 class="anchored" data-anchor-id="motivation-for-writing-this">Motivation for writing this</h2>
 <p>I’ve been messing around with locally-deployed models over the last week or two (currently includes running Whisper.cpp on a raspberry pi and trying to shove in m.2 -&gt; PCIE adapters just to see what would happen).</p>
 <p>This then led me to “what could I do about chatgpt, on ~24-48GB of vRAM?” The answer was <code>Qwen/Qwen2.5-72B-Instruct-AWQ</code>, running locally with HuggingChat.</p>
 <p>What comes next is the steps it took me to go from idea -&gt; deployment, navigating (imo) some easily-overwhelming documentation, and the steps I took to remedy it.</p>
 </section>
-<section id="what-is-huggingchat" class="level2">
+<section class="level2" id="what-is-huggingchat">
 <h2 class="anchored" data-anchor-id="what-is-huggingchat">What is HuggingChat?</h2>
 <p><a href="https://github.com/huggingface/chat-ui">HuggingChat (or ChatUI)</a> is an OSS by Hugging Face aimed to glue the pieces together of “I have this model, now how do I quickly make a chat app for it.”</p>
 <p>It operates on three parts:</p>
@@ -234,7 +239,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <li>The model itself (for my case, hosted via vLLM)</li>
 </ul>
 </section>
-<section id="getting-up-and-going" class="level2">
+<section class="level2" id="getting-up-and-going">
 <h2 class="anchored" data-anchor-id="getting-up-and-going">Getting up and going</h2>
 <p>I won’t go into the nitty gritty, I’m simply going to help you deploy <code>Qwen2.5-72B-Instruct-AWQ</code> locally, and <em>hopefully</em> in under an hour.</p>
 <p>(Note: most of these directions came from <a href="https://gist.github.com/devspotyt/aeb2293530da40b75351ae5c052275df">this gist</a>, as the official documentation in the README was either incorrect or overwhelming).</p>
@@ -244,50 +249,50 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <li>Some place to store your model</li>
 </ol>
 </section>
-<section id="first-step-mongodb" class="level2">
+<section class="level2" id="first-step-mongodb">
 <h2 class="anchored" data-anchor-id="first-step-mongodb">First step: MongoDB</h2>
 <p>Mongo is used to keep your chat history fully local when running ChatUI (which is what I’ll refer to HuggingChat as from now on).</p>
 <p>For this, I used <code>docker-compose</code> running on my raspberry-pi to host the logs (since it’s not resource-intensive at all, and already runs low-level jobs like my <code>pi-hole</code> and <code>homeassistant</code>):</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">mongo-chatui</span><span class="kw">:</span><span class="co"> # &lt;- What to name the service</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> mongo:latest</span><span class="co"> # &lt;- mongodb image to use</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> mongo</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"8097:27017"</span><span class="co"> # &lt;- 8097 is what *we* will use to send the data</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">MONGO_INITDB_ROOT_USERNAME</span><span class="kw">:</span><span class="at"> root</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">MONGO_INITDB_ROOT_PASSWORD</span><span class="kw">:</span><span class="at"> some_password</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mongo-data:/mnt/datasets/db</span><span class="co"> # &lt;- specify where you want data stored</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">volumes</span><span class="kw">:</span><span class="co"> # &lt;- specify that as a volume to use</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">mongo-data</span><span class="kw">:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a aria-hidden="true" href="#cb1-1" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb1-2"><a aria-hidden="true" href="#cb1-2" tabindex="-1"></a><span class="at">  </span><span class="fu">mongo-chatui</span><span class="kw">:</span><span class="co"> # &lt;- What to name the service</span></span>
+<span id="cb1-3"><a aria-hidden="true" href="#cb1-3" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> mongo:latest</span><span class="co"> # &lt;- mongodb image to use</span></span>
+<span id="cb1-4"><a aria-hidden="true" href="#cb1-4" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> mongo</span></span>
+<span id="cb1-5"><a aria-hidden="true" href="#cb1-5" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb1-6"><a aria-hidden="true" href="#cb1-6" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"8097:27017"</span><span class="co"> # &lt;- 8097 is what *we* will use to send the data</span></span>
+<span id="cb1-7"><a aria-hidden="true" href="#cb1-7" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb1-8"><a aria-hidden="true" href="#cb1-8" tabindex="-1"></a><span class="at">      </span><span class="fu">MONGO_INITDB_ROOT_USERNAME</span><span class="kw">:</span><span class="at"> root</span></span>
+<span id="cb1-9"><a aria-hidden="true" href="#cb1-9" tabindex="-1"></a><span class="at">      </span><span class="fu">MONGO_INITDB_ROOT_PASSWORD</span><span class="kw">:</span><span class="at"> some_password</span></span>
+<span id="cb1-10"><a aria-hidden="true" href="#cb1-10" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb1-11"><a aria-hidden="true" href="#cb1-11" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mongo-data:/mnt/datasets/db</span><span class="co"> # &lt;- specify where you want data stored</span></span>
+<span id="cb1-12"><a aria-hidden="true" href="#cb1-12" tabindex="-1"></a></span>
+<span id="cb1-13"><a aria-hidden="true" href="#cb1-13" tabindex="-1"></a><span class="fu">volumes</span><span class="kw">:</span><span class="co"> # &lt;- specify that as a volume to use</span></span>
+<span id="cb1-14"><a aria-hidden="true" href="#cb1-14" tabindex="-1"></a><span class="at">  </span><span class="fu">mongo-data</span><span class="kw">:</span></span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>Then just do <code>docker compose up -d</code> and now your database is fully up and running. If you want to test, I used <code>mongosh</code>:</p>
 <pre><code>mongosh "mongodb://root:password@localhost:8097"  </code></pre>
 </section>
-<section id="getting-the-model-running" class="level2">
+<section class="level2" id="getting-the-model-running">
 <h2 class="anchored" data-anchor-id="getting-the-model-running">Getting the Model Running</h2>
 <p>Next up we need to actually download and run the model. Use whatever method you want to download the repo, I have my own small package called <a href="https://github.com/muellerzr/hf-model-downloader"><code>hf-model-downloader</code></a> to pull down the weights and everything.</p>
 <p>This now assumes you have all the required stuff to run <code>Qwen2.5-72B-Instruct-AWQ</code>. We will assume you saved them in a folder called <code>qwen_model</code> for the rest of this blog.</p>
 <p>For this part, I used vLLM and some help from <a href="https://www.reddit.com/r/LocalLLaMA/comments/1fnx59y/comment/lom9pu0/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button">Reddit</a> with some reasonable params to max out 48gb:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="dt">\</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--name</span> my_vllm_container <span class="dt">\</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--gpus</span> <span class="st">'"device=0,1"'</span> <span class="dt">\</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-v</span> /my_path_to_models_folder:/root/models <span class="dt">\</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-p</span> 8000:8000 <span class="dt">\</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--ipc</span><span class="op">=</span>host <span class="dt">\</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  vllm/vllm-openai:latest <span class="dt">\</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--model</span> /root/models/qwen_model <span class="dt">\</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--served-model-name</span> Qwen/Qwen2.5-72B-Instruct-AWQ <span class="dt">\</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--pipeline-parallel-size</span> 2 <span class="dt">\</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--gpu-memory-utilization</span> 1 <span class="dt">\</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">--max-num-seqs</span> 2 <span class="dt">\</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">--max-model-len</span> 2292 <span class="dt">\</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">--block-size</span> 32 <span class="dt">\</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--max-num-batched-tokens</span> 2292</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a aria-hidden="true" href="#cb3-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="dt">\</span></span>
+<span id="cb3-2"><a aria-hidden="true" href="#cb3-2" tabindex="-1"></a>  <span class="at">--name</span> my_vllm_container <span class="dt">\</span></span>
+<span id="cb3-3"><a aria-hidden="true" href="#cb3-3" tabindex="-1"></a>  <span class="at">--gpus</span> <span class="st">'"device=0,1"'</span> <span class="dt">\</span></span>
+<span id="cb3-4"><a aria-hidden="true" href="#cb3-4" tabindex="-1"></a>  <span class="at">-v</span> /my_path_to_models_folder:/root/models <span class="dt">\</span></span>
+<span id="cb3-5"><a aria-hidden="true" href="#cb3-5" tabindex="-1"></a>  <span class="at">-p</span> 8000:8000 <span class="dt">\</span></span>
+<span id="cb3-6"><a aria-hidden="true" href="#cb3-6" tabindex="-1"></a>  <span class="at">--ipc</span><span class="op">=</span>host <span class="dt">\</span></span>
+<span id="cb3-7"><a aria-hidden="true" href="#cb3-7" tabindex="-1"></a>  vllm/vllm-openai:latest <span class="dt">\</span></span>
+<span id="cb3-8"><a aria-hidden="true" href="#cb3-8" tabindex="-1"></a>  <span class="at">--model</span> /root/models/qwen_model <span class="dt">\</span></span>
+<span id="cb3-9"><a aria-hidden="true" href="#cb3-9" tabindex="-1"></a>  <span class="at">--served-model-name</span> Qwen/Qwen2.5-72B-Instruct-AWQ <span class="dt">\</span></span>
+<span id="cb3-10"><a aria-hidden="true" href="#cb3-10" tabindex="-1"></a>  <span class="at">--pipeline-parallel-size</span> 2 <span class="dt">\</span></span>
+<span id="cb3-11"><a aria-hidden="true" href="#cb3-11" tabindex="-1"></a>  <span class="at">--gpu-memory-utilization</span> 1 <span class="dt">\</span></span>
+<span id="cb3-12"><a aria-hidden="true" href="#cb3-12" tabindex="-1"></a>  <span class="at">--max-num-seqs</span> 2 <span class="dt">\</span></span>
+<span id="cb3-13"><a aria-hidden="true" href="#cb3-13" tabindex="-1"></a>  <span class="at">--max-model-len</span> 2292 <span class="dt">\</span></span>
+<span id="cb3-14"><a aria-hidden="true" href="#cb3-14" tabindex="-1"></a>  <span class="at">--block-size</span> 32 <span class="dt">\</span></span>
+<span id="cb3-15"><a aria-hidden="true" href="#cb3-15" tabindex="-1"></a>  <span class="at">--max-num-batched-tokens</span> 2292</span></code><button class="code-copy-button" title="Copy to Clipboard"><i class="bi"></i></button></pre></div>
 <p>This basically exposes a chat-gpt compatible API at the pi’s IP and port 8000.</p>
 </section>
-<section id="chatui" class="level2">
+<section class="level2" id="chatui">
 <h2 class="anchored" data-anchor-id="chatui">ChatUI</h2>
 <p>Now for the final step, ChatUI.</p>
 <p>To make this easy, here is my <code>.env.local</code> file:</p>
@@ -326,11 +331,8 @@ USE_LOCAL_WEBSEARCH=true</code></pre>
 <p>From here, simply run it:</p>
 <pre><code>docker run -p 3000:3000 --env-file .env.local  ghcr.io/huggingface/chat-ui:latest</code></pre>
 <p>And now you should have a beautiful ChatUI instance going where you can speak to your own LLM!</p>
-<p><img src="https://raw.githubusercontent.com/muellerzr/muellerzr.github.io/refs/heads/master/blog/media/images/chatui.png" class="img-fluid"></p>
-
-
+<p><img class="img-fluid" src="https://raw.githubusercontent.com/muellerzr/muellerzr.github.io/refs/heads/master/blog/media/images/chatui.png"/></p>
 </section>
-
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -732,8 +734,4 @@ USE_LOCAL_WEBSEARCH=true</code></pre>
   });
   </script>
 </div> <!-- /content -->
-
-
-
-
 </body></html>

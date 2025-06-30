@@ -288,20 +288,17 @@ class SEOEnhancer:
                     head.append('\n    ')
                 click.echo(f"✅ Added Twitter Card {name}")
     
-    def save_html(self, output_file: Optional[Path] = None):
-        """Save the enhanced HTML."""
-        if output_file is None:
-            output_file = self.html_file
-        
+    def save_html(self):
+        """Save the enhanced HTML back to the original file."""
         try:
-            with open(output_file, 'w', encoding='utf-8') as f:
+            with open(self.html_file, 'w', encoding='utf-8') as f:
                 f.write(str(self.soup))
-            click.echo(f"💾 Enhanced HTML saved to: {output_file}")
+            click.echo(f"💾 Enhanced HTML saved to: {self.html_file}")
         except Exception as e:
             click.echo(f"Error saving file: {e}", err=True)
             sys.exit(1)
     
-    def enhance(self, output_file: Optional[Path] = None):
+    def enhance(self):
         """Main enhancement process."""
         click.echo(f"🔍 Processing: {self.html_file}")
         
@@ -316,7 +313,7 @@ class SEOEnhancer:
         if click.confirm('\nProceed with adding SEO enhancements?'):
             self.add_json_ld(json_ld)
             self.add_meta_tags(data)
-            self.save_html(output_file)
+            self.save_html()
             click.echo("\n🎉 SEO enhancement completed!")
         else:
             click.echo("❌ Enhancement cancelled.")
@@ -331,11 +328,6 @@ def main():
         'html_file',
         type=Path,
         help='Input HTML file to enhance'
-    )
-    parser.add_argument(
-        '-o', '--output',
-        type=Path,
-        help='Output file (defaults to overwriting input file)'
     )
     parser.add_argument(
         '--dry-run',
@@ -361,7 +353,7 @@ def main():
             if key in ['description', 'meta_description', 'author_name', 'keywords']:
                 click.echo(f"  - {key}: {value}")
     else:
-        enhancer.enhance(args.output)
+        enhancer.enhance()
 
 
 if __name__ == "__main__":
