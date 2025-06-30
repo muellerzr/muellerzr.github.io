@@ -25,6 +25,45 @@
         /* Critical rendering path optimization */
         body { margin: 0; }
         .navbar { background-color: #343a40; }
+        
+        /* Code block optimizations */
+        .sourceCode code span {
+            display: inline;
+            white-space: pre;
+        }
+        
+        .sourceCode code span[id] {
+            display: block;
+            line-height: 1.5;
+        }
+        
+        .sourceCode code span[id] a {
+            position: absolute;
+            left: -999px;
+            opacity: 0;
+        }
+        
+        .code-copy-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .code-copy-button:hover {
+            background: #e9ecef;
+        }
+        
+        /* Social links optimization */
+        .nav-link {
+            white-space: nowrap;
+        }
     </style>
 
 
@@ -68,14 +107,20 @@
         "@context": "https://schema.org",
         "@type": "TechArticle",
         "headline": "PyTorch Gradient Accumulation Guide: Fixing Multi-GPU vs Single GPU behaviors",
-        "datePublished": "2024-10-29",
+        "datePublished": "2023-03-03",
         "author": {
             "@type": "Person",
             "name": "Zach Mueller",
             "url": "https://muellerzr.github.io"
         },
-        "description": "Solve the critical issue during distributed gradient accumulation to make single GPU training the same as multi GPU training."
-    }
+        "description": "Solve the critical issue during distributed gradient accumulation to make single GPU training the same as multi GPU training.",
+        "keywords": "PyTorch, gradient accumulation, distributed training, GPU optimization",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Zach Mueller's Blog",
+            "url": "https://muellerzr.github.io"
+          }
+        }
     </script>
 
     <!-- Quarto search options -->
@@ -147,13 +192,13 @@
                     <!-- Social Links -->
                     <ul class="navbar-nav navbar-nav-scroll ms-auto" role="menubar">
                         <li class="nav-item compact" role="none">
-                            <a class="nav-link" href="https://github.com/muellerzr" role="menuitem">
-                                <i class="bi bi-github" role="img" aria-label="GitHub"></i>
+                            <a class="nav-link" href="https://github.com/muellerzr" role="menuitem" aria-label="GitHub">
+                                GitHub
                             </a>
   </li>  
                         <li class="nav-item compact" role="none">
-                            <a class="nav-link" href="https://twitter.com/TheZachMueller" role="menuitem">
-                                <i class="bi bi-twitter" role="img" aria-label="Twitter"></i>
+                            <a class="nav-link" href="https://twitter.com/TheZachMueller" role="menuitem" aria-label="Twitter">
+                                Twitter
                             </a>
   </li>  
 </ul>
@@ -168,7 +213,7 @@
                         role="button" data-bs-target=".quarto-sidebar-collapse-item" 
                         aria-controls="quarto-sidebar" aria-expanded="false" 
                         aria-label="Toggle sidebar navigation">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
+        ☰
       </button>
                 <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb">
                     <ol class="breadcrumb">
@@ -327,7 +372,7 @@
                 <span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    )</span>
                 <span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> train_dl, eval_dl</span>
                 <span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
-                <span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>train_dl, eval_dl <span class="op">=</span> get_dataloaders(train_batch_size<span class="op">=</span>batch_size)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>train_dl, eval_dl <span class="op">=</span> get_dataloaders(train_batch_size<span class="op">=</span>batch_size)</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 </details>
                 </div>
                 <p>And finally write a training loop:</p>
@@ -347,7 +392,7 @@
                 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            </span>
                 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
                 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        scheduler.step()</span>
-                <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 <p>We can then graph our curve and see it’s fairly smooth:</p>
                 <p><img src="media/images/gradient_accumulation_part2/losses_baseline.png" class="img-fluid"></p>
                 </section>
@@ -376,7 +421,7 @@
                 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            scheduler.step()</span>
                 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span>
                 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            losses_grad_accum.append(grad_accum_loss)</span>
-                <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            grad_accum_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            grad_accum_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 <div id="c0f2ea03" class="cell" data-execution_count="2">
                 <details class="code-fold">
                 <summary>Show the full code</summary>
@@ -407,7 +452,7 @@
                 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            scheduler.step()</span>
                 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span>
                 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>            losses_grad_accum.append(grad_accum_loss)</span>
-                <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            grad_accum_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            grad_accum_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 </details>
                 </div>
                 <p>And plot the results:</p>
@@ -425,11 +470,11 @@
                 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    shift_labels <span class="op">=</span> shift_labels.to(shift_logits.device)</span>
                 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cross_entropy(</span>
                 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        shift_logits, shift_labels, ignore_index<span class="op">=-</span><span class="dv">100</span>, reduction<span class="op">=</span><span class="st">"mean"</span></span>
-                <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 <p>If you notice, we explicitly define the reduction as <code>"mean"</code> (the default).</p>
                 <p>What this means, is that we are assuming that across all steps of gradient accumulation, the number of labels seen total are <strong>the exact same</strong>. In a generation problem though this is <strong>not the case</strong> when we start messing with the batch sizes. For a quick dumb TL;DR:</p>
                 <p>Say the batch is:</p>
-                <div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>[[<span class="dv">0</span>],[<span class="dv">0</span>,<span class="dv">1</span>],[<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>], [<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>[[<span class="dv">0</span>],[<span class="dv">0</span>,<span class="dv">1</span>],[<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>], [<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 <p>The average length of the first two items is .75, while the second is 3.5.</p>
                 <p>This tiny numerical difference means the world when it comes to calculating our loss here, as that <code>"mean"</code> isn’t taking into account the rest of the items our gradient accumulation step is seeing!</p>
                 <p>So what’s the fix?</p>
@@ -448,7 +493,7 @@
                 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    )</span>
                 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> reduction <span class="op">==</span> <span class="st">"sum"</span>:</span>
                 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> loss <span class="op">/</span> num_items_in_batch</span>
-                <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 <p>Essentially if we pass in a <code>num_items_in_batch</code>, we use the <code>"sum"</code> of everything then divide by the total later, rather than letting PyTorch do it themselves.</p>
                 <p>But, that’s not the only fix we need to do. How do we get <code>num_items_in_batch</code>?</p>
                 </section>
@@ -487,7 +532,7 @@
                 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>            loss.backward()</span>
                 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
                 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        scheduler.step()</span>
-                <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 <div id="cd37a402" class="cell" data-execution_count="3">
                 <details class="code-fold">
                 <summary>Show the full code</summary>
@@ -534,7 +579,7 @@
                 <span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>        scheduler.step()</span>
                 <span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span>
                 <span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>        losses_fixed_ga.append(actual_loss)</span>
-                <span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>        actual_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>        actual_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 </details>
                 </div>
                 <p>And also rerun our baseline:</p>
@@ -582,7 +627,7 @@
                 <span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>        scheduler.step()</span>
                 <span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span>
                 <span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>        losses_baseline.append(actual_loss)</span>
-                <span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>        actual_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>        actual_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 </details>
                 </div>
                 <p><img src="media/images/gradient_accumulation_part2/loss_fixed.png" class="img-fluid"></p>
@@ -738,7 +783,7 @@
                 <span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">"--ga"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">int</span>, default<span class="op">=</span><span class="dv">1</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Gradient accumulation steps"</span>)</span>
                 <span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a></span>
                 <span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
-                <span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a>    main(args)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a>    main(args)</span></code><button title="Copy to Clipboard" class="code-copy-button">Copy</button></pre></div>
                 </details>
                 </div>
                 </section>
@@ -755,26 +800,6 @@
     </div>
 
     <!-- Performance optimizations -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "TechArticle",
-        "headline": "PyTorch Gradient Accumulation Guide: Fixing Multi-GPU vs Single GPU behaviors",
-        "datePublished": "2024-10-29",
-        "author": {
-            "@type": "Person",
-            "name": "Zach Mueller",
-            "url": "https://muellerzr.github.io"
-        },
-        "description": "Solve the critical issue during distributed gradient accumulation to make single GPU training the same as multi GPU training.",
-        "keywords": "PyTorch, gradient accumulation, distributed training, GPU optimization",
-        "publisher": {
-            "@type": "Organization",
-            "name": "Zach Mueller's Blog",
-            "url": "https://muellerzr.github.io"
-          }
-        }
-    </script>
 
     <!-- Simple lazy loading -->
     <script>
