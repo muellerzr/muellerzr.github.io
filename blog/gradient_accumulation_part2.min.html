@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <!-- Performance and SEO meta tags -->
+    <meta name="description" content="Solve the critical issue during distributed gradient accumulation to make single GPU training the same as multi GPU training">
+    <meta name="author" content="Zach Mueller">
+    <meta name="keywords" content="PyTorch, gradient accumulation, distributed training, GPU optimization, machine learning, deep learning, unsloth">
+<meta name="dcterms.date" content="2023-03-03">
+    <meta name="generator" content="quarto-1.7.31">
+    <meta name="quarto:offset" content="../">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://muellerzr.github.io/gradient_accumulation_part2.html">
+    
+    <!-- Performance optimizations -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#343a40">
+
+    <title>PyTorch Gradient Accumulation Guide: Fixing Multi-GPU vs Single GPU behaviors</title>
+
+    <!-- Critical inline styles for immediate rendering -->
+    <style>
+        /* Critical rendering path optimization */
+        body { margin: 0; }
+        .navbar { background-color: #343a40; }
+    </style>
+
+
+
+    <!-- Critical CSS - minimal custom styles -->
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css">
+    
+
+
+    <!-- Resource hints for better loading -->
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+
+    <!-- Essential JavaScript only -->
+    <script defer src="../site_libs/clipboard/clipboard.min.js"></script>
+    <script defer src="../site_libs/quarto-html/anchor.min.js"></script>
+    
+    <!-- Optional: Load search functionality only if needed -->
+    <script defer src="../site_libs/quarto-search/fuse.min.js"></script>
+    <script defer src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+    <script defer src="../site_libs/quarto-search/quarto-search.js"></script>
+
+    <!-- Analytics - optimized loading -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-99XP3R051T', {
+            'anonymize_ip': true,
+            'transport_type': 'beacon',
+            'allow_google_signals': false,
+            'allow_ad_personalization_signals': false
+        });
+    </script>
+
+    <!-- Schema.org metadata -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "PyTorch Gradient Accumulation Guide: Fixing Multi-GPU vs Single GPU behaviors",
+        "datePublished": "2024-10-29",
+        "author": {
+            "@type": "Person",
+            "name": "Zach Mueller",
+            "url": "https://muellerzr.github.io"
+        },
+        "description": "Solve the critical issue during distributed gradient accumulation to make single GPU training the same as multi GPU training."
+    }
+    </script>
+
+    <!-- Quarto search options -->
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+</head>
+
+<body class="nav-sidebar floating nav-fixed fullcontent quarto-light">
+    <a href="#quarto-document-content" class="skip-link" tabindex="0">Skip to main content</a>
+    <div id="quarto-search-results" role="region" aria-label="Search results"></div>
+
+    <!-- Primary Navigation -->
+    <header id="quarto-header" class="headroom fixed-top" role="banner">
+        <nav class="navbar navbar-expand-lg" data-bs-theme="dark" role="navigation" aria-label="Main navigation">
+      <div class="navbar-container container-fluid">
+                <!-- Brand -->
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Zach Mueller</span>
+    </a>
+  </div>
+
+                <!-- Search -->
+                <div id="quarto-search" class="" title="Search" role="search"></div>
+
+                <!-- Main Navigation Links -->
+                <nav class="navbar-nav-container">
+                    <ul class="navbar-nav navbar-nav-scroll me-auto" role="menubar">
+                        <li class="nav-item" role="none">
+                            <a class="nav-link" href="../index.html" role="menuitem">
+                                <span class="menu-text">About Me</span>
+                            </a>
+  </li>  
+                        <li class="nav-item" role="none">
+                            <a class="nav-link" href="../blog/index.html" role="menuitem">
+                                <span class="menu-text">Blog</span>
+                            </a>
+  </li>  
+                        <li class="nav-item" role="none">
+                            <a class="nav-link" href="../til/index.html" role="menuitem">
+                                <span class="menu-text">Today I Learned</span>
+                            </a>
+  </li>  
+                        <li class="nav-item" role="none">
+                            <a class="nav-link" href="../builds/index.html" role="menuitem">
+                                <span class="menu-text">PC Builds</span>
+                            </a>
+  </li>  
+</ul>
+
+                    <!-- Social Links -->
+                    <ul class="navbar-nav navbar-nav-scroll ms-auto" role="menubar">
+                        <li class="nav-item compact" role="none">
+                            <a class="nav-link" href="https://github.com/muellerzr" role="menuitem">
+                                <i class="bi bi-github" role="img" aria-label="GitHub"></i>
+                            </a>
+  </li>  
+                        <li class="nav-item compact" role="none">
+                            <a class="nav-link" href="https://twitter.com/TheZachMueller" role="menuitem">
+                                <i class="bi bi-twitter" role="img" aria-label="Twitter"></i>
+                            </a>
+  </li>  
+</ul>
+                </nav>
+</div>
+    </nav>
+
+        <!-- Secondary Navigation -->
+        <nav class="quarto-secondary-nav" role="navigation" aria-label="Secondary navigation">
+    <div class="container-fluid d-flex">
+                <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" 
+                        role="button" data-bs-target=".quarto-sidebar-collapse-item" 
+                        aria-controls="quarto-sidebar" aria-expanded="false" 
+                        aria-label="Toggle sidebar navigation">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+                <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">PyTorch Gradient Accumulation Guide: Fixing Multi-GPU vs Single GPU behaviors</li>
+                    </ol>
+                </nav>
+    </div>
+  </nav>
+</header>
+
+    <!-- Main Content Area -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+        <!-- Sidebar -->
+        <aside id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" role="complementary">
+        </aside>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+    
+        <!-- Main Content -->
+        <main class="content" id="quarto-document-content" role="main">
+            <article>
+                <!-- Article Header -->
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+                        <h1 class="title">PyTorch Gradient Accumulation Guide: Fixing Multi-GPU vs Single GPU behaviors</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">pytorch</div>
+  </div>
+  </div>
+
+<div class="quarto-title-meta">
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+                                <time datetime="2023-03-03">March 3, 2023</time>
+    </div>
+  </div>
+  </div>
+</header>
+
+                <!-- Article Content -->
+                <h1>Introduction</h1>
+                <p>A few weeks ago the <a href="https://unsloth.ai/blog/gradient">Unsloth</a> team put out a pretty damning report showing that <em>most</em> training frameworks have <em>critical</em> issues when it comes to applying gradient accumulation and training language models (specifically in the use-case of generation).</p>
+                <p>When performing gradient accumulation, the underlying assumption is that training with a batch size of 8 and 4 gradient accumulation steps should be exactly equivalent to training with a batch size of 32 and no accumulation. <em>However</em>, what has been discovered is that when training language models for generation the resulting outputs are not all uniform (the same size), which makes a <em>drastic</em> difference in calculating the loss.</p>
+                <p>In this blog, I’ll be walking you through what myself and the rest of the <code>transformers</code> team (Marc Sun, Yoach Lacombe, myself, and many others) worked through to investigate this issue and break it down to its core parts in a reproducible case. I’ll also discuss how <strong>this fix is also needed for distributed training</strong> , something the Unsloth team didn’t talk about in their report.</p>
+                <section id="required-reading" class="level2">
+                <h2 class="anchored" data-anchor-id="required-reading">Required Reading</h2>
+                <p>Before reading this article, I recommend reading my prior article on <a href="https://muellerzr.github.io/blog/gradient_accumulation.html">gradient accumulation relative to multi-GPU training</a>, it will come into play later.</p>
+                </section>
+                <section id="setup" class="level2">
+                <h2 class="anchored" data-anchor-id="setup">Setup</h2>
+                <p>First let’s discuss setup.</p>
+                <p>For these experiments, I used the following:</p>
+                <ul>
+                <li>Python: 3.10.13</li>
+                <li>PyTorch: v2.5.0</li>
+                <li>Accelerate: v1.0.1</li>
+                <li>Transformers: v4.46.0</li>
+                <li>Compute:
+                <ul>
+                <li>Single RTX 4090</li>
+                <li>8x H100’s for the DDP tests</li>
+                </ul></li>
+                </ul>
+                </section>
+                <section id="creating-a-baseline" class="level2">
+                <h2 class="anchored" data-anchor-id="creating-a-baseline">Creating a baseline</h2>
+                <p>Like all good experiments, we need a baseline. A benchmark.</p>
+                <p>For this experiment, we’ll use the following setup:</p>
+                <ul>
+                <li>Dataset: A small chunk of the <code>Salesforce</code> repo of <code>wikitext-2-v1</code> hosted on <a href="https://huggingface.co/datasets/Salesforce/wikitext">the Hub</a>.</li>
+                <li>Model: <a href="https://huggingface.co/HuggingFaceTB/SmolLM-135M"><code>SmolLM-135M</code></a></li>
+                <li>Optimizer: AdamW</li>
+                <li>Scheduler: Constant LR</li>
+                <li>Actual batch size: 8 (it’s what could fit in 24gb of vRAM)</li>
+                </ul>
+                </section>
+                <section id="core-code" class="level2">
+                <h2 class="anchored" data-anchor-id="core-code">Core Code</h2>
+                <p>Below is the basic code for setting up:</p>
+                <ul>
+                <li>Reproducability</li>
+                <li>The dataset</li>
+                <li>The model</li>
+                <li>The torch <code>DataLoaders</code></li>
+                <li>Base training</li>
+                </ul>
+                <p>Let’s start with some code that sets up our dataset/dataloaders, model, optimizer, and scheduler:</p>
+                <div id="c9c833b0" class="cell" data-execution_count="1">
+                <details class="code-fold">
+                <summary>Show the code</summary>
+                <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+                <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+                <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+                <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datasets <span class="im">import</span> load_dataset</span>
+                <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.nn.functional <span class="im">import</span> cross_entropy</span>
+                <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader</span>
+                <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer, AutoModelForCausalLM, get_constant_schedule</span>
+                <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> set_seed():</span>
+                <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    random.seed(<span class="dv">42</span>)</span>
+                <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    np.random.seed(<span class="dv">42</span>)</span>
+                <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    torch.manual_seed(<span class="dv">42</span>)</span>
+                <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    torch.cuda.manual_seed_all(<span class="dv">42</span>)</span>
+                <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>set_seed()</span>
+                <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> <span class="st">"HuggingFaceTB/SmolLM-135M"</span></span>
+                <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>dataset_name <span class="op">=</span> <span class="st">"Salesforce/wikitext"</span></span>
+                <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">8</span></span>
+                <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>datasets <span class="op">=</span> load_dataset(</span>
+                <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    dataset_name, <span class="st">"wikitext-2-v1"</span>, split<span class="op">=</span>{<span class="st">"train"</span>:<span class="st">"train[:800]"</span>, <span class="st">"validation"</span>:<span class="st">"validation[:80]"</span>}</span>
+                <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>)</span>
+                <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>datasets <span class="op">=</span> datasets.<span class="bu">filter</span>(<span class="kw">lambda</span> x: <span class="bu">len</span>(x)<span class="op">&gt;</span><span class="dv">0</span>, input_columns<span class="op">=</span><span class="st">"text"</span>)</span>
+                <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(datasets[<span class="st">"train"</span>]) <span class="op">&gt;=</span> <span class="dv">500</span> <span class="kw">and</span> <span class="bu">len</span>(datasets[<span class="st">"train"</span>]) <span class="op">&lt;</span> <span class="dv">600</span></span>
+                <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(datasets[<span class="st">"validation"</span>]) <span class="op">&gt;=</span> <span class="dv">50</span> <span class="kw">and</span> <span class="bu">len</span>(datasets[<span class="st">"validation"</span>]) <span class="op">&lt;</span> <span class="dv">60</span></span>
+                <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(model_name)</span>
+                <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>tokenizer.pad_token <span class="op">=</span> tokenizer.eos_token</span>
+                <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_items(model_name):</span>
+                <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> AutoModelForCausalLM.from_pretrained(model_name)</span>
+                <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    optimizer <span class="op">=</span> torch.optim.AdamW(model.parameters(), lr<span class="op">=</span><span class="fl">2e-5</span>)</span>
+                <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    scheduler <span class="op">=</span> get_constant_schedule(optimizer<span class="op">=</span>optimizer)</span>
+                <span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model, optimizer, scheduler</span>
+                <span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>model, optimizer, scheduler <span class="op">=</span> get_items(model_name)</span>
+                <span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> tokenize_func(data):</span>
+                <span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> tokenizer(data[<span class="st">"text"</span>], max_length<span class="op">=</span><span class="va">None</span>, return_attention_mask<span class="op">=</span><span class="va">False</span>)</span>
+                <span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>tokenized_datasets <span class="op">=</span> datasets.<span class="bu">map</span>(tokenize_func, batched<span class="op">=</span><span class="va">True</span>, remove_columns<span class="op">=</span>[<span class="st">"text"</span>])</span>
+                <span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> collate_fn(examples):</span>
+                <span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    max_length <span class="op">=</span> <span class="bu">max</span>([<span class="bu">len</span>(example[<span class="st">"input_ids"</span>]) <span class="cf">for</span> example <span class="kw">in</span> examples])</span>
+                <span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    batch <span class="op">=</span> tokenizer.pad(</span>
+                <span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>        examples, </span>
+                <span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>        padding<span class="op">=</span><span class="st">"max_length"</span>, </span>
+                <span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>        max_length<span class="op">=</span>max_length<span class="op">+</span><span class="dv">1</span>, </span>
+                <span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>        pad_to_multiple_of <span class="op">=</span> <span class="va">None</span>,</span>
+                <span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>        return_tensors<span class="op">=</span><span class="st">"pt"</span>,</span>
+                <span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    )</span>
+                <span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    batch[<span class="st">"labels"</span>] <span class="op">=</span> batch[<span class="st">"input_ids"</span>][:, <span class="dv">1</span>:]</span>
+                <span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    batch[<span class="st">"input_ids"</span>] <span class="op">=</span> batch[<span class="st">"input_ids"</span>][:, :<span class="op">-</span><span class="dv">1</span>]</span>
+                <span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    batch[<span class="st">"labels"</span>] <span class="op">=</span> torch.where(batch[<span class="st">"labels"</span>] <span class="op">==</span> tokenizer.pad_token_id, <span class="op">-</span><span class="dv">100</span>, batch[<span class="st">"labels"</span>])</span>
+                <span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> batch</span>
+                <span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_dataloaders(train_batch_size:<span class="bu">int</span><span class="op">=</span><span class="dv">8</span>):</span>
+                <span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    train_dl <span class="op">=</span> DataLoader(</span>
+                <span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>        tokenized_datasets[<span class="st">"train"</span>], shuffle<span class="op">=</span><span class="va">False</span>, collate_fn<span class="op">=</span>collate_fn, batch_size<span class="op">=</span>train_batch_size,</span>
+                <span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>    )</span>
+                <span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    eval_dl <span class="op">=</span> DataLoader(</span>
+                <span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>        tokenized_datasets[<span class="st">"validation"</span>], shuffle<span class="op">=</span><span class="va">False</span>, collate_fn<span class="op">=</span>collate_fn, batch_size<span class="op">=</span><span class="dv">4</span></span>
+                <span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    )</span>
+                <span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> train_dl, eval_dl</span>
+                <span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>train_dl, eval_dl <span class="op">=</span> get_dataloaders(train_batch_size<span class="op">=</span>batch_size)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                </details>
+                </div>
+                <p>And finally write a training loop:</p>
+                <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model.to(<span class="st">"cuda"</span>)</span>
+                <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>losses_baseline <span class="op">=</span> []</span>
+                <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>total_batched_samples <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+                <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    model.train()</span>
+                <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> batch <span class="kw">in</span> train_dl:</span>
+                <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        batch <span class="op">=</span> {k:v.to(<span class="st">"cuda"</span>) <span class="cf">for</span> k,v <span class="kw">in</span> batch.items()}</span>
+                <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        out <span class="op">=</span> model(<span class="op">**</span>batch)</span>
+                <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> loss_fn(</span>
+                <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>            out[<span class="st">"logits"</span>], batch[<span class="st">"labels"</span>], model.vocab_size</span>
+                <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        )</span>
+                <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        loss.backward()</span>
+                <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        losses_baseline.append(loss.cpu().detach().item())</span>
+                <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            </span>
+                <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
+                <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        scheduler.step()</span>
+                <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <p>We can then graph our curve and see it’s fairly smooth:</p>
+                <p><img src="media/images/gradient_accumulation_part2/losses_baseline.png" class="img-fluid"></p>
+                </section>
+                <section id="gradient-accumulation-the-naive-way" class="level2">
+                <h2 class="anchored" data-anchor-id="gradient-accumulation-the-naive-way">Gradient Accumulation, the naive way</h2>
+                <p>Now let’s modify our training loop to perform basic gradient accumulation, and go again</p>
+                <p>(For this, the number of step is 2)</p>
+                <p>I’ve highlighted the core change to the code below:</p>
+                <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>gradient_accumulation_steps <span class="op">=</span> <span class="dv">2</span></span>
+                <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">4</span></span>
+                <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>...</span>
+                <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>losses_grad_accum <span class="op">=</span> []</span>
+                <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>total_batched_samples <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>grad_accum_loss <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+                <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    ...</span>
+                <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i,batch <span class="kw">in</span> <span class="bu">enumerate</span>(train_dl):</span>
+                <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        ...</span>
+                <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> ...</span>
+                <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> loss <span class="op">/</span> gradient_accumulation_steps</span>
+                <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        loss.backward()</span>
+                <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        grad_accum_loss <span class="op">+=</span> loss.cpu().detach().item()</span>
+                <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (i <span class="op">%</span> gradient_accumulation_steps <span class="op">!=</span> <span class="dv">0</span>) <span class="kw">or</span> (i <span class="op">==</span> <span class="bu">len</span>(train_dl)<span class="op">-</span><span class="dv">1</span>):</span>
+                <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            optimizer.step()</span>
+                <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            scheduler.step()</span>
+                <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span>
+                <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            losses_grad_accum.append(grad_accum_loss)</span>
+                <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            grad_accum_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <div id="c0f2ea03" class="cell" data-execution_count="2">
+                <details class="code-fold">
+                <summary>Show the full code</summary>
+                <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>set_seed()</span>
+                <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>gradient_accumulation_steps <span class="op">=</span> <span class="dv">2</span></span>
+                <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">4</span></span>
+                <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>model, optimizer, scheduler <span class="op">=</span> get_items(model_name)</span>
+                <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>train_dl, eval_dl <span class="op">=</span> get_dataloaders(train_batch_size<span class="op">=</span>batch_size)</span>
+                <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>model.to(<span class="st">"cuda"</span>)</span>
+                <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>losses_grad_accum <span class="op">=</span> []</span>
+                <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>total_batched_samples <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>grad_accum_loss <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+                <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    model.train()</span>
+                <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i,batch <span class="kw">in</span> <span class="bu">enumerate</span>(train_dl):</span>
+                <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        batch <span class="op">=</span> {k:v.to(<span class="st">"cuda"</span>) <span class="cf">for</span> k,v <span class="kw">in</span> batch.items()}</span>
+                <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        out <span class="op">=</span> model(<span class="op">**</span>batch)</span>
+                <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> loss_fn(</span>
+                <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            out[<span class="st">"logits"</span>], batch[<span class="st">"labels"</span>], model.vocab_size</span>
+                <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        )</span>
+                <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> loss <span class="op">/</span> gradient_accumulation_steps</span>
+                <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        loss.backward()</span>
+                <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        grad_accum_loss <span class="op">+=</span> loss.cpu().detach().item()</span>
+                <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (i <span class="op">%</span> gradient_accumulation_steps <span class="op">!=</span> <span class="dv">0</span>) <span class="kw">or</span> (i <span class="op">==</span> <span class="bu">len</span>(train_dl)<span class="op">-</span><span class="dv">1</span>):</span>
+                <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>            optimizer.step()</span>
+                <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            scheduler.step()</span>
+                <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span>
+                <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>            losses_grad_accum.append(grad_accum_loss)</span>
+                <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            grad_accum_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                </details>
+                </div>
+                <p>And plot the results:</p>
+                <p><img src="media/images/gradient_accumulation_part2/losses_ga.png" class="img-fluid"></p>
+                <p>As you can see, they’re <em>close</em> but… <strong>not exact</strong>.</p>
+                <p>What’s going on?</p>
+                </section>
+                <section id="the-problem-loss" class="level2">
+                <h2 class="anchored" data-anchor-id="the-problem-loss">The Problem: Loss</h2>
+                <p>Let’s go back to how we defined our loss function:</p>
+                <div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> loss_fn(logits, labels, vocab_size):</span>
+                <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    logits <span class="op">=</span> logits.<span class="bu">float</span>()</span>
+                <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    shift_logits <span class="op">=</span> logits[..., :<span class="op">-</span><span class="dv">1</span>, :].contiguous().view(<span class="op">-</span><span class="dv">1</span>, vocab_size)</span>
+                <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    shift_labels <span class="op">=</span> labels[..., <span class="dv">1</span>:].contiguous().view(<span class="op">-</span><span class="dv">1</span>)</span>
+                <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    shift_labels <span class="op">=</span> shift_labels.to(shift_logits.device)</span>
+                <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cross_entropy(</span>
+                <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        shift_logits, shift_labels, ignore_index<span class="op">=-</span><span class="dv">100</span>, reduction<span class="op">=</span><span class="st">"mean"</span></span>
+                <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <p>If you notice, we explicitly define the reduction as <code>"mean"</code> (the default).</p>
+                <p>What this means, is that we are assuming that across all steps of gradient accumulation, the number of labels seen total are <strong>the exact same</strong>. In a generation problem though this is <strong>not the case</strong> when we start messing with the batch sizes. For a quick dumb TL;DR:</p>
+                <p>Say the batch is:</p>
+                <div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>[[<span class="dv">0</span>],[<span class="dv">0</span>,<span class="dv">1</span>],[<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>], [<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <p>The average length of the first two items is .75, while the second is 3.5.</p>
+                <p>This tiny numerical difference means the world when it comes to calculating our loss here, as that <code>"mean"</code> isn’t taking into account the rest of the items our gradient accumulation step is seeing!</p>
+                <p>So what’s the fix?</p>
+                </section>
+                <section id="the-fix-loss" class="level2">
+                <h2 class="anchored" data-anchor-id="the-fix-loss">The Fix: Loss</h2>
+                <p>The first fix is to rewrite our loss function to take into account the <strong>total number of items seen across all gradient accumulation steps</strong>. The <a href="https://unsloth.ai/blog/gradient">Unsloth crew</a> go into more detail on why that matters, below I’ve defined a new loss function which reflects this:</p>
+                <div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> loss_fn(logits, labels, vocab_size, num_items_in_batch<span class="op">=</span><span class="va">None</span>):</span>
+                <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    logits <span class="op">=</span> logits.<span class="bu">float</span>()</span>
+                <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    shift_logits <span class="op">=</span> logits[..., :<span class="op">-</span><span class="dv">1</span>, :].contiguous().view(<span class="op">-</span><span class="dv">1</span>, vocab_size)</span>
+                <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    shift_labels <span class="op">=</span> labels[..., <span class="dv">1</span>:].contiguous().view(<span class="op">-</span><span class="dv">1</span>)</span>
+                <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    shift_labels <span class="op">=</span> shift_labels.to(shift_logits.device)</span>
+                <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    reduction <span class="op">=</span> <span class="st">"sum"</span> <span class="cf">if</span> num_items_in_batch <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="cf">else</span> <span class="st">"mean"</span></span>
+                <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> cross_entropy(</span>
+                <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        shift_logits, shift_labels, ignore_index<span class="op">=-</span><span class="dv">100</span>, reduction<span class="op">=</span>reduction</span>
+                <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+                <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> reduction <span class="op">==</span> <span class="st">"sum"</span>:</span>
+                <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> loss <span class="op">/</span> num_items_in_batch</span>
+                <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <p>Essentially if we pass in a <code>num_items_in_batch</code>, we use the <code>"sum"</code> of everything then divide by the total later, rather than letting PyTorch do it themselves.</p>
+                <p>But, that’s not the only fix we need to do. How do we get <code>num_items_in_batch</code>?</p>
+                </section>
+                <section id="the-fix-prefetching" class="level2">
+                <h2 class="anchored" data-anchor-id="the-fix-prefetching">The Fix: Prefetching</h2>
+                <p>The second fix is figuring out <code>num_items_in_batch</code>. We need to be careful about:</p>
+                <ol type="1">
+                <li>Making sure we prefetch <code>gradient_accumulation_steps</code> batches of data at a time</li>
+                <li>Calculating the total <strong>non pad tokens</strong> across <strong>all labels</strong>.</li>
+                </ol>
+                <p>Let’s rewrite our training loop to do just that:</p>
+                <div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>num_update_steps_per_epoch <span class="op">=</span> math.ceil(<span class="bu">len</span>(train_dl) <span class="op">/</span> gradient_accumulation_steps)</span>
+                <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>remainder <span class="op">=</span> <span class="bu">len</span>(train_dl) <span class="op">%</span> gradient_accumulation_steps</span>
+                <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> remainder <span class="op">==</span> <span class="dv">0</span>:</span>
+                <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    remainder <span class="op">=</span> gradient_accumulation_steps</span>
+                <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>losses_fixed_ga <span class="op">=</span> []</span>
+                <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>actual_loss <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+                <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    ...</span>
+                <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    iterator <span class="op">=</span> <span class="bu">iter</span>(train_dl)</span>
+                <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> update_step <span class="kw">in</span> <span class="bu">range</span>(num_update_steps_per_epoch):</span>
+                <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        batch_samples <span class="op">=</span> []</span>
+                <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        num_batches <span class="op">=</span> gradient_accumulation_steps <span class="cf">if</span> update_step <span class="op">!=</span> (num_update_steps_per_epoch <span class="op">-</span> <span class="dv">1</span>) <span class="cf">else</span> remainder</span>
+                <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Prefetch and calculate the number of non-padded items seen across one gradient accumulation "step"</span></span>
+                <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(num_batches):</span>
+                <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>            batch_samples <span class="op">+=</span> [<span class="bu">next</span>(iterator)]</span>
+                <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        num_items_in_batch <span class="op">=</span> <span class="bu">sum</span>([(batch[<span class="st">"labels"</span>].ne(<span class="op">-</span><span class="dv">100</span>)).<span class="bu">sum</span>() <span class="cf">for</span> batch <span class="kw">in</span> batch_samples])</span>
+                <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> batch <span class="kw">in</span> batch_samples:</span>
+                <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>            ...</span>
+                <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            loss <span class="op">=</span> loss_fn(</span>
+                <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>                out[<span class="st">"logits"</span>], batch[<span class="st">"labels"</span>], </span>
+                <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                vocab_size<span class="op">=</span>model.vocab_size, num_items_in_batch<span class="op">=</span>num_items_in_batch</span>
+                <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>            )</span>
+                <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>            loss.backward()</span>
+                <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
+                <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        scheduler.step()</span>
+                <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                <div id="cd37a402" class="cell" data-execution_count="3">
+                <details class="code-fold">
+                <summary>Show the full code</summary>
+                <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+                <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>set_seed()</span>
+                <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>gradient_accumulation_steps <span class="op">=</span> <span class="dv">2</span></span>
+                <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">4</span></span>
+                <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>model, optimizer, scheduler <span class="op">=</span> get_items(model_name)</span>
+                <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>train_dl, eval_dl <span class="op">=</span> get_dataloaders(train_batch_size<span class="op">=</span>batch_size)</span>
+                <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>model.to(<span class="st">"cuda"</span>)</span>
+                <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>num_update_steps_per_epoch <span class="op">=</span> math.ceil(<span class="bu">len</span>(train_dl) <span class="op">/</span> gradient_accumulation_steps)</span>
+                <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>remainder <span class="op">=</span> <span class="bu">len</span>(train_dl) <span class="op">%</span> gradient_accumulation_steps</span>
+                <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> remainder <span class="op">==</span> <span class="dv">0</span>:</span>
+                <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    remainder <span class="op">=</span> gradient_accumulation_steps</span>
+                <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>losses_fixed_ga <span class="op">=</span> []</span>
+                <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>actual_loss <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>total_batched_samples <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+                <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    model.train()</span>
+                <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    iterator <span class="op">=</span> <span class="bu">iter</span>(train_dl)</span>
+                <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> update_step <span class="kw">in</span> <span class="bu">range</span>(num_update_steps_per_epoch):</span>
+                <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        batch_samples <span class="op">=</span> []</span>
+                <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        num_batches <span class="op">=</span> gradient_accumulation_steps <span class="cf">if</span> update_step <span class="op">!=</span> (num_update_steps_per_epoch <span class="op">-</span> <span class="dv">1</span>) <span class="cf">else</span> remainder</span>
+                <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Prefetch and calculate the number of non-padded items seen across one gradient accumulation "step"</span></span>
+                <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(num_batches):</span>
+                <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>            batch_samples <span class="op">+=</span> [<span class="bu">next</span>(iterator)]</span>
+                <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        num_items_in_batch <span class="op">=</span> <span class="bu">sum</span>([(batch[<span class="st">"labels"</span>].ne(<span class="op">-</span><span class="dv">100</span>)).<span class="bu">sum</span>() <span class="cf">for</span> batch <span class="kw">in</span> batch_samples])</span>
+                <span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> batch <span class="kw">in</span> batch_samples:</span>
+                <span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>            total_batched_samples <span class="op">+=</span> <span class="dv">1</span></span>
+                <span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>            batch <span class="op">=</span> {k:v.to(<span class="st">"cuda"</span>) <span class="cf">for</span> k,v <span class="kw">in</span> batch.items()}</span>
+                <span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>            out <span class="op">=</span> model(<span class="op">**</span>batch)</span>
+                <span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>            loss <span class="op">=</span> loss_fn(</span>
+                <span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>                out[<span class="st">"logits"</span>], batch[<span class="st">"labels"</span>], </span>
+                <span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>                vocab_size<span class="op">=</span>model.vocab_size, num_items_in_batch<span class="op">=</span>num_items_in_batch</span>
+                <span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>            )</span>
+                <span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>            loss.backward()</span>
+                <span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>            actual_loss <span class="op">+=</span> loss.detach().cpu().item()</span>
+                <span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
+                <span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>        scheduler.step()</span>
+                <span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span>
+                <span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>        losses_fixed_ga.append(actual_loss)</span>
+                <span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>        actual_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                </details>
+                </div>
+                <p>And also rerun our baseline:</p>
+                <div id="57bbc1ab" class="cell" data-execution_count="4">
+                <details class="code-fold">
+                <summary>Show the code</summary>
+                <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>set_seed()</span>
+                <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>gradient_accumulation_steps <span class="op">=</span> <span class="dv">1</span></span>
+                <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">8</span></span>
+                <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>model, optimizer, scheduler <span class="op">=</span> get_items(model_name)</span>
+                <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>train_dl, eval_dl <span class="op">=</span> get_dataloaders(train_batch_size<span class="op">=</span>batch_size)</span>
+                <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>model.to(<span class="st">"cuda"</span>)</span>
+                <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>num_update_steps_per_epoch <span class="op">=</span> math.ceil(<span class="bu">len</span>(train_dl) <span class="op">/</span> gradient_accumulation_steps)</span>
+                <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>remainder <span class="op">=</span> <span class="bu">len</span>(train_dl) <span class="op">%</span> gradient_accumulation_steps</span>
+                <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> remainder <span class="op">==</span> <span class="dv">0</span>:</span>
+                <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    remainder <span class="op">=</span> gradient_accumulation_steps</span>
+                <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>losses_baseline <span class="op">=</span> []</span>
+                <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>actual_loss <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>total_batched_samples <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+                <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    model.train()</span>
+                <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    iterator <span class="op">=</span> <span class="bu">iter</span>(train_dl)</span>
+                <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> update_step <span class="kw">in</span> <span class="bu">range</span>(num_update_steps_per_epoch):</span>
+                <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>        batch_samples <span class="op">=</span> []</span>
+                <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>        num_batches <span class="op">=</span> gradient_accumulation_steps <span class="cf">if</span> update_step <span class="op">!=</span> (num_update_steps_per_epoch <span class="op">-</span> <span class="dv">1</span>) <span class="cf">else</span> remainder</span>
+                <span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Prefetch and calculate the number of non-padded items seen across one gradient accumulation "step"</span></span>
+                <span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(num_batches):</span>
+                <span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>            batch_samples <span class="op">+=</span> [<span class="bu">next</span>(iterator)]</span>
+                <span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>        num_items_in_batch <span class="op">=</span> <span class="bu">sum</span>([(batch[<span class="st">"labels"</span>].ne(<span class="op">-</span><span class="dv">100</span>)).<span class="bu">sum</span>() <span class="cf">for</span> batch <span class="kw">in</span> batch_samples])</span>
+                <span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> batch <span class="kw">in</span> batch_samples:</span>
+                <span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>            total_batched_samples <span class="op">+=</span> <span class="dv">1</span></span>
+                <span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>            batch <span class="op">=</span> {k:v.to(<span class="st">"cuda"</span>) <span class="cf">for</span> k,v <span class="kw">in</span> batch.items()}</span>
+                <span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>            out <span class="op">=</span> model(<span class="op">**</span>batch)</span>
+                <span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>            loss <span class="op">=</span> loss_fn(</span>
+                <span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>                out[<span class="st">"logits"</span>], batch[<span class="st">"labels"</span>], </span>
+                <span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>                vocab_size<span class="op">=</span>model.vocab_size, num_items_in_batch<span class="op">=</span>num_items_in_batch</span>
+                <span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>            )</span>
+                <span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>            loss.backward()</span>
+                <span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>            actual_loss <span class="op">+=</span> loss.detach().cpu().item()</span>
+                <span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
+                <span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>        scheduler.step()</span>
+                <span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span>
+                <span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>        losses_baseline.append(actual_loss)</span>
+                <span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>        actual_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                </details>
+                </div>
+                <p><img src="media/images/gradient_accumulation_part2/loss_fixed.png" class="img-fluid"></p>
+                <p>And now we find they are <strong>near exactly the same</strong>! (I found I could get within ~5 decimal places, not bad <em>at all</em>).</p>
+                <p>That’s it, we’re done right?</p>
+                <p><strong>Wrong</strong></p>
+                </section>
+                <section id="problem-distributed-training" class="level2">
+                <h2 class="anchored" data-anchor-id="problem-distributed-training">Problem: Distributed Training</h2>
+                <p>That’s great, but what about during distributed training?</p>
+                <p>Since the data is split across <code>n</code> GPUs, each other GPU has no idea how many total items are seen across a step, leading to the <em>same issue</em>.</p>
+                <p>The solution is to call a <code>gather()</code> across the inputs and use them to help calculate the loss. The <strong>problem</strong> here, is this involves a communication step between all of the GPUs, which can get costly if we’re doing so every gradient accumulation step (as rather than a single communication when we do <code>backward()</code>, we’re now doubling it to two).</p>
+                <p>Below is an experiment I ran across 8 GPUs (with a much larger batch size) showcasing how these results change based on if we do <code>gather()</code> or not.</p>
+                <p><img src="media/images/gradient_accumulation_part2/ddp.png" class="img-fluid"></p>
+                <p>The full solution is below, utilizing <code>accelerate</code> solely to handle DDP and splitting the data between each GPU, just make sure to run this via <code>torchrun</code> or <code>accelerate launch</code>.</p>
+                <p>If you want to be 100% exact, I <strong>recommend you do this</strong>. However, without it we’re <em>extremely close</em> (much closer than before), so it’s up to you, your compute budget, and if you find the extra <code>.gather()</code> adds too much time.</p>
+                <div id="e01cf325" class="cell" data-execution_count="5">
+                <details class="code-fold">
+                <summary>Show the code</summary>
+                <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+                <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+                <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+                <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm.auto <span class="im">import</span> tqdm</span>
+                <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader</span>
+                <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.nn.functional <span class="im">import</span> cross_entropy</span>
+                <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datasets <span class="im">import</span> load_dataset</span>
+                <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer, AutoModelForCausalLM, get_constant_schedule</span>
+                <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+                <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+                <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate <span class="im">import</span> Accelerator</span>
+                <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> accelerate.utils <span class="im">import</span> <span class="bu">reduce</span></span>
+                <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+                <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> contextlib</span>
+                <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">42</span>)</span>
+                <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
+                <span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>torch.manual_seed(<span class="dv">42</span>)</span>
+                <span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>torch.cuda.manual_seed_all(<span class="dv">42</span>)</span>
+                <span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main(args):</span>
+                <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    accelerator <span class="op">=</span> Accelerator()</span>
+                <span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    accelerator.<span class="bu">print</span>(<span class="st">"Loading dataset"</span>)</span>
+                <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    datasets <span class="op">=</span> load_dataset(<span class="st">"Salesforce/wikitext"</span>, <span class="st">"wikitext-2-v1"</span>)</span>
+                <span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    datasets <span class="op">=</span> datasets.<span class="bu">filter</span>(<span class="kw">lambda</span> x: <span class="bu">len</span>(x)<span class="op">&gt;</span><span class="dv">0</span>, input_columns<span class="op">=</span><span class="st">"text"</span>)</span>
+                <span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(<span class="st">"HuggingFaceTB/SmolLM-135M"</span>)</span>
+                <span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    tokenizer.pad_token <span class="op">=</span> tokenizer.eos_token</span>
+                <span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    accelerator.<span class="bu">print</span>(<span class="st">"Creating model"</span>)</span>
+                <span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> AutoModelForCausalLM.from_pretrained(<span class="st">"HuggingFaceTB/SmolLM-135M"</span>)</span>
+                <span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    optimizer <span class="op">=</span> torch.optim.AdamW(model.parameters(), lr<span class="op">=</span><span class="fl">2e-5</span>)</span>
+                <span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    scheduler <span class="op">=</span> get_constant_schedule(optimizer<span class="op">=</span>optimizer)</span>
+                <span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> tokenize_func(data):</span>
+                <span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> tokenizer(data[<span class="st">"text"</span>], max_length<span class="op">=</span><span class="va">None</span>, return_attention_mask<span class="op">=</span><span class="va">False</span>)</span>
+                <span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>    tokenized_datasets <span class="op">=</span> datasets.<span class="bu">map</span>(tokenize_func, batched<span class="op">=</span><span class="va">True</span>, remove_columns<span class="op">=</span>[<span class="st">"text"</span>])</span>
+                <span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> collate_fn(examples):</span>
+                <span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>        max_length <span class="op">=</span> <span class="bu">max</span>([<span class="bu">len</span>(example[<span class="st">"input_ids"</span>]) <span class="cf">for</span> example <span class="kw">in</span> examples])</span>
+                <span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>        batch <span class="op">=</span> tokenizer.pad(</span>
+                <span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>            examples, </span>
+                <span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>            padding<span class="op">=</span><span class="st">"max_length"</span>, </span>
+                <span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>            max_length<span class="op">=</span>max_length<span class="op">+</span><span class="dv">1</span>, </span>
+                <span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>            pad_to_multiple_of <span class="op">=</span> <span class="va">None</span>,</span>
+                <span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>            return_tensors<span class="op">=</span><span class="st">"pt"</span>,</span>
+                <span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>        )</span>
+                <span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>        batch[<span class="st">"labels"</span>] <span class="op">=</span> batch[<span class="st">"input_ids"</span>][:, <span class="dv">1</span>:]</span>
+                <span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>        batch[<span class="st">"input_ids"</span>] <span class="op">=</span> batch[<span class="st">"input_ids"</span>][:, :<span class="op">-</span><span class="dv">1</span>]</span>
+                <span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>        batch[<span class="st">"labels"</span>] <span class="op">=</span> torch.where(batch[<span class="st">"labels"</span>] <span class="op">==</span> tokenizer.pad_token_id, <span class="op">-</span><span class="dv">100</span>, batch[<span class="st">"labels"</span>])</span>
+                <span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> batch</span>
+                <span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> get_dataloaders(train_batch_size:<span class="bu">int</span><span class="op">=</span><span class="dv">8</span>):</span>
+                <span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>        train_dl <span class="op">=</span> DataLoader(</span>
+                <span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>            tokenized_datasets[<span class="st">"train"</span>], shuffle<span class="op">=</span><span class="va">False</span>, collate_fn<span class="op">=</span>collate_fn, batch_size<span class="op">=</span>train_batch_size,</span>
+                <span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>        )</span>
+                <span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>        eval_dl <span class="op">=</span> DataLoader(</span>
+                <span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>            tokenized_datasets[<span class="st">"validation"</span>], shuffle<span class="op">=</span><span class="va">False</span>, collate_fn<span class="op">=</span>collate_fn, batch_size<span class="op">=</span><span class="dv">4</span></span>
+                <span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>        )</span>
+                <span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> train_dl, eval_dl</span>
+                <span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>    accelerator.<span class="bu">print</span>(<span class="st">"Making dataloaders"</span>)</span>
+                <span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>    train_dl, eval_dl <span class="op">=</span> get_dataloaders(train_batch_size<span class="op">=</span>args.bs)</span>
+                <span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> loss_fn(logits, labels, vocab_size, num_items_in_batch<span class="op">=</span><span class="va">None</span>):</span>
+                <span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>        logits <span class="op">=</span> logits.<span class="bu">float</span>()</span>
+                <span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>        shift_logits <span class="op">=</span> logits[..., :<span class="op">-</span><span class="dv">1</span>, :].contiguous().view(<span class="op">-</span><span class="dv">1</span>, vocab_size)</span>
+                <span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>        shift_labels <span class="op">=</span> labels[..., <span class="dv">1</span>:].contiguous().view(<span class="op">-</span><span class="dv">1</span>)</span>
+                <span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a>        shift_labels <span class="op">=</span> shift_labels.to(shift_logits.device)</span>
+                <span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a>        reduction <span class="op">=</span> <span class="st">"sum"</span> <span class="cf">if</span> num_items_in_batch <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="cf">else</span> <span class="st">"mean"</span></span>
+                <span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> cross_entropy(</span>
+                <span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>            shift_logits, shift_labels, ignore_index<span class="op">=-</span><span class="dv">100</span>, reduction<span class="op">=</span>reduction</span>
+                <span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a>        )</span>
+                <span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> reduction <span class="op">==</span> <span class="st">"sum"</span>:</span>
+                <span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> loss <span class="op">/</span> num_items_in_batch</span>
+                <span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> loss</span>
+                <span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a>    accelerator.<span class="bu">print</span>(<span class="st">"Calling prepare"</span>)</span>
+                <span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a>    model, train_dl <span class="op">=</span> accelerator.prepare(model, train_dl)</span>
+                <span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a>    losses_baseline <span class="op">=</span> []</span>
+                <span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a>    actual_loss <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a>    num_update_steps_per_epoch <span class="op">=</span> math.ceil(<span class="bu">len</span>(train_dl) <span class="op">/</span> args.ga)</span>
+                <span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a>    remainder <span class="op">=</span> <span class="bu">len</span>(train_dl) <span class="op">%</span> args.ga</span>
+                <span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> remainder <span class="op">==</span> <span class="dv">0</span>:</span>
+                <span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a>        remainder <span class="op">=</span> args.ga</span>
+                <span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a>    total_batched_samples <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a>    accelerator.<span class="bu">print</span>(<span class="st">"Starting training"</span>)</span>
+                <span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+                <span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a>        model.train()</span>
+                <span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a>        iterator <span class="op">=</span> <span class="bu">iter</span>(train_dl)</span>
+                <span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> update_step <span class="kw">in</span> <span class="bu">range</span>(num_update_steps_per_epoch):</span>
+                <span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a>            batch_samples <span class="op">=</span> []</span>
+                <span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a>            num_batches <span class="op">=</span> args.ga <span class="cf">if</span> update_step <span class="op">!=</span> (num_update_steps_per_epoch <span class="op">-</span> <span class="dv">1</span>) <span class="cf">else</span> remainder</span>
+                <span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(num_batches):</span>
+                <span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a>                batch_samples <span class="op">+=</span> [<span class="bu">next</span>(iterator)]</span>
+                <span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a>            num_items_in_batch <span class="op">=</span> <span class="bu">sum</span>([(batch[<span class="st">"labels"</span>].ne(<span class="op">-</span><span class="dv">100</span>)).<span class="bu">sum</span>() <span class="cf">for</span> batch <span class="kw">in</span> batch_samples])</span>
+                <span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a>            num_items_in_batch <span class="op">=</span> accelerator.gather(num_items_in_batch).<span class="bu">sum</span>().item()</span>
+                <span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> i,batch <span class="kw">in</span> <span class="bu">enumerate</span>(batch_samples):</span>
+                <span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a>                ctx <span class="op">=</span> model.no_sync <span class="cf">if</span> i <span class="op">==</span> <span class="bu">len</span>(batch_samples) <span class="op">-</span> <span class="dv">1</span> <span class="cf">else</span> contextlib.nullcontext</span>
+                <span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a>                total_batched_samples <span class="op">+=</span> <span class="dv">1</span></span>
+                <span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a>                <span class="cf">with</span> ctx():</span>
+                <span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a>                    out <span class="op">=</span> model(<span class="op">**</span>batch)</span>
+                <span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a>                    loss <span class="op">=</span> loss_fn(</span>
+                <span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a>                        out[<span class="st">"logits"</span>], batch[<span class="st">"labels"</span>], </span>
+                <span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a>                        vocab_size<span class="op">=</span>model.module.vocab_size, num_items_in_batch<span class="op">=</span>num_items_in_batch</span>
+                <span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a>                    )</span>
+                <span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a>                    loss <span class="op">=</span> loss <span class="op">*</span> accelerator.num_processes</span>
+                <span id="cb11-114"><a href="#cb11-114" aria-hidden="true" tabindex="-1"></a>                    loss.backward()</span>
+                <span id="cb11-115"><a href="#cb11-115" aria-hidden="true" tabindex="-1"></a>                actual_loss <span class="op">+=</span> loss.detach()</span>
+                <span id="cb11-116"><a href="#cb11-116" aria-hidden="true" tabindex="-1"></a>            optimizer.step()</span>
+                <span id="cb11-117"><a href="#cb11-117" aria-hidden="true" tabindex="-1"></a>            scheduler.step()</span>
+                <span id="cb11-118"><a href="#cb11-118" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span>
+                <span id="cb11-119"><a href="#cb11-119" aria-hidden="true" tabindex="-1"></a>            actual_loss <span class="op">=</span> accelerator.gather(actual_loss)</span>
+                <span id="cb11-120"><a href="#cb11-120" aria-hidden="true" tabindex="-1"></a>            actual_loss <span class="op">=</span> actual_loss.cpu().<span class="bu">sum</span>().item()</span>
+                <span id="cb11-121"><a href="#cb11-121" aria-hidden="true" tabindex="-1"></a>            losses_baseline.append(actual_loss)</span>
+                <span id="cb11-122"><a href="#cb11-122" aria-hidden="true" tabindex="-1"></a>            actual_loss <span class="op">=</span> <span class="dv">0</span></span>
+                <span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a>    </span>
+                <span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame({<span class="st">"loss"</span>: losses_baseline})</span>
+                <span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> args.ga <span class="op">==</span> <span class="dv">1</span>:</span>
+                <span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a>        name <span class="op">=</span> <span class="st">"losses_baseline"</span></span>
+                <span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+                <span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a>        name <span class="op">=</span> <span class="ss">f"losses_bs</span><span class="sc">{</span>args<span class="sc">.</span>bs<span class="sc">}</span><span class="ss">_ga</span><span class="sc">{</span>args<span class="sc">.</span>ga<span class="sc">}</span><span class="ss">_fixed"</span></span>
+                <span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a>    df.to_csv(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.csv"</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+                <span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-131"><a href="#cb11-131" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+                <span id="cb11-132"><a href="#cb11-132" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">"Train a language model with optional gradient accumulation"</span>)</span>
+                <span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">"--bs"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">int</span>, default<span class="op">=</span><span class="dv">8</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Training batch size"</span>)</span>
+                <span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">"--ga"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">int</span>, default<span class="op">=</span><span class="dv">1</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"Gradient accumulation steps"</span>)</span>
+                <span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a></span>
+                <span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
+                <span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a>    main(args)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+                </details>
+                </div>
+                </section>
+                <section id="conclusion" class="level2">
+                <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+                <p>As we continue to see, gradient accumulation seems simple on the surface but <em>hard</em> to get right! Hopefully this article helps teach you how to stay reproducible as you scale training with gradient accumulation.</p>
+                <p>I’d like to thank the Unsloth team who helped us figure out how to change the code in the Trainer, and Yoach and Marc for getting down in the weeds with me as we worked towards coming up with minimal reproducible examples to help educate all of us.</p>
+                
+                
+                </section>
+                </section>
+                            </article>
+        </main>
+    </div>
+
+    <!-- Performance optimizations -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "PyTorch Gradient Accumulation Guide: Fixing Multi-GPU vs Single GPU behaviors",
+        "datePublished": "2024-10-29",
+        "author": {
+            "@type": "Person",
+            "name": "Zach Mueller",
+            "url": "https://muellerzr.github.io"
+        },
+        "description": "Solve the critical issue during distributed gradient accumulation to make single GPU training the same as multi GPU training.",
+        "keywords": "PyTorch, gradient accumulation, distributed training, GPU optimization",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Zach Mueller's Blog",
+            "url": "https://muellerzr.github.io"
+          }
+        }
+    </script>
+
+    <!-- Simple lazy loading -->
+    <script>
+        if ('IntersectionObserver' in window) {
+            const images = document.querySelectorAll('img[loading="lazy"]');
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+            images.forEach(img => imageObserver.observe(img));
+        }
+    </script>
+
+    <!-- Simple JavaScript initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize copy buttons
+            if (window.ClipboardJS) {
+                new ClipboardJS('.code-copy-button');
+            }
+            
+            // Initialize anchors
+            if (window.AnchorJS) {
+                const anchors = new window.AnchorJS();
+                anchors.options = {placement: 'right'};
+                anchors.add('.anchored');
+            }
+        });
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+        if (window.AnchorJS) {
+            const anchorJS = new window.AnchorJS();
+            anchorJS.options = {
+                placement: 'right',
+                icon: ""
+            };
+            anchorJS.add('.anchored');
+        }
+    });
+    </script>
+</body>
+</html>
