@@ -1,0 +1,66 @@
+---
+title: 'Announcing Scratch to Scale, Large Scale Training in the Modern World'
+date: 2025-07-12
+category: education
+image: media/blog/Walkwithfastai/01.png
+---
+
+
+> Details about my newest course, available at https://maven.com/walk-with-code/scratch-to-scale?promoCode=zach35
+
+# Scratch to Scale, Large Scale Training in the Modern World
+
+We're continuing the [three year pattern](/Walkwithfastai) of new courses! [(Buy at 35% off here now)](https://maven.com/walk-with-code/scratch-to-scale?promoCode=zach35)
+
+This go-around, my aim is to take you **deep** into the world of distributed training, through myself and over a dozen guest lecturers. 
+
+## Why a new course?
+
+Over the last two years the landscape of Deep Learning and model training has changed drastically. We've gone from "Train your own imagenet model"
+to open-source _*trillion parameter LLMs*_. This day and age, thinking about training in the same ways as before just will not cut it.
+
+This is what I'm trying to help solve. FSDP, DeepSpeed, DistributedDataParallelism, LoCo, DiLoCo. These are all fancy terms and algorithm
+names that matter when training distributed models. My goal is to help you know them inside and out *from scratch*.
+
+## How we're going to get there
+
+This *conference* (what started out as a course, but got *far* too large), will encompass 6 weeks, 5 lectures from me, and 14 (and counting) guest speakers.
+
+There are three tracks:
+
+**Applied**:
+The applied track is from industry leaders on how they have approached the problems of training at scale, and the solutions they've come to for enabling developers
+the easiest access to these fully trained models once they're done.
+- Robert Nishihara, Cofounder of Ray, Anyscale. Robert will help you learn how Ray and Anyscale help millions of machine learning engineers scale training across thousands of GPUs at once
+- Sami Jaghouar, research engineer at Prime Intellect. Sami will introduce you to the idea of Decentralized Training at a **global scale**, and how Prime Intellect gets it done
+- Tunji Ruwase, software engineer at Snowflake (DeepSpeed). Tunji will introduce you to *Arctic Long Sequence Training*, which helps make training **multi-million token context length** models efficient and scaleable
+- Prince Canuma, machine learning research engineer. Prince is by and large one of the smartest people I know who is working on MLX (Apple Silicon). He will help you learn how you can utilize local Mac clusters to run ML workloads locally for a fraction of the cost.
+
+Next we have the **Pretraining** track:
+Pretraining is a core foundation of modern LLM research. We're going to learn what techniques are used by the top
+labs around the world when it comes to training an entirely new LLM from scratch on your data. This includes talks by:
+- Phuc Nguyen, a research engineer at Hugging Face who has **reimplemented FP8 training from scratch**. He will help guide you on using FP8 on fancy NVIDIA hardware yourself to make the best use of your FLOPs
+- Elie Bakouch, a machine learning researcher on the Hugging Face pretraining team. He will help guide you on the latest modeling methods like MLA, MoE, and more
+- Daniel Han, creator of UnslothAI, formerly at NVIDIA. Daniel will help teach you how triton kernels and other techniques can help you save hundreds of hours in training time.
+
+
+Then finally, guest speakers during the **Distributed Training Course** (that's right, my own course is secondary now!)
+Learn the techniques used today when training and fine-tuning models at scale (hundreds and thousands of GPUs at once). 
+
+These include talks by:
+- Sylvain Gugger, Jane Street and formerly Hugging Face & fast.ai. Sylvain will help introduce us to the idea of distributed training, and a brief overview of ZeRO
+- Wanchao Liang, formerly Meta and creator of TorchTitan & the DTensor. Wanchao will help teach you how TorchTitan has helped developers take model pretraining to scale faster, and how DTensors have made this easier
+- Ferdinand Mom, research engineer at Hugging Face. Ferdinand will help you get a grasp on the idea of **multi-dimensional parallelism**, where we take standard parallelism strategies and combine them for the *fastest throughput possible*.
+- Less Wright, PyTorch Partner Engineer at Meta. Less will guide you on how Async TensorParallelism lets you train across thousands of GPUs efficiently
+- Matej Sirovatka, MLE at Hugging Face. Matej will teach you what Expert Parallelism is, and how it helps boost the training speed of MoE models.
+- Marc Sun, MLE at Hugging Face. Marc will help you learn the tips and tricks needed to take these models and deploy them easily.
+
+## Other Goodies
+
+There are of course other goodies from sponsorships like free compute, Hugging Face Pro, and more. However, most of all **if you buy this cohort, 
+I will give you free access to all future cohorts**. Distributed training is needed *now* and there's just **to much content to cover** even *with*
+that laundry list of speakers I just mentioned.
+
+So, if you've made it this far, come learn with me over the next year. [Here's a 35% off coupon, and I hope to see you there.](https://maven.com/walk-with-code/scratch-to-scale?promoCode=zach35)
+
+Zach
