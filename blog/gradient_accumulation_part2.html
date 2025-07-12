@@ -266,7 +266,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <li>Base training</li>
 </ul>
 <p>Let’s start with some code that sets up our dataset/dataloaders, model, optimizer, and scheduler:</p>
-<div id="3eb2674b" class="cell" data-execution_count="1">
+<div id="d28bf8e0" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
@@ -387,7 +387,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()</span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            losses_grad_accum.append(grad_accum_loss)</span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            grad_accum_loss <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="9fbfb553" class="cell" data-execution_count="2">
+<div id="5eadb3b3" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the full code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>set_seed()</span>
@@ -498,7 +498,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        scheduler.step()</span>
 <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="3cd7e040" class="cell" data-execution_count="3">
+<div id="a39e604b" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the full code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
@@ -548,7 +548,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </details>
 </div>
 <p>And also rerun our baseline:</p>
-<div id="60493c6e" class="cell" data-execution_count="4">
+<div id="1fcbfc75" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>set_seed()</span>
@@ -609,7 +609,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <p><img src="media/images/gradient_accumulation_part2/ddp.png" class="img-fluid"></p>
 <p>The full solution is below, utilizing <code>accelerate</code> solely to handle DDP and splitting the data between each GPU, just make sure to run this via <code>torchrun</code> or <code>accelerate launch</code>.</p>
 <p>If you want to be 100% exact, I <strong>recommend you do this</strong>. However, without it we’re <em>extremely close</em> (much closer than before), so it’s up to you, your compute budget, and if you find the extra <code>.gather()</code> adds too much time.</p>
-<div id="e6aa1de2" class="cell" data-execution_count="5">
+<div id="2d878e19" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
