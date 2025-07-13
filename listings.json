@@ -12,6 +12,7 @@
   {
     "listing": "/blog/index.html",
     "items": [
+      "/blog/fine_tuning.html",
       "/blog/scratch_to_scale.html",
       "/blog/huggingchat_local.html",
       "/blog/gradient_accumulation_part2.html",
