@@ -2,11 +2,11 @@
 title: 'Announcing Scratch to Scale, Large Scale Training in the Modern World'
 date: 2025-07-12
 category: education
-image: media/blog/Walkwithfastai/01.png
+image: media/blog/scratchtoscale.png
 ---
 
 
-> Details about my newest course, available at https://maven.com/walk-with-code/scratch-to-scale?promoCode=zach35
+> Details about my newest course, [available here (for 35% off too)](https://maven.com/walk-with-code/scratch-to-scale?promoCode=zach35)
 
 # Scratch to Scale, Large Scale Training in the Modern World
 

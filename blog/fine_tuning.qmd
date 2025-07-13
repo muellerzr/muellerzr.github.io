@@ -1,0 +1,41 @@
+---
+title: 'Fine-tuning in a world of APIs'
+date: 2025-07-13
+category: pytorch
+---
+
+## When getting a trained model is an API call away, why do we need to fine-tune ourselves anymore?
+
+It's 2025, every single provider out there offers ways to fine-tune your closed (or open source) model on your data through
+a paid API schema. These typically are in the ballpark of either a per token cost (OpenAI is ~$0.008-0.012/1K tokens) or an hourly cost (Fireworks is ~$0.50-5.00/GPU hour).
+
+You're paying an *increase* in price to have the *convience* of not needing to know what's going on during training and simply pointing your data 
+at an endpoint, and a few hundred (or thousands) of dollars later you have a custom model.
+
+This is great, right?
+
+Right?
+
+![](images/good_defaults.PNG)
+
+## What you sacrifice
+
+Convience needs to sacrifice *something* to occur. Usually this is in the form of **control**. You **don't** know how the sausage gets made.
+You're *assuming* that these fancy labs *do*. And while that's good for some people, if I'm spending a hefty chunk of money to train my model 
+in a day-and-age when open source alternatives to closed source labs are growing closer and closer to being equivalent, there is little reason 
+for charging *more* for me to make use of data and tools I could use instead *myself*.
+
+What if their training has leakeage? You don't know. Nor do you know if they're doing anything with your training data. 
+
+When it comes to situations like these, getting your hands dirty to get that training done is more often better than not. 
+
+## What's the best way to get started?
+
+Let's assume you want the minimal headache possible to get the ball rolling. You've got your data, a model, and you just want the training done.
+But you want it done on your own (rented) hardware, and appraocable enough that you can figure out what's going on.
+
+My personal tier list of frameworks I've used is either going to axolotl or torchtune ([Will agrees](https://x.com/willccbb/status/1944502396631105582)), however Unsloth is also a great direction for starting 
+out since their entire framework is around making model training as accessable as possible through Google Colab (a freemium GPU provider).
+
+In a world when open-source models are on the state-of-the-art, learn how to work them to your advantage and get the job done, while also being able
+to maintain complete control of your model from start to finish. 
