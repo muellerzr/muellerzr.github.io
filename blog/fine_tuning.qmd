@@ -16,7 +16,7 @@ This is great, right?
 
 Right?
 
-![](images/good_defaults.PNG)
+![](media/images/good_defaults.PNG)
 
 ## What you sacrifice
 
