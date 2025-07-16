@@ -72,7 +72,7 @@ ul.task-list li input[type="checkbox"] {
 <script>
 
   window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    const listingTargetEl = window.document.querySelector('#listing-notes .list');
     if (!listingTargetEl) {
       // No listing discovered, do not attach.
       return; 
@@ -85,7 +85,7 @@ ul.task-list li input[type="checkbox"] {
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+    window['quarto-listings']['listing-notes'] = new List('listing-notes', options);
 
     if (window['quarto-listing-loaded']) {
       window['quarto-listing-loaded']();
@@ -241,7 +241,7 @@ window.Quarto = {
 
 
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="quarto-listing quarto-listing-container-default" id="listing-notes">
 <div class="list quarto-listing-default">
 <div class="quarto-post image-right" data-index="0" data-categories="ZGlzdHJpYnV0ZWQtdHJhaW5pbmclMkNweXRvcmNoJTJDZnNkcCUyQ3BpcGVsaW5lLXBhcmFsbGVsaXNtJTJDdGVuc29yLXBhcmFsbGVsaXNt" data-listing-date-sort="1752638400000" data-listing-file-modified-sort="1752694206579" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1001">
 <div class="thumbnail"><a href="../notes/distributed_overview.html" class="no-external">
@@ -341,7 +341,7 @@ Jul 16, 2025
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/muellerzr\.github\.io\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
