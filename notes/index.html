@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2022-10-22">
 
-<title>Announcing Walk with fastai, the missing pieces for success – Zach Mueller</title>
+<title>Distributed Training Notes – Zach Mueller</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -31,6 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-listing/list.min.js"></script>
+<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -68,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script>
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-99XP3R051T"></script>
 
 <script type="text/javascript">
@@ -78,6 +108,35 @@ gtag('js', new Date());
 gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -108,7 +167,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../notes/index.html"> 
+    <a class="nav-link active" href="../notes/index.html" aria-current="page"> 
 <span class="menu-text">Distributed Training Notes</span></a>
   </li>  
   <li class="nav-item">
@@ -142,7 +201,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Announcing Walk with fastai, the missing pieces for success</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Distributed Training Notes</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -161,7 +220,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Announcing Walk with fastai, the missing pieces for success</h1>
+<h1 class="title">Distributed Training Notes</h1>
 </div>
 
 
@@ -169,12 +228,6 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <div class="quarto-title-meta">
 
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">October 22, 2022</p>
-    </div>
-  </div>
   
     
   </div>
@@ -184,62 +237,38 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </header>
 
 
-<blockquote class="blockquote">
-<p>Details about my newest course, available at https://thezachmueller.gumroad.com/l/walkwithfastai</p>
-</blockquote>
-<section id="walk-with-fastai-the-missing-pieces-for-success" class="level1">
-<h1>Walk with fastai, the missing pieces for success</h1>
-<p><img src="media/blog/Walkwithfastai/01.png" class="img-fluid"></p>
-<p>You heard that right, three years after the hit course <a href="https://walkwithfastai.com">Walk with fastai</a> I’m coming back with an action-packed round two!</p>
-<p>This course has been in the making since the <em>day</em> version 1 finished, as I was never truly happy with how that one ended up. It was great, but there was much to be desired. This course is designed to help fill those gaps. Let’s dive in!</p>
-<section id="why-do-this-whats-different" class="level2">
-<h2 class="anchored" data-anchor-id="why-do-this-whats-different">Why do this? What’s different?</h2>
-<p>First let’s talk about what’s new. This course will <strong>still</strong> take you from someone who either has completed Jeremy Howards <a href="https://course.fast.ai">course</a> or who hasn’t even <strong>touched</strong> fastai at all and take you to a level above most practitioners. We still start at an understanding of some Python, and maybe some PyTorch and take you further beyond.</p>
-<p>However it’s been three years since the first came out and much has changed. New techiques have been released, changes to the framework have occured, and in these times concepts like <em>distributed computing</em> mean much more! As a result over <strong>50%</strong> of the course material is <em>completely new</em>.</p>
-<p>But wait, what about the old material?</p>
-<p>The old material is also completely redone and added verbose content thanks to the power of Quarto and nbdev. Just look at the before and after:</p>
-<section id="before" class="level3">
-<h3 class="anchored" data-anchor-id="before">Before:</h3>
-<p><img src="media/blog/Walkwithfastai/02.png" class="img-fluid"></p>
-</section>
-<section id="after" class="level3">
-<h3 class="anchored" data-anchor-id="after">After:</h3>
-<p><img src="media/blog/Walkwithfastai/03.png" class="img-fluid"></p>
-<p>No longer is this course just a passing resource, but instead it could be read entirely on its own without the accompaning lecture content and be infinitely more valuable than its predecessor.</p>
-</section>
-</section>
-<section id="what-about-the-original-course" class="level2">
-<h2 class="anchored" data-anchor-id="what-about-the-original-course">What about the original course?</h2>
-<p>The original course will always be free and a readily-available resource to all, however its content will not be updated for latest iterations of the framework and so forth. The YouTube videos will not be going anywhere, and the code repository wil still be publically available. Always.</p>
-<p>That being said, this new version of the course will go much futher beyond than the original did, and has enough material to have it stand out as its own and not just be a complete repeat of what was presented three years ago.</p>
-</section>
-<section id="not-convinced-heres-what-others-have-to-say-about-the-original-course" class="level2">
-<h2 class="anchored" data-anchor-id="not-convinced-heres-what-others-have-to-say-about-the-original-course">Not convinced? Here’s what others have to say about the original course:</h2>
-<blockquote class="blockquote">
-<p>Zach Mueller is probably the most active member of the fastai community. He is also very actively involved with fastai development. If there is one person who understands the fastai library through and through (apart from Jeremy Howard and Sylvain Gugger), that is certainly Zach! He went out of his way to create a fabulous learning resource for us, Walk With Fastai. Numerous notebooks explaining how to work with the library to achieve wonderful results. A must read! - Radek Osmulski, Senior Data Scientist at NVIDIA AI</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>Walk with Fastai is the best source available for utilizing fastai and goes above and beyond what is available in the documentation. Zach somehow extracted all of the knowledge I wanted to know about fastai and combined it into blog posts, videos, and source code that are easy to follow and build on. If you want to use fastai, this is a great resource to reference. I’ve had to go back and forth a couple of times between the best source (between it and fastbook) and I think I’ve gotten more out of Walk with fastai. - Kevin Bird</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>I really enjoyed the vision section Zach’s Walk with fastai series. His extension of the fastai keypoint example from a single point to multipoint was really great and importantly included covering the basics of doing ML well such as cleaning the data, ensuring the transforms make sense and so forth before starting any modelling - super critical to teaching deep learning. I loved that he then goes deeper and shows off how to customize a UNET for key point regression (because why not!) and really get the most out of the fastai API. Highly recommended as an accompaniment to the fastai course! - Morgan McGuire, Growth ML Engineer at Weights and Biases</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>Your addendum course videos in Walk with fastai is so super useful. I’ve learnt so much more about using fastai effectively in new problem spaces by combining Jeremy’s lessons with your own, and am still learning as I am still progressing through them. - Nissan Dookeran</p>
-</blockquote>
-</section>
-<section id="how-do-i-sign-up" class="level2">
-<h2 class="anchored" data-anchor-id="how-do-i-sign-up">How do I sign up?</h2>
-<p>Preorders are now live, which you can find <a href="https://thezachmueller.gumroad.com/l/walkwithfastai">here</a>.</p>
-<p>I value your trust in me as a teacher and a creator so if you preorder before the course begins you will be able to not only attend the lectures <strong>live</strong> and directly as me questions, but you will also get weekly updates from me detailing progress, teases, and overall how the course is coming along.</p>
-<p>If you do not preorder you will receive access to the material as a lesson finishes, within a day for the unedited lecture and within a week for the edited ones.</p>
-<p>Also starting today preorders are now 50% off, so be sure to get them while they’re available!</p>
 
 
-</section>
-</section>
 
-</main> <!-- /main -->
+
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-categories="ZGlzdHJpYnV0ZWQtdHJhaW5pbmclMkNweXRvcmNoJTJDZnNkcCUyQ3BpcGVsaW5lLXBhcmFsbGVsaXNtJTJDdGVuc29yLXBhcmFsbGVsaXNt" data-listing-date-sort="1752638400000" data-listing-file-modified-sort="1752694206579" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1001">
+<div class="thumbnail"><a href="../notes/distributed_overview.html" class="no-external">
+
+<p class="card-img-top"><img src="nanotron.jpg"  class="thumbnail-image card-img"/></p>
+
+</a></div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../notes/distributed_overview.html" class="no-external">DDP, FSDP, TP, PP: A Field Guide to Modern Parallelism Strategies</a>
+</h3>
+<div class="delink listing-description"><a href="../notes/distributed_overview.html" class="no-external">
+Every time I open Twitter/X/LinkedIn these days I see the same alphabet-soup: <em>DDP</em>, <em>FSDP</em>, <em>TP</em>, <em>PP</em>, <em>DiLoCo</em>.<br>
+It’s easy to think they’re just buzzwords slapped onto marketing…
+</a></div>
+</div>
+<div class="metadata">
+<a href="../notes/distributed_overview.html" class="no-external">
+<div class="listing-date">
+Jul 16, 2025
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">No matching items</div>
+</div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

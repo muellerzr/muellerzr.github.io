@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2022-10-22">
+<meta name="dcterms.date" content="2025-07-16">
 
-<title>Announcing Walk with fastai, the missing pieces for success – Zach Mueller</title>
+<title>DDP, FSDP, TP, PP: A Field Guide to Modern Parallelism Strategies – Zach Mueller</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -142,7 +177,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Announcing Walk with fastai, the missing pieces for success</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">DDP, FSDP, TP, PP: A Field Guide to Modern Parallelism Strategies</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -161,8 +196,15 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Announcing Walk with fastai, the missing pieces for success</h1>
-</div>
+<h1 class="title">DDP, FSDP, TP, PP: A Field Guide to Modern Parallelism Strategies</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">distributed-training</div>
+    <div class="quarto-category">pytorch</div>
+    <div class="quarto-category">fsdp</div>
+    <div class="quarto-category">pipeline-parallelism</div>
+    <div class="quarto-category">tensor-parallelism</div>
+  </div>
+  </div>
 
 
 
@@ -172,7 +214,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 22, 2022</p>
+      <p class="date">July 16, 2025</p>
     </div>
   </div>
   
@@ -184,56 +226,165 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </header>
 
 
-<blockquote class="blockquote">
-<p>Details about my newest course, available at https://thezachmueller.gumroad.com/l/walkwithfastai</p>
-</blockquote>
-<section id="walk-with-fastai-the-missing-pieces-for-success" class="level1">
-<h1>Walk with fastai, the missing pieces for success</h1>
-<p><img src="media/blog/Walkwithfastai/01.png" class="img-fluid"></p>
-<p>You heard that right, three years after the hit course <a href="https://walkwithfastai.com">Walk with fastai</a> I’m coming back with an action-packed round two!</p>
-<p>This course has been in the making since the <em>day</em> version 1 finished, as I was never truly happy with how that one ended up. It was great, but there was much to be desired. This course is designed to help fill those gaps. Let’s dive in!</p>
-<section id="why-do-this-whats-different" class="level2">
-<h2 class="anchored" data-anchor-id="why-do-this-whats-different">Why do this? What’s different?</h2>
-<p>First let’s talk about what’s new. This course will <strong>still</strong> take you from someone who either has completed Jeremy Howards <a href="https://course.fast.ai">course</a> or who hasn’t even <strong>touched</strong> fastai at all and take you to a level above most practitioners. We still start at an understanding of some Python, and maybe some PyTorch and take you further beyond.</p>
-<p>However it’s been three years since the first came out and much has changed. New techiques have been released, changes to the framework have occured, and in these times concepts like <em>distributed computing</em> mean much more! As a result over <strong>50%</strong> of the course material is <em>completely new</em>.</p>
-<p>But wait, what about the old material?</p>
-<p>The old material is also completely redone and added verbose content thanks to the power of Quarto and nbdev. Just look at the before and after:</p>
-<section id="before" class="level3">
-<h3 class="anchored" data-anchor-id="before">Before:</h3>
-<p><img src="media/blog/Walkwithfastai/02.png" class="img-fluid"></p>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Every time I open Twitter/X/LinkedIn these days I see the same alphabet-soup: <em>DDP</em>, <em>FSDP</em>, <em>TP</em>, <em>PP</em>, <em>DiLoCo</em>.<br>
+It’s easy to think they’re just buzzwords slapped onto marketing decks, but behind each acronym is a concrete trade-off between memory, speed, and how often your GPUs have to talk to one another.</p>
+<p>The other day I ran a quick lightning lesson where I tried to draw the whole zoo on a single whiteboard.<br>
+The drawing was… enthusiastic.<br>
+So here’s the cleaned-up, blog-ready version: one place to look when you’re asking <em>“which strategy do I pick when my 70-B model doesn’t fit on my 4-4090 box?”</em></p>
+<section id="distributed-data-parallelism-ddp" class="level2">
+<h2 class="anchored" data-anchor-id="distributed-data-parallelism-ddp">Distributed Data Parallelism (DDP)</h2>
+<p>DDP is the bread-and-butter of multi-GPU training.<br>
+The recipe is almost boring:</p>
+<ul>
+<li>Clone your entire model onto each GPU.<br>
+</li>
+<li>Let every GPU munch on a different slice of the batch (local batch = 8 → global batch = <code>8 × #GPUs</code>).<br>
+</li>
+<li>After <code>backward()</code>, average the gradients in one all-reduce.<br>
+</li>
+<li>Step the optimiser. Repeat.</li>
+</ul>
+<p>Because nothing is sharded, the memory footprint per GPU is <em>full model + gradients + optimiser states</em>.<br>
+The upside: dead simple and near-linear throughput gains.<br>
+The downside: if the model itself is bigger than a single GPU, DDP can’t help; your GPUs will simply OOM.</p>
 </section>
-<section id="after" class="level3">
-<h3 class="anchored" data-anchor-id="after">After:</h3>
-<p><img src="media/blog/Walkwithfastai/03.png" class="img-fluid"></p>
-<p>No longer is this course just a passing resource, but instead it could be read entirely on its own without the accompaning lecture content and be infinitely more valuable than its predecessor.</p>
+<section id="zero-fsdp-shard-the-world" class="level2">
+<h2 class="anchored" data-anchor-id="zero-fsdp-shard-the-world">ZeRO &amp; FSDP: shard the world</h2>
+<p>ZeRO (Zero Redundancy Optimizer) and its PyTorch twin FSDP (Fully-Sharded Data Parallel) attack memory, not throughput.<br>
+They introduce a <em>communication ⇄ memory</em> dial you can turn at three levels:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Stage</th>
+<th>Shards what?</th>
+<th>Memory saved</th>
+<th>Extra comms?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>ZeRO-1</strong></td>
+<td>optimiser states only</td>
+<td>~25–30 %</td>
+<td>almost free</td>
+</tr>
+<tr class="even">
+<td><strong>ZeRO-2</strong></td>
+<td>optimiser states + gradients</td>
+<td>~50–60 %</td>
+<td>modest</td>
+</tr>
+<tr class="odd">
+<td><strong>ZeRO-3</strong></td>
+<td><em>everything</em> (weights, grads, opt states)</td>
+<td>~75 %</td>
+<td>heavy but predictable</td>
+</tr>
+</tbody>
+</table>
+<p>A quick mental model:<br>
+- ZeRO-1 is “I just need a little more head-room”.<br>
+- ZeRO-2 is the sweet spot for most pre-training runs.<br>
+- ZeRO-3 is “I want to train a 70-B model on 4×A6000s”.</p>
+<section id="an-aside-hybrid-sharding" class="level3">
+<h3 class="anchored" data-anchor-id="an-aside-hybrid-sharding">An aside: Hybrid Sharding</h3>
+<p>Inside a single node NVLink is <em>fast</em>.<br>
+Across nodes it’s not. (Blame our fastest ethernet speed at 100GbE/25GB/s)<br>
+So run ZeRO-2 <em>per node</em>, then a lightweight all-reduce every <code>k</code> steps to keep the global view consistent.<br>
+That’s what the PyTorch folks call <em>hybrid shard</em> and it’s often the cheapest way to scale.</p>
 </section>
 </section>
-<section id="what-about-the-original-course" class="level2">
-<h2 class="anchored" data-anchor-id="what-about-the-original-course">What about the original course?</h2>
-<p>The original course will always be free and a readily-available resource to all, however its content will not be updated for latest iterations of the framework and so forth. The YouTube videos will not be going anywhere, and the code repository wil still be publically available. Always.</p>
-<p>That being said, this new version of the course will go much futher beyond than the original did, and has enough material to have it stand out as its own and not just be a complete repeat of what was presented three years ago.</p>
+<section id="pipeline-parallelism-pp" class="level2">
+<h2 class="anchored" data-anchor-id="pipeline-parallelism-pp">Pipeline Parallelism (PP)</h2>
+<p>When a single <em>layer</em> still fits on one GPU but the <em>whole model</em> does not, slice the model horizontally: layer 0–10 on GPU-0, 11–20 on GPU-1, etc.<br>
+Forward is a literal pipeline: GPU-0 finishes micro-batch-1, ships activations to GPU-1, then immediately starts micro-batch-2 while GPU-1 is still crunching micro-batch-1.</p>
+<p>Pros<br>
+- Only activations cross node boundaries—gradients stay local.<br>
+- Works great for inference too: you can throw away the backward pass and just stream tokens through the pipe.</p>
+<p>Cons<br>
+- You have to <em>partition the graph yourself</em>.<br>
+- The bubble at the end of each step (GPUs waiting for tail batches) can eat 10–20 % of your throughput if micro-batches are small.</p>
+<p>PyTorch’s <code>torchpippy</code> (which lives in <code>torch.distributed.pippy</code>) can auto-partition a HF model the same way <code>device_map="auto"</code> does for inference—handy if you hate counting layers.</p>
 </section>
-<section id="not-convinced-heres-what-others-have-to-say-about-the-original-course" class="level2">
-<h2 class="anchored" data-anchor-id="not-convinced-heres-what-others-have-to-say-about-the-original-course">Not convinced? Here’s what others have to say about the original course:</h2>
-<blockquote class="blockquote">
-<p>Zach Mueller is probably the most active member of the fastai community. He is also very actively involved with fastai development. If there is one person who understands the fastai library through and through (apart from Jeremy Howard and Sylvain Gugger), that is certainly Zach! He went out of his way to create a fabulous learning resource for us, Walk With Fastai. Numerous notebooks explaining how to work with the library to achieve wonderful results. A must read! - Radek Osmulski, Senior Data Scientist at NVIDIA AI</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>Walk with Fastai is the best source available for utilizing fastai and goes above and beyond what is available in the documentation. Zach somehow extracted all of the knowledge I wanted to know about fastai and combined it into blog posts, videos, and source code that are easy to follow and build on. If you want to use fastai, this is a great resource to reference. I’ve had to go back and forth a couple of times between the best source (between it and fastbook) and I think I’ve gotten more out of Walk with fastai. - Kevin Bird</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>I really enjoyed the vision section Zach’s Walk with fastai series. His extension of the fastai keypoint example from a single point to multipoint was really great and importantly included covering the basics of doing ML well such as cleaning the data, ensuring the transforms make sense and so forth before starting any modelling - super critical to teaching deep learning. I loved that he then goes deeper and shows off how to customize a UNET for key point regression (because why not!) and really get the most out of the fastai API. Highly recommended as an accompaniment to the fastai course! - Morgan McGuire, Growth ML Engineer at Weights and Biases</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>Your addendum course videos in Walk with fastai is so super useful. I’ve learnt so much more about using fastai effectively in new problem spaces by combining Jeremy’s lessons with your own, and am still learning as I am still progressing through them. - Nissan Dookeran</p>
-</blockquote>
+<section id="tensor-parallelism-tp" class="level2">
+<h2 class="anchored" data-anchor-id="tensor-parallelism-tp">Tensor Parallelism (TP)</h2>
+<p>Instead of slicing <em>layers</em>, slice <em>within</em> each layer.<br>
+For a linear layer <code>Y = XW</code>, split <code>W</code> column-wise across GPUs.<br>
+Every forward pass becomes an all-reduce, but each GPU only stores 1/k of the weight matrix.</p>
+<p>Because the communication is <em>every layer</em>, you really want NVLink or InfiniBand. PCIe will murder you.</p>
 </section>
-<section id="how-do-i-sign-up" class="level2">
-<h2 class="anchored" data-anchor-id="how-do-i-sign-up">How do I sign up?</h2>
-<p>Preorders are now live, which you can find <a href="https://thezachmueller.gumroad.com/l/walkwithfastai">here</a>.</p>
-<p>I value your trust in me as a teacher and a creator so if you preorder before the course begins you will be able to not only attend the lectures <strong>live</strong> and directly as me questions, but you will also get weekly updates from me detailing progress, teases, and overall how the course is coming along.</p>
-<p>If you do not preorder you will receive access to the material as a lesson finishes, within a day for the unedited lecture and within a week for the edited ones.</p>
-<p>Also starting today preorders are now 50% off, so be sure to get them while they’re available!</p>
+<section id="composing-the-lego-bricks" class="level2">
+<h2 class="anchored" data-anchor-id="composing-the-lego-bricks">Composing the Lego bricks</h2>
+<p>These strategies are <em>orthogonal</em>.<br>
+Real-world runs stack them into 2-D or 3-D meshes:</p>
+<pre><code>Data Parallel (DDP/FSDP)   -&gt; replicas across nodes
+  └── Pipeline Parallel    -&gt; layers across GPUs inside a node
+        └── Tensor Parallel-&gt; split each layer across GPUs</code></pre>
+<p>Megatron, Nanotron, or TorchTitan let you write a tiny YAML:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tensor_parallel_size</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pipeline_parallel_size</span><span class="kw">:</span><span class="at"> </span><span class="dv">4</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data_parallel_size</span><span class="kw">:</span><span class="at"> </span><span class="dv">8</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and the framework wires everything together.</p>
+<p>For the best visualization on optimizing this topology, see this reference from the <code>nanotron</code> team (lighter color == good):</p>
+<p><img src="nanotron.jpg" class="img-fluid"></p>
+</section>
+<section id="diloco-zero-2-at-planet-scale-kinda" class="level2">
+<h2 class="anchored" data-anchor-id="diloco-zero-2-at-planet-scale-kinda">Diloco: ZeRO-2 at planet scale (kinda)</h2>
+<p>ZeRO-2 keeps <em>weights local</em> and syncs only the sharded optimiser states.<br>
+DiLoCo (Decentralised Low-Communication) applies the same idea across <em>islands of machines</em> with slow links (because regular internet is quite slow).<br>
+Each “neighborhood” trains locally for <code>n</code> steps asynchronously, then syncs its aggregated model updates (or pseudo-gradients) with the others using a lightweight, <strong>decentralized</strong> update.<br>
+It’s not quite ZeRO-2 with a long ping, but it <em>does</em> let you train LLMs across the globe without melting your bandwidth.</p>
+<p>Prime Intellect already has an open-source implementation (OpenDiLoCo); I’ll leave a link at the bottom.</p>
+</section>
+<section id="article-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="article-takeaways">Article Takeaways</h2>
+<ul>
+<li>DDP is the <strong>default</strong> until your model can’t fit into memory on its own.<br>
+</li>
+<li>ZeRO-2/FSDP is usually the cheapest knob to turn next.<br>
+</li>
+<li>Pipeline parallelism is great when <em>layers</em> are chunky; tensor parallelism when <em>weights</em> are chunky.<br>
+</li>
+<li>Combine all three for giant models; let Megatron/nanotron/TorchTitan handle the plumbing.<br>
+</li>
+<li>Measure interconnect with T-flops and torch-profiler, not eyeballs.<br>
+</li>
+<li>Your most expensive resource is <em>time waiting on other GPUs</em>, minimise that and you minimise the cloud bill.</li>
+</ul>
+<hr>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Pick one strategy and you’re probably fine.<br>
+Pick <em>two to three</em> and you can pre-train a 400-B model in your bathtub (okay, maybe a garage full of GPUs).</p>
+<p>If you want to go deeper, I’m collecting everything: notebooks, diagrams, and working configs, into a repo that accompanies the <strong>Scratch-to-Scale</strong> course.<br>
+We’ll rebuild DDP, ZeRO, PP and TP from the ground up, then bolt them together until something catches fire (in a good way).<br>
+<a href="https://maven.com/walk-with-code/scratch-to-scale?promoCode=distributedtaxonomyblog">Use the following link to get 35% off entry</a>, and hear from the folks who have built the frameworks I talked about here as part of the fun</p>
+<p>Happy learning!</p>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1910.02054">ZeRO paper</a><br>
+</li>
+<li><a href="https://github.com/NVIDIA/Megatron-LM">Megatron-LM code</a><br>
+</li>
+<li><a href="https://github.com/huggingface/nanotron">nanotron</a><br>
+</li>
+<li><a href="https://github.com/pytorch/torchtitan">TorchTitan</a><br>
+</li>
+<li><a href="https://github.com/PrimeIntellect-ai/OpenDiloco">Prime Intellect Open Diloco</a><br>
+</li>
+<li><a href="https://maven.com/walk-with-code/scratch-to-scale?promoCode=distributedtaxonomyblog">Scratch to Scale course</a></li>
+</ul>
 
 
 </section>

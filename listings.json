@@ -12,6 +12,7 @@
   {
     "listing": "/blog/index.html",
     "items": [
+      "/blog/fine_tuning.html",
       "/blog/scratch_to_scale.html",
       "/blog/huggingchat_local.html",
       "/blog/gradient_accumulation_part2.html",
@@ -43,6 +44,12 @@
       "/blog/Week-1.html",
       "/blog/Suspecto.html",
       "/blog/Fastai-Curriculum.html"
+    ]
+  },
+  {
+    "listing": "/notes/index.html",
+    "items": [
+      "/notes/distributed_overview.html"
     ]
   },
   {
