@@ -1,0 +1,59 @@
+/* Newsletter button styling */
+.newsletter-container {
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .subscribe-button {
+    background-color: #447099;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    width: 300px;
+    margin-bottom: 30px;
+  }
+  
+  .subscribe-button:hover {
+    background-color: #305775;
+  }
+  
+  /* Blog listings improvements */
+  #blog-listings {
+    margin-top: 1.5rem;
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .newsletter-container {
+      justify-content: flex-start;
+    }
+  
+    .subscribe-button {
+      background: none;
+      color: #75A8D9;
+      padding: 0;
+      width: auto;
+      margin: 0 0 20px 0;
+      text-align: left;
+      display: inline;
+      text-decoration: underline;
+      font-weight: bold;
+      border-radius: 0;
+      font-size: 1.05em;
+    }
+  
+    .subscribe-button:hover {
+      background: none;
+      color: #74adf7;
+    }
+  }
+  
