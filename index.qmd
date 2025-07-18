@@ -12,6 +12,8 @@ I have a heavy passion for **Deep Learning** and **Open Source** libraries. As a
 
 ## My blogs
 
+<button onclick="window.location.href='https://walkwithcode.kit.com/53cb7ade49'" class="subscribe-button">Subscribe To My Newsletter</button>
+
 Explore this website to learn more! Generally most of my larger articles are in `/blog`.
 
 ## Outside Articles and Posts

@@ -1,5 +1,7 @@
 ---
 title: "Distributed Training Notes"
+format: html
 listing:
+  - id: notes
     sort: "date desc"
 ---
