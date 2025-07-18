@@ -4,15 +4,21 @@ image: media/profile.jpg
 about:
     template: jolla
 toc: true
+format:
+    html:
+        anchor-sections: true
+        css: index-styles.css
 ---
 
 Hi! My name is Zachary Mueller, and I'm a **Machine Learning Software Engineer** at 🤗. I majored in **Software Design and Development** and I have minors in both **Computer Science** and **Environmental Science**.
 
 I have a heavy passion for **Deep Learning** and **Open Source** libraries. As a result, below you will find some notable articles I've written, a few courses I've made, some of software libraries I've written, interesting projects, and the open source libraries I have tried to contribute the most to.
 
-## My blogs
-
 <button onclick="window.location.href='https://walkwithcode.kit.com/53cb7ade49'" class="subscribe-button">Subscribe To My Newsletter</button>
+
+
+
+## My blogs
 
 Explore this website to learn more! Generally most of my larger articles are in `/blog`.
 
