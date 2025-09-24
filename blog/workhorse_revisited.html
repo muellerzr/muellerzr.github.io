@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2025-07-12">
+<meta name="dcterms.date" content="2025-09-03">
 
-<title>Announcing Scratch to Scale, Large Scale Training in the Modern World – Zach Mueller</title>
+<title>The Workhorse is dead. Long live the Workhorse – Zach Mueller</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -40,7 +40,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-0f58e2f6821c54e2f4f765745ef8dab5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-cfa207c77eb7cbba8b42f7d389f7d0a8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -82,7 +82,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed fullcontent quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -142,7 +142,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Announcing Scratch to Scale, Large Scale Training in the Modern World</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">The Workhorse is dead. Long live the Workhorse</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -155,13 +155,24 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#my-motivation" id="toc-my-motivation" class="nav-link active" data-scroll-target="#my-motivation">My motivation</a></li>
+  <li><a href="#the-build" id="toc-the-build" class="nav-link" data-scroll-target="#the-build">The Build</a></li>
+  <li><a href="#every-build-has-quirks-right" id="toc-every-build-has-quirks-right" class="nav-link" data-scroll-target="#every-build-has-quirks-right">Every build has quirks right?</a></li>
+  <li><a href="#what-on-earth-are-you-going-to-do-with-this" id="toc-what-on-earth-are-you-going-to-do-with-this" class="nav-link" data-scroll-target="#what-on-earth-are-you-going-to-do-with-this">What on earth are you going to do with this??</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Announcing Scratch to Scale, Large Scale Training in the Modern World</h1>
+<h1 class="title">The Workhorse is dead. Long live the Workhorse</h1>
 </div>
 
 
@@ -172,7 +183,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 12, 2025</p>
+      <p class="date">September 3, 2025</p>
     </div>
   </div>
   
@@ -184,35 +195,62 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
 </header>
 
 
-<blockquote class="blockquote">
-<p>Details about my newest course, <a href="https://maven.com/walk-with-code/scratch-to-scale?promoCode=zach35">available here (for 35% off too)</a></p>
-</blockquote>
-<section id="scratch-to-scale-large-scale-training-in-the-modern-world" class="level1">
-<h1>Scratch to Scale, Large Scale Training in the Modern World</h1>
-<p>We’re continuing the <a href="../Walkwithfastai">three year pattern</a> of new courses! <a href="https://maven.com/walk-with-code/scratch-to-scale?promoCode=zach35">(Buy at 35% off here now)</a></p>
-<p>This go-around, my aim is to take you <strong>deep</strong> into the world of distributed training, through myself and over a dozen guest lecturers.</p>
-<section id="why-a-new-course" class="level2">
-<h2 class="anchored" data-anchor-id="why-a-new-course">Why a new course?</h2>
-<p>Over the last two years the landscape of Deep Learning and model training has changed drastically. We’ve gone from “Train your own imagenet model” to open-source <em><em>trillion parameter LLMs</em></em>. This day and age, thinking about training in the same ways as before just will not cut it.</p>
-<p>This is what I’m trying to help solve. FSDP, DeepSpeed, DistributedDataParallelism, LoCo, DiLoCo. These are all fancy terms and algorithm names that matter when training distributed models. My goal is to help you know them inside and out <em>from scratch</em>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="media/images/workhorse_v2.jpg" class="img-fluid figure-img"></p>
+<figcaption>Picture of the Workhorse</figcaption>
+</figure>
+</div>
+<p>As the title states, the Workhorse is now dead.</p>
+<p>Gutted.</p>
+<p>And thrown together with new parts.</p>
+<p>The only two pieces that remain the same are: - The 6000 ADA - One PSU</p>
+<p>First though, let’s talk about <em>why</em> you’re staring at a ~40k machine</p>
+<section id="my-motivation" class="level2">
+<h2 class="anchored" data-anchor-id="my-motivation">My motivation</h2>
+<p>I’m <strong>not</strong> here to tell you to go spend ~40-50k on a new rig. However, instead I’m here to detail my (thinly veiled) excuse to go buy these.</p>
+<p>With the release of Kimi K2 and other such large models, I use them daily in my life. My goal originally was to get 2 M3 Ultras, smack them together, get distributed inference going, and have a gigantic 1T param model working at home.</p>
+<p>A month of pain and suffering later, and MLX just isn’t there (yet) for my needs.</p>
+<p>Now let’s talk about these cards. The Blackwell Max-Q’s.</p>
+<ul>
+<li>300w max draw</li>
+<li><strong>96GB of VRAM</strong></li>
+<li>~10-20% less performant than the full 600w variant.</li>
+</ul>
+<p>That’s some <em>insane</em> compute in a small package.</p>
+<p>With all of my own experiments with distributed training (and my course), my 2 4090’s and the 6000 ADA just could not get me to run experiments the way I need to.</p>
+<p>For example, when training it’s ~16x the memory cost to train a model in terms of VRAM. 2x 4090’s lets you get a 3 billion parameter model (and it will take ages to get anything done.)</p>
+<p>With 384GB of VRAM across the cards, I can experiment with pipeline or tensor parallelism with models of up to roughly 20 billion parameters (though realistically only 8 when you consider good seq_len etc).</p>
+<p>Along with this, they’re beasts for inference since I can run a model that’s roughly ~600B param or so quantized.</p>
 </section>
-<section id="how-were-going-to-get-there" class="level2">
-<h2 class="anchored" data-anchor-id="how-were-going-to-get-there">How we’re going to get there</h2>
-<p>This <em>conference</em> (what started out as a course, but got <em>far</em> too large), will encompass 6 weeks, 5 lectures from me, and 14 (and counting) guest speakers.</p>
-<p>There are three tracks:</p>
-<p><strong>Applied</strong>: The applied track is from industry leaders on how they have approached the problems of training at scale, and the solutions they’ve come to for enabling developers the easiest access to these fully trained models once they’re done. - Robert Nishihara, Cofounder of Ray, Anyscale. Robert will help you learn how Ray and Anyscale help millions of machine learning engineers scale training across thousands of GPUs at once - Sami Jaghouar, research engineer at Prime Intellect. Sami will introduce you to the idea of Decentralized Training at a <strong>global scale</strong>, and how Prime Intellect gets it done - Tunji Ruwase, software engineer at Snowflake (DeepSpeed). Tunji will introduce you to <em>Arctic Long Sequence Training</em>, which helps make training <strong>multi-million token context length</strong> models efficient and scaleable - Prince Canuma, machine learning research engineer. Prince is by and large one of the smartest people I know who is working on MLX (Apple Silicon). He will help you learn how you can utilize local Mac clusters to run ML workloads locally for a fraction of the cost.</p>
-<p>Next we have the <strong>Pretraining</strong> track: Pretraining is a core foundation of modern LLM research. We’re going to learn what techniques are used by the top labs around the world when it comes to training an entirely new LLM from scratch on your data. This includes talks by: - Phuc Nguyen, a research engineer at Hugging Face who has <strong>reimplemented FP8 training from scratch</strong>. He will help guide you on using FP8 on fancy NVIDIA hardware yourself to make the best use of your FLOPs - Elie Bakouch, a machine learning researcher on the Hugging Face pretraining team. He will help guide you on the latest modeling methods like MLA, MoE, and more - Daniel Han, creator of UnslothAI, formerly at NVIDIA. Daniel will help teach you how triton kernels and other techniques can help you save hundreds of hours in training time.</p>
-<p>Then finally, guest speakers during the <strong>Distributed Training Course</strong> (that’s right, my own course is secondary now!) Learn the techniques used today when training and fine-tuning models at scale (hundreds and thousands of GPUs at once).</p>
-<p>These include talks by: - Sylvain Gugger, Jane Street and formerly Hugging Face &amp; fast.ai. Sylvain will help introduce us to the idea of distributed training, and a brief overview of ZeRO - Wanchao Liang, formerly Meta and creator of TorchTitan &amp; the DTensor. Wanchao will help teach you how TorchTitan has helped developers take model pretraining to scale faster, and how DTensors have made this easier - Ferdinand Mom, research engineer at Hugging Face. Ferdinand will help you get a grasp on the idea of <strong>multi-dimensional parallelism</strong>, where we take standard parallelism strategies and combine them for the <em>fastest throughput possible</em>. - Less Wright, PyTorch Partner Engineer at Meta. Less will guide you on how Async TensorParallelism lets you train across thousands of GPUs efficiently - Matej Sirovatka, MLE at Hugging Face. Matej will teach you what Expert Parallelism is, and how it helps boost the training speed of MoE models. - Marc Sun, MLE at Hugging Face. Marc will help you learn the tips and tricks needed to take these models and deploy them easily.</p>
+<section id="the-build" class="level2">
+<h2 class="anchored" data-anchor-id="the-build">The Build</h2>
+<p>Now, let’s talk about costs (ew). First thing <strong>I will acknowledge</strong>: I got PCIe-5 based GPUs with a PCIe-4 based motherboard.</p>
+<p>Some performance is left on the table, yes. However this build is already insanely expensive (for a consumer) and I didn’t want to drop another few thousand $$$ at the time. That could change in the future, who knows.</p>
+<p>{Everything was purchased from eBay}</p>
+<p><strong>Setup:</strong></p>
+<ul>
+<li>Motherboard: ASUS WRX80E-SAGE Pro WS SE ($636)</li>
+<li>CPU: AMD Ryzen Threadripper Pro 5955WX ($969)</li>
+<li>Cooler: Noctua NH-U12S TR4-SP3 ($115)</li>
+<li>RAM: 2x A-Tech 128GB 4x 32GB 3200 RDIMM EEC Memory ($709)</li>
+<li>Case: Veddha V4C 6-GPU Mining Case ($56)</li>
+<li>GPUs: 4x RTX PRO 6000 Blackwell Max-Q ($39,236) 1x RTX 6000 ADA (Bought off a friend)</li>
+</ul>
 </section>
-<section id="other-goodies" class="level2">
-<h2 class="anchored" data-anchor-id="other-goodies">Other Goodies</h2>
-<p>There are of course other goodies from sponsorships like free compute, Hugging Face Pro, and more. However, most of all <strong>if you buy this cohort, I will give you free access to all future cohorts</strong>. Distributed training is needed <em>now</em> and there’s just <strong>to much content to cover</strong> even <em>with</em> that laundry list of speakers I just mentioned.</p>
-<p>So, if you’ve made it this far, come learn with me over the next year. <a href="https://maven.com/walk-with-code/scratch-to-scale?promoCode=zach35">Here’s a 35% off coupon, and I hope to see you there.</a></p>
-<p>Zach</p>
+<section id="every-build-has-quirks-right" class="level2">
+<h2 class="anchored" data-anchor-id="every-build-has-quirks-right">Every build has quirks right?</h2>
+<p>So, one very frustrating part of this build is that this particular mining rig case was <em>not meant for this large of a motherboard</em>.</p>
+<p>It took a few trips to the local hardware store, some drillbits, and moving the holes a few inches down the side to get the motherboard to <em>kind of</em> stay on, but it works. This was my first time ever getting a mining-rig style frame, and as a result mistakes are bound to happen.</p>
+</section>
+<section id="what-on-earth-are-you-going-to-do-with-this" class="level2">
+<h2 class="anchored" data-anchor-id="what-on-earth-are-you-going-to-do-with-this">What on earth are you going to do with this??</h2>
+<p>Mainly research. I’ve been thinking of years to make a “poor man’s” guide to FP8, and so I’m currently running a wide sweep of experiments on that now.</p>
+<p>I also will be finally able to host very large models (including with CPU offloading from the 256GB of ECC memory I have) and start playing around with how that works more.</p>
+<p>Would I recommend this to <em>most</em> people? <strong>No</strong>. From my early results, if you’re considering a build like this, just get 2. That alone is enough for you to see benefits from FP8, and you can train a 12 billion parameter model if you’re careful.</p>
+<p>We live in a world where VRAM is king, and I’m <strong>not</strong> saying to go into debt to buy this card. But, if you’ve been sitting on your cards for a number of years, and want 4x the vram of a 4090 using less power than it, the max-q is not a bad option.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -288,7 +326,7 @@ gtag('config', 'G-99XP3R051T', { 'anonymize_ip': true});
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/muellerzr\.github\.io\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
