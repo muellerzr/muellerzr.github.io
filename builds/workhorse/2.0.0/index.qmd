@@ -1,0 +1,8 @@
+---
+title: "Workhorse - Revision 2.0.0"
+date: 2025-06-05
+---
+
+### Changes:
+
+Many, see the blog
